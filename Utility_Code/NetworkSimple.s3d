@@ -1,0 +1,446 @@
+/* Include s3d symbols */
+#include <Script3d.h>
+#include <Camera.s3d.h>
+
+/* Set global scene parameters */
+SET SCENE_FOV  = 60;
+SET SCENE_NEAR = 0.5;
+SET SCENE_FAR  = 1000;
+
+#define MY_ID 			7
+#define POSITION_PDU 	1
+#define MISSILE_PDU		2
+#define	KEEPALIVE_PDU	3
+#define	EXPLOSION_PDU	4
+#define	SCORE_PDU		5
+#define	RESET_PDU		6
+#define	FRAME_RATE		60
+#define	TIME_STEP		1
+
+// TODO: put your global variables here
+
+var g_pos1 = [0,0,0];
+var g_rot1 = 0.0;
+var g_pos1_fire = [0,0,0];
+var fire_life=0;
+var fire_direction;
+
+var g_pos2 = [0,0,0];
+var g_rot2 = 0.0;
+
+var g_enemy_pos = vector(3*32);			// There can be up to 32 enemies
+var g_enemy_rot = vector(32);			// The only rotation is around y axis
+var g_enemy_velocity = vector(32);		// We will use it later
+var g_enemy_alive = vector(32);
+
+var g_enemy_bullet = vector(3*32);			// There can be up to 32 enemies
+var g_enemy_bullet_life = vector(32);		// The only rotation is around y axis
+var g_enemy_bullet_rot = vector(32);		// We will use it later
+
+var g_score = vector(32);
+
+var timer1 = 0;
+var timer2 = 0;
+var timer3 = 0;
+var timer4 = 0;
+var timer5 = 0;
+
+var color_table = vector(23 * 3);
+
+/* Camera globals */
+var CamPos = [0.0, 50.0, 100.0]; 	// camera position
+
+/* Light globals */
+var Light0;
+var PosL = [0.0, 10.0, 10.0];	// default light position
+
+var old_time = 0;
+var old_time2 = 0;
+var traffic_out = 0;
+var traffic_in = 0;
+var channel1;
+
+/* Function declarations */
+function CameraMoveMouse();
+function DrawGrid(col, size);
+
+function MySend(PDU){
+	static var counter = 0;
+	var current_time = getTime();
+	if(current_time - old_time > 1000){
+		traffic_out = counter;
+		old_time = getTime();
+		counter = 0;
+	}
+	counter += len(PDU);
+	NetVarSendTo("192.168.1.255",50023,PDU);
+}
+
+function MyReceive(){
+	static var counter2 = 0;
+	var current_time2 = getTime();
+	if(current_time2 - old_time2 > 1000){
+		traffic_in = counter2;
+		old_time2 = getTime();
+		counter2 = 0;
+	}
+	
+	var address1 = "................";
+	
+	// Simulating packet loss
+	if(rand(1000) > 800)
+		NetVarReceiveFrom(channel1,&address1);
+		
+	var receive_data = NetVarReceiveFrom(channel1,&address1);
+	
+	//trace(received_data);
+	if(receive_data!=NULL){
+		counter2 += len(receive_data);
+		
+		return(receive_data);	
+	}
+}
+
+function OnDownload(){
+	// TODO: download your resources here
+	// E.g.: FileDownload("resource.ext");
+}
+
+function OnInit(params){
+	/* initialize camera */
+	CameraGetCurrent().SetPosition(CamPos);
+	CameraSetTarget(0,0,0);
+
+	channel1 = NetCreateChannel(50023,"0.0.0.0",VR_NO_BLOCKING);
+	
+	SetFrameRate(FRAME_RATE);	
+	SetTimeStep(TIME_STEP);
+	
+	ConsoleFont("Arial",12);
+	
+//	global var old_time = getTime();
+//	global var old_time2 = getTime();
+
+	for(var i = 0; i < 32; i++){
+		color_table[i*3+0] = rand(256)/256.0;
+		color_table[i*3+1] = rand(256)/256.0;
+		color_table[i*3+2] = rand(256)/256.0;
+	}
+	
+	color_table = [
+		1, 	0, 	0,
+		1, 	0.5,0,
+		1,	1,	0,
+		1,	1,	0.5,
+		1,	0,	0.5,
+		1,	0,	1,
+		1,	0.5,0.5,
+		1,	0.5,1,
+		
+		0.5, 0, 	0,
+		0.5, 0.5,0,
+		0.5, 1,	0,
+		0.5, 1,	0.5,
+		0.5, 0,	0.5,
+		0.5, 0,	1,
+		0.5, 0.5,0.5,
+		0.5, 0.5,1,
+		
+		0, 	0.5,0,
+		0,	1,	0,
+		0,	1,	0.5,
+		0,	0,	0.5,
+		0,	0,	1,
+		0,	0.5,0.5,
+		0, 0.5,1
+	];
+}
+
+function OnFrame(){	
+	ConsoleText(0.1,0.1,"Traffic out: " + str(traffic_out));
+	ConsoleText(0.1,0.2,"Traffic in: " + str(traffic_in));
+	
+	for(var i = 0; i < 20; i++)
+		ConsoleText(0.8,0.95-0.05*i,"Player " + str(i) + "SCORE" + str(g_score[i]));
+	
+	static var velocity = 0;
+	static var updated = false;
+	static var fire_rotation = 0;
+	var direction = [0.0,0.0,0.1];
+	var real_direction = VectorRotate(g_rot1,0,1,0,direction);
+	
+	if(KeyPressed(VK_UP)) {updated = true; velocity+=0.05;}
+	if(KeyPressed(VK_DOWN)) {updated = true; velocity-=0.05;}
+	
+	velocity*=0.99;
+	
+	g_pos1+= velocity*real_direction;
+	
+	if(KeyPressed(VK_LEFT)) {updated = true; g_rot1+=2.0;}
+	if(KeyPressed(VK_RIGHT)) {updated = true; g_rot1-=2.0;}
+	
+	if(Keyboard() == "r"){ 
+		var PDU = vector(2);
+		PDU[0]=RESET_PDU;
+		PDU[1]=MY_ID;
+		
+		MySend(PDU);
+		
+		for(var i = 0; i < 32; i++)
+			g_score[i];
+	}
+	
+	if(getTime() - timer1 > 100){
+		timer1 = getTime();
+		updated = false;
+		var PDU = vector(7);
+		PDU[0]=POSITION_PDU;
+		PDU[1]=MY_ID;
+		PDU[2]=g_pos1.x;
+		PDU[3]=g_pos1.y;
+		PDU[4]=g_pos1.z;
+		PDU[5]=g_rot1;	
+		PDU[6]=velocity;	
+	
+		MySend(PDU);
+	}
+	
+	if(getTime() - timer3 > 500){
+		timer3 = getTime();
+		var PDU = vector(2);
+		PDU[0]=KEEPALIVE_PDU;
+		PDU[1]=MY_ID;
+	
+		MySend(PDU);
+	}
+	
+	if(getTime() - timer5 > 3000){
+		timer5 = getTime();
+		var PDU = vector(34);
+		PDU[0]=SCORE_PDU;
+		PDU[1]=MY_ID;
+		for(var i = 0; i < 32; i++)
+			PDU[2+i] = g_score[i];
+	
+		MySend(PDU);
+	}
+
+	if(KeyPressed(VK_SPACE) && fire_life == 0){
+		g_pos1_fire = g_pos1;
+		fire_direction = real_direction;
+		fire_rotation = g_rot1;
+		fire_life = 100;
+	}
+	
+	if(fire_life > 0){
+		fire_life--;
+		g_pos1_fire += fire_direction*8.0;
+		
+		if(getTime() - timer2 > 50 || fire_life == 0){
+			timer2 = getTime();
+			var PDU = vector(7);
+			PDU[0]=MISSILE_PDU;
+			PDU[1]=MY_ID;
+			PDU[2]=g_pos1_fire.x;
+			PDU[3]=g_pos1_fire.y;
+			PDU[4]=g_pos1_fire.z;
+			PDU[5]=fire_life;
+			PDU[6]=fire_rotation;	
+			
+			MySend(PDU);
+		}
+	}
+	
+	//Networking
+	
+	SceneBegin(VR_SHOW_STATS);
+		DrawGrid([0.5, 0.5, 0.5], 100);
+		glDisable(GL_LIGHTING);
+	
+		//My own ship
+		glColor(1,0,0);
+		glPushMatrix();
+		 glTranslate(g_pos1);
+		 glRotate(g_rot1,0,1,0);
+		 glBegin(GL_TRIANGLES);
+		 	glVertex(-4,0,0);
+		 	glVertex(0,0,4);
+		 	glVertex(4,0,0);
+		 glEnd();
+		glPopMatrix();
+		
+		if(fire_life > 0){
+			glColor(1,1,0);
+			glPushMatrix();
+				glTranslate(g_pos1_fire);
+				glPointSize(5.0);
+				glBegin(GL_POINTS);
+					glVertex(0,0,0);
+				glEnd();
+			glPopMatrix();
+		}
+	
+		//Enemy
+		for (var i = 0; i < 32; i++){
+			var enemy_direction = [0.0, 0.0, 0.1];
+			var real_enemy_direction = VectorRotate(g_enemy_rot[i],0,1,0,enemy_direction);
+			g_enemy_velocity[i]*=0.99;
+			g_enemy_pos[i*3+0]+=g_enemy_velocity[i] * real_enemy_direction.x;
+			g_enemy_pos[i*3+1]+=g_enemy_velocity[i] * real_enemy_direction.y;
+			g_enemy_pos[i*3+2]+=g_enemy_velocity[i] * real_enemy_direction.z;
+			
+			var enemy_bullet_direction = [0.0, 0.0, 0.1];
+			var real_enemy_bullet_direction = VectorRotate(g_enemy_bullet_rot[i],0,1,0,enemy_bullet_direction);
+			g_enemy_bullet[i*3+0]+=real_enemy_bullet_direction.x * 8.0;
+			g_enemy_bullet[i*3+1]+=real_enemy_bullet_direction.y * 8.0;
+			g_enemy_bullet[i*3+2]+=real_enemy_bullet_direction.z * 8.0;
+			
+			if(g_enemy_alive[i]>0){
+				glColor(color_table[i*3+0],color_table[i*3+1],color_table[i*3+2]);
+				glPushMatrix();
+				 glTranslate(g_enemy_pos[3*i+0], g_enemy_pos[3*i+1], g_enemy_pos[3*i+2]);
+				 glRotate(g_enemy_pos[i],0,1,0);
+				 glBegin(GL_TRIANGLES);
+				 	glVertex(-4,0,0);
+				 	glVertex(0,0,4);
+				 	glVertex(4,0,0);
+				 glEnd();
+				glPopMatrix();
+				
+				if(g_enemy_bullet_life[i] > 1){
+					glColor(1,1,0);
+					glPushMatrix();
+						glTranslate(g_enemy_bullet[3*i+0], g_enemy_bullet[3*i+1], g_enemy_bullet[3*i+2]);
+						glPointSize(5.0);
+						glBegin(GL_POINTS);
+							glVertex(0,0,0);
+						glEnd();
+					glPopMatrix();
+				}
+			}
+		}
+		
+		if(getTime() - timer4 > 2000){
+			timer4 = getTime();
+			for(var i = 0; i < 32; i++)
+				if(g_enemy_alive[i]>0)
+					g_enemy_alive[i]--;
+		}
+		
+		for(var i = 0; i < 32; i++){
+			var tmp_pos = [g_enemy_bullet[3*i+0], g_enemy_bullet[3*i+1], g_enemy_bullet[3*i+2]];
+			var distance = g_pos1 - tmp_pos;
+			if(g_enemy_bullet_life[i] > 0 && modulus(distance) < 5){
+				g_pos1 = [rand(100)-50,0,rand(100)-50];
+				
+				var PDU = vector(3);
+				PDU[0]=EXPLOSION_PDU;
+				PDU[1]=MY_ID;
+				PDU[2]=i;
+				
+				MySend(PDU);
+				
+				g_score[i]++;
+			}
+		}
+	SceneEnd();
+}
+
+function DownloadReady(RequestID){
+	// TODO
+}
+
+function OnTimer(){
+	var loop = true;
+	
+	while(loop){
+		var received_data = MyReceive();
+		
+		if(received_data!=void){
+			if(received_data[1]!=MY_ID){
+				if(received_data[0]==POSITION_PDU){	
+					var incoming_id = received_data[1];
+					g_enemy_pos[incoming_id*3+0] = received_data[2];
+					g_enemy_pos[incoming_id*3+1] = received_data[3];
+					g_enemy_pos[incoming_id*3+2] = received_data[4];
+					g_enemy_rot[incoming_id] = received_data[5];	
+					g_enemy_velocity[incoming_id] = received_data[6];	
+				}	
+				
+				if(received_data[0]==MISSILE_PDU){	
+					var incoming_id = received_data[1];
+					g_enemy_bullet[incoming_id*3+0] = received_data[2];
+					g_enemy_bullet[incoming_id*3+1] = received_data[3];
+					g_enemy_bullet[incoming_id*3+2] = received_data[4];
+					g_enemy_bullet_life[incoming_id] = received_data[5];
+					g_enemy_bullet_rot[incoming_id] = received_data[6];
+				}	
+				
+				if(received_data[0]==KEEPALIVE_PDU){	
+					var incoming_id = received_data[1];
+					if(g_enemy_alive[incoming_id] < 4)
+						g_enemy_alive[incoming_id]++;
+				}		
+				
+				if(received_data[0]==EXPLOSION_PDU){
+					g_score[received_data[2]] += 1;
+				}
+				
+				if(received_data[0]==SCORE_PDU){
+					for(var i = 0; i < 32; i++)
+						if (received_data[2+i] > g_score[i])
+							g_score[i] = received_data[2+i];
+				}
+				
+				if(received_data[0]==RESET_PDU){
+					for(var i = 0; i < 32; i++)
+						g_score[i] = 0;
+				}
+			}
+		}
+		else
+			loop = false;
+	}
+}
+
+function OnExit(){
+	// TODO: put your cleanup code here
+}
+
+// Camera manager (using mouse)
+function CameraMoveMouse(){	
+	CameraMoveMouse_MBL_LC();
+}
+
+function DrawGrid(col, size){
+	/* let's not mess up current OpenGL status */
+	glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_CURRENT_BIT);
+	
+	glLineWidth(1);
+	glDisable(GL_LIGHTING);
+	glColor(col);
+	var max = size / 2.0;
+	var min = -max;	
+	var step = size / 10.0;
+	
+	glBegin(GL_LINES);
+		for (var i = min; i <= max; i += step){
+			glVertex(i, 0, max);
+			glVertex(i, 0, min);
+			
+			glVertex(max, 0, i);
+			glVertex(min, 0, i);
+		}
+	glEnd();
+	
+	/* polite restoration of previous OpenGL status */
+	glPopAttrib();
+}
+
+function OnEvent(eventID, wparam, lparam){
+  // TODO: put your events handling code here
+}
+
+function OnError(){
+  // TODO: put your errors handling code here
+}
