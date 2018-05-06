@@ -1,0 +1,52 @@
+#define UNIT_SIZE		0.01
+#define BORDER_SIZE		0.001
+
+#define START_POINT_X	0.01
+#define START_POINT_Y	0.01
+
+class map{
+	var matrix_level;
+	var map_position_x;
+	var map_position_y;
+	var rows;
+	var columns;
+	var width;
+	var height;
+	
+	init(ml);
+	draw(players);
+	update(matrix_level);
+};
+
+function map::init(ml) {
+	matrix_level = ml;
+	
+	rows = len(matrix_level);
+	columns = len(matrix_level[0]);
+	
+	width = columns * UNIT_SIZE;
+	height = rows * UNIT_SIZE;
+	
+	map_position_x = START_POINT_X;
+	map_position_y = START_POINT_Y + height;
+	
+	ConsoleFont("Arial", 12);
+}
+
+function map::draw(players) {
+	ConsoleColor(1, 1, 1, 1);
+	ConsoleFilledRect(map_position_x, map_position_y, width, height);
+	
+	ConsoleColor(1, 0, 0, 1);
+	for(var i = 0; i < rows; i++)
+		for(var j = 0; j < columns; j++)
+			if(matrix_level[i][j] == 1)
+				ConsoleFilledRect(START_POINT_X + j * UNIT_SIZE, START_POINT_Y + UNIT_SIZE + i * UNIT_SIZE, UNIT_SIZE + BORDER_SIZE, UNIT_SIZE + BORDER_SIZE);
+	
+	ConsoleColor(0, 1, 0, 1);
+	var n_players = len(players);
+	for(var i = 0; i < n_players; i++)
+		ConsoleFilledRect(START_POINT_X + players[i][1] * UNIT_SIZE, START_POINT_Y + UNIT_SIZE +  players[i][0] * UNIT_SIZE, UNIT_SIZE + BORDER_SIZE, UNIT_SIZE + BORDER_SIZE);
+				
+	ConsoleFinish();
+}

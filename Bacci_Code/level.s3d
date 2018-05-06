@@ -1,4 +1,5 @@
 #include "player.s3d"
+#include "map.s3d"
 
 #define FLOOR_TILING 5
 #define WALL_HEIGHT 3
@@ -13,6 +14,7 @@ class level{
 	var texture_wall;
 	var array_wall;
 	var array_player;
+	var mymap;
 	
 	init();
 	draw();
@@ -72,8 +74,8 @@ function level::init(){
 	
 	for (var i = 0; i < array_rows_length - 1; i++){
 		matrix_level[i] = array(array_columns_length);
-		
-		for (var j = 0; j < array_columns_length - 1; j++){
+
+		for (var j = 0; j < array_columns_length; j++){
 			var tmp = array_rows[i][j];
 			if(tmp == "*"){
 				matrix_level[i][j] = 1;
@@ -88,6 +90,9 @@ function level::init(){
 				matrix_level[i][j] = 0;
 		}
 	}
+	
+	mymap = map();
+	mymap.init(matrix_level);
 }
 
 function level::draw(){
@@ -102,6 +107,15 @@ function level::draw(){
 	foreach (var aw in array_wall)
 		aw.draw();
 		
-	foreach (var pl in array_player)
-		pl.draw();
+	var n_players = len(array_player);
+	var positions = array(n_players);
+	var i = 0;
+	foreach (var pl in array_player) {
+		positions[i] = pl.get_position();
+		var boh  = positions[i];
+		i++;
+		pl.draw();	
+	}
+		
+	mymap.draw(positions);
 }

@@ -25,6 +25,7 @@ class player{
 	init(i, c, p);
 	draw();
 	update(matrix_level);
+	get_position();
 	shoot();
 };
 
@@ -57,6 +58,10 @@ function player::init(i, c, p){
 	
 	mybullet = bullet();	
 	mybullet.init(c);
+}
+
+function player::get_position(){
+	return obj_player.GetPosition();
 }
 
 function player::shoot(){
