@@ -1,0 +1,90 @@
+#define BULLET_SPEED 5       
+#define BULLET_MASS	0.008
+#define BULLET_RADIUS 0.003
+#define SHOOT_FORCE 10000
+
+#define ACCEL_GRAVITY 9.81
+#define VISCOSITY_COEFF 0.0000186
+#define FRAME_SECOND	30
+	
+
+class bullet{
+	var mesh_bullet;
+	var obj_bullet;
+	var position;
+	var dir;
+	var color; 
+
+	var isflying;
+	var elapsed_time;
+	var dx;
+	var dy;
+	
+	var acc;
+	var speed; 
+
+	
+	
+	init(p,d,c);
+	update();
+	draw();
+	shoot(p,d);
+	computeDynamics();
+	resetDynamics();
+};
+
+function bullet::computeDynamics(){
+	elapsed_time += 1.0/FRAME_SECOND;
+	
+	acc 	-=6* PI* VISCOSITY_COEFF * BULLET_RADIUS * speed / BULLET_MASS;
+	speed	= acc * elapsed_time;
+
+	dx += elapsed_time * speed;
+	dy = ACCEL_GRAVITY * elapsed_time * elapsed_time / 2;
+	position[0] += dir[0] * dx;
+	position[1] -=  dy;
+	position[2] += dir[2] * dx;
+	 
+}
+
+
+function bullet::shoot(p,d){
+	position = p + [0,1,0];
+	dir = d; 
+	isflying = true;
+}
+
+function bullet::init(p,d,c){
+	acc =  BULLET_MASS * SHOOT_FORCE;
+	isflying = false;
+	elapsed_time = 0.0; 
+	position=p;
+	dir=d;
+	color=c;
+	mesh_bullet= CVmnewMesh(VRP_BOX);
+	mesh_bullet.scale(0.1);
+	mesh_bullet.ModulateMaterials(color);
+	obj_bullet = CVmObj(mesh_bullet);
+	obj_bullet.SetPosition(position);
+	speed= BULLET_SPEED;
+	dx = 0.0; 
+	dy = 0.0;
+}
+
+function bullet::draw(){
+	if(isflying)
+	  obj_bullet.draw();
+}
+
+function bullet::update(){
+	
+	if(isflying){
+		computeDynamics();
+		
+		obj_bullet.setposition(position);
+		if(position[1] <= 0)
+			isflying = false; 
+			
+	}
+	
+}

@@ -1,0 +1,17 @@
+#define CLIP_SIZE 30 
+
+class RailGun {
+
+   public:
+    function Weapon::SetWidth(int w) {
+         width = w;
+      }
+      void setHeight(int h) {
+         height = h;
+      }
+      
+   protected:
+      var OnClip;
+      var clipSize; 
+	  
+};

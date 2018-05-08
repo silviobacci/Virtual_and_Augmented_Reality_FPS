@@ -1,0 +1,15 @@
+#define CLIP_SIZE 30 
+
+class RailGun {
+	
+	var OnClip;
+	  
+    function Weapon::init() {
+    	onClip = CLIP_SIZE; 
+    	
+      }
+
+    
+      
+	  
+};

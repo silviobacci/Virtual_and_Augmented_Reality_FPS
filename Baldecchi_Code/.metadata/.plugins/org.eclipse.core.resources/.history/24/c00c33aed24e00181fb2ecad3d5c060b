@@ -1,0 +1,13 @@
+class Shape {
+   public:
+    function Weapon::SetWidth(int w) {
+         width = w;
+      }
+      void setHeight(int h) {
+         height = h;
+      }
+      
+   protected:
+      int width;
+      int height;
+};

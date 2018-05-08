@@ -1,0 +1,3 @@
+function initSomething(var some){
+	some = 3;
+}

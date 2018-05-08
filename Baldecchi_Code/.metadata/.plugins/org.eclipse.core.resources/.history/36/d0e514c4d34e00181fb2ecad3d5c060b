@@ -1,0 +1,162 @@
+#include "bullet.s3d"
+#define PLAYER_SPEED 0.03
+#define PLAYER_ANGLE_STEP 0.01
+#define SWAT_START_WALK 16
+#define SWAT_END_WALK 48
+#define SWAT_TOTAL_FRAMES 32
+
+class player{
+	var mesh_player_lower;
+	var mesh_player_upper;
+	var mesh_gun;
+	var obj_player_lower;
+	var obj_player_upper;
+	var obj_gun;
+	var obj_player;
+	var position;
+	var angleY;
+	var direction;
+	var current_frame; 
+	var id;
+	var color;
+	var my_bullet; 
+	var fx_shoot;
+	var jump; 
+	var bullets;
+	
+	init(i,c,p);
+	draw();
+	update(matrix_level);
+	turnings();
+	movement(run);
+	check_Collision(matrix_level);
+	shoot(p,d);
+	jump_check();
+};
+
+function player::shoot(p,d){
+	if(bullets >= 0)
+		my_bullet[bullets--].shoot(position, direction);
+	fx_shoot.setposition(position);
+	fx_shoot.setlistenerposition(cameragetposition());
+	fx_shoot.setlistenerorientation(-cameragetdirection());
+	fx_shoot.play();
+}
+
+function player::init(i,c,p){
+	fx_shoot = CVmVRAWav("shoot.wav",true);    //the second param is to enable 3d sound effect
+	position= p;
+	angleY = 0;
+	direction = [sin(angleY), 0 , cos(angleY)]; 
+	id=i;
+	color=c;
+	bullets=100;
+	mesh_player_upper = CVmNewMesh("swat_upper.aam");          //We have to rotate -90 on the x(because of clockwise)
+	//var bb = mesh_player_lower.GetBoundingBox();
+	//trace(bb);
+	mesh_player_lower = CVmNewMesh("swat_lower.aam"); 			//meshes load
+	mesh_player_lower.ModulateMaterials(color);
+	mesh_player_upper.ModulateMaterials(color);
+	mesh_gun = CVmNewMesh("rocketl.aam");
+	obj_gun = CVmObj(mesh_gun);
+	
+	var sf1 =mesh_player_lower.Normalize(1);					//to correctly attach meshes
+	mesh_player_upper.scale(sf1);
+	mesh_gun.scale(sf1);							
+	
+	obj_player_upper = CVmObj(mesh_player_upper);			//player's object
+	obj_player_lower = CVmObj(mesh_player_lower);
+	obj_player = CVmObj();
+	
+	
+	obj_player.AddChild(obj_player_lower);						//objects hierarchy
+	obj_player.AddChild(obj_player_upper);
+	obj_player_upper.AddChild(obj_gun);
+	obj_player.setposition(position);
+	
+	my_bullet= array(0);
+	for(var i=0; i <= bullets; i++){
+		var b =bullet();
+	    b.init(position,direction,color);			//pos e dir actully not neebuded
+	    aadd(my_bullet,b);
+	}
+	current_frame= 0;										//player's movement
+	jump=0;
+}
+
+function player::draw(){											
+	obj_player.Draw(VR_FRAMENUMBER, SWAT_START_WALK+current_frame);
+	foreach(var b in my_bullet)
+		b.draw();
+}
+
+function player::turnings(){
+	if(keypressed(VK_LEFT))						
+		angleY += PLAYER_ANGLE_STEP;
+	else if(keypressed(VK_RIGHT))
+		angleY -= PLAYER_ANGLE_STEP;	
+}
+
+function player::check_Collision(block){
+		
+}
+
+function player::movement(run){
+	
+}
+
+
+function player::jump_check(){
+		position.y=sin(jump);
+		if(jump > PI/2)
+			jump-=0.05;
+		else
+			jump-=0.045;	
+}
+function player::update(matrix_level){			//update on key press
+	var run=1; 
+	var old_position = position;
+	
+	if(keypressed(VK_SHIFT))					//speed
+		run=2;
+	//if(keypressed(VK_SHIFT)	)				//speed
+	
+	
+	if(keypressed(VK_LEFT))						
+		angleY += PLAYER_ANGLE_STEP;
+	else if(keypressed(VK_RIGHT))
+		angleY -= PLAYER_ANGLE_STEP;										//player motion
+	
+	if(keypressed(VK_UP)){
+		position += PLAYER_SPEED * direction*run;	
+		current_frame = (current_frame +0.35*run)%SWAT_TOTAL_FRAMES;
+	}
+	else if(keypressed(VK_DOWN)){
+		position -= PLAYER_SPEED * direction*run;	
+		current_frame = (current_frame -0.35*run)%SWAT_TOTAL_FRAMES;
+		if(current_frame <= 0)
+			current_frame+=SWAT_TOTAL_FRAMES;
+		}
+	
+	if(jump > 0)
+		jump_check();
+	if(keypressed(VK_SPACE)){
+		//shoot();
+		jump=PI;	
+	}
+		
+	direction = [sin(angleY), 0 ,cos(angleY)];	//spatial and horientational data updating
+	var intx = int(position.x);
+	var intz = int(position.z);
+	
+	
+	if(matrix_level[intz][intx] == 1)
+		position = old_position;	
+
+	
+	obj_player.setposition(position);			//obj updating
+	obj_player.setRotation(RAD_TO_GRAD * angleY, [0,1,0]);
+	foreach (var i in my_bullet)
+		i.update();
+		
+}
