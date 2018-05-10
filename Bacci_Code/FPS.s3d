@@ -2,6 +2,7 @@
 #include <Script3d.h>
 #include <Camera.s3d.h>
 #include "level.s3d"
+#include "menu.s3d"
 
 /* Set global scene parameters */
 SET SCENE_FOV  = 60;
@@ -24,6 +25,7 @@ function CameraMoveMouse();
 function DrawGrid(col, size);
 
 var mylevel;
+var mymenu;
 
 function OnDownload()
 {
@@ -47,7 +49,8 @@ function OnInit(params)
 	mylevel = level();
 	mylevel.init();
 	mylevel.addplayer(0, [1, 0, 0], [2, 0, 2]);
-	mylevel.addplayer(1, [0, 1, 0], [2, 0, 5]);
+	mymenu = menu();
+	mymenu.init();
 }
 
 
@@ -69,6 +72,7 @@ function OnFrame()
 
 	// TODO: put your drawing code here
 	mylevel.draw();
+	mymenu.draw();
 
 	SceneEnd();
 }

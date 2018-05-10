@@ -17,15 +17,15 @@ class map{
 	var width;
 	var height;
 	var window;
-	var scaling_factor;
+	var scaling_factor_x;
+	var scaling_factor_y;
 	
 	init(ml);
 	draw(players);
 	update(matrix_level);
 	
-	global_to_local(global_coordinates);
-	draw_rect_wall(to_draw_x, to_draw_y);
-	draw_rect_player(to_draw_x, to_draw_y);
+	draw_rect(to_draw_x, to_draw_y, border);
+	draw_background();
 	draw_player(players_position);
 	draw_wall();
 };
@@ -43,25 +43,23 @@ function map::init(ml) {
 	
 	map_position_x = START_POINT_X;
 	
+	scaling_factor_x = 1;
+	
 	ConsoleFont("Arial", 12);
 }
 
-function map::draw_rect_wall(to_draw_x, to_draw_y) {
-	var x = START_POINT_X + UNIT_SIZE * to_draw_x;
-	var y = START_POINT_Y + (UNIT_SIZE * to_draw_y + BORDER_SIZE_WALL) * scaling_factor;
-	var w = UNIT_SIZE + BORDER_SIZE_WALL;
-	var h = (UNIT_SIZE + BORDER_SIZE_WALL) * scaling_factor;
+function map::draw_rect(to_draw_x, to_draw_y, border) {
+	var x = START_POINT_X + (UNIT_SIZE * to_draw_x) * scaling_factor_x;
+	var y = START_POINT_Y + (UNIT_SIZE * to_draw_y) * scaling_factor_y;
+	var w = (UNIT_SIZE + border) * scaling_factor_x;
+	var h = (UNIT_SIZE + border) * scaling_factor_y;
 	
 	ConsoleFilledRect(x, y, w, h);
 }
 
-function map::draw_rect_player(to_draw_x, to_draw_y) {
-	var x = START_POINT_X + UNIT_SIZE * to_draw_x - UNIT_SIZE/2;
-	var y = START_POINT_Y + (UNIT_SIZE * to_draw_y + BORDER_SIZE_PLAYER + UNIT_SIZE/2) * scaling_factor;
-	var w = UNIT_SIZE + BORDER_SIZE_PLAYER;
-	var h = (UNIT_SIZE + BORDER_SIZE_PLAYER) * scaling_factor;
-	
-	ConsoleFilledRect(x, y, w, h);
+function map::draw_background() {
+	ConsoleColor(1, 1, 1, 1);
+	ConsoleFilledRect(map_position_x, map_position_y, width, height);
 }
 
 function map::draw_wall() {
@@ -69,43 +67,23 @@ function map::draw_wall() {
 	for(var i = 0; i < rows; i++)
 		for(var j = 0; j < columns; j++)
 			if(matrix_level[i][j] == 1)
-				draw_rect_wall(j, i + 1);
-}
-
-function map::global_to_local(global_coordinates){
-	var array_size = len(global_coordinates);
-	var local_coordinates = array(array_size);
-	trace(global_coordinates);
-	for(var i = 0; i < len(global_coordinates); i++) {
-		array_size = len(global_coordinates[i]);
-		local_coordinates[i] = array(array_size);
-		local_coordinates[i][0] = global_coordinates[i][0];
-		local_coordinates[i][1] = global_coordinates[i][1];
-		local_coordinates[i][2] = MAP_HEIGHT - global_coordinates[i][2];
-	}
-	
-	return local_coordinates;
+				draw_rect(j, i + 1, BORDER_SIZE_WALL);
 }
 
 function map::draw_player(players_position) {
 	ConsoleColor(0, 1, 0, 1);
-	//players_position = global_to_local(players_position);
 	for(var i = 0; i < len(players_position); i++)
-		draw_rect_player(players_position[i][0], players_position[i][2]);
+		draw_rect(players_position[i][0], players_position[i][2], BORDER_SIZE_PLAYER);
 }
 
 function map::draw(players_position) {
 	var size = window.GetSize();
-	scaling_factor = size[0] / size[1];
-	height = (rows * UNIT_SIZE) * scaling_factor;
+	scaling_factor_y = size[0] / size[1];
+	height = (rows * UNIT_SIZE) * scaling_factor_y;
 	map_position_y = START_POINT_Y + height;
 	
-	ConsoleColor(1, 1, 1, 1);
-	ConsoleFilledRect(map_position_x, map_position_y, width, height);
-	
+	draw_background();
 	draw_wall();
-	
-	draw_player(players_position);
-				
+	draw_player(players_position);		
 	ConsoleFinish();
 }

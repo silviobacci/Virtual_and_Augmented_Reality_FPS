@@ -1,0 +1,73 @@
+#define DIM_FONT_TWENTY		0.19
+#define DIM_FONT_THIRTY		0.19
+#define TITLE_FONT_SIZE		20
+#define SCALE				0.001
+
+class menu{
+	var menu_position_x;
+	var menu_position_y;
+	var width;
+	var height;
+	var window;
+	var scaling_factor;
+	
+	init();
+	draw();
+	update();
+	
+	draw_box(x, y, w, h, text);
+	draw_background();
+	draw_title();
+};
+
+function menu::init() {
+	window = CVmWebBrowser ();
+}
+
+function menu::draw_box(x, y, w, h, text) {
+	var font_size = TITLE_FONT_SIZE * scaling_factor;
+	ConsoleFont("Courier",  font_size);
+	
+	var color = [139, 63, 51] / 255.0;
+	ConsoleColor(color);
+	ConsoleFilledRect(x, y, w, h);
+	
+	color = [0, 0, 0] / 255.0;
+	ConsoleColor(color);
+	var dim = font_size / 1000 * 1.2;
+	ConsoleFilledRect(x + w / 2.0, y - h / 2.0, dim * len(text), h);
+	
+	color = [1, 1, 1] / 255.0;
+	ConsoleColor(color);
+	ConsoleText(x + w / 2.0, y - h / 2.0, text);
+}
+
+function menu::draw_title() {
+	var w = width / 2.0;
+	var h = height / 10.0;
+	var x = width / 2.0 - w / 2.0;
+	var y = height / 2.0 + h / 2.0;
+	
+	draw_box(x, y, w, h, "First Person Shooter kind");
+}
+
+function menu::draw_background() {
+	var color = [244, 225, 174] / 255.0;
+	ConsoleColor(color);
+	ConsoleFilledRect(menu_position_x, menu_position_y, width, height);
+}
+
+function menu::draw() {
+	var size = window.GetSize();
+	scaling_factor = size[1] * SCALE;
+	
+	width = 1;
+	height = 1;
+	menu_position_x = 0;
+	menu_position_y = height;
+	
+	draw_background();	
+	draw_title();
+	
+	ConsoleFinish();
+}
