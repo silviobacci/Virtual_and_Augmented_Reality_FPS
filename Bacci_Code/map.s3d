@@ -32,7 +32,6 @@ class map{
 
 function map::init(ml) {
 	window = CVmWebBrowser ();
-	window.Fullscreen();
 	
 	matrix_level = ml;
 	

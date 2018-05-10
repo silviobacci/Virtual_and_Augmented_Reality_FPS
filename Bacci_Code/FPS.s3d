@@ -65,6 +65,7 @@ function OnFrame()
 	Light0.SetPosition(CameraGetCurrent().GetPosition());
 	
 	mylevel.update();
+	mymenu.update();
 
 	SceneBegin();
 
