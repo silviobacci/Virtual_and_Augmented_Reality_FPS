@@ -73,7 +73,9 @@ function OnFrame()
 
 	// TODO: put your drawing code here
 	mylevel.draw();
-	mymenu.draw();
+	
+	if(mymenu.show_menu)
+		mymenu.draw();
 
 	SceneEnd();
 }
