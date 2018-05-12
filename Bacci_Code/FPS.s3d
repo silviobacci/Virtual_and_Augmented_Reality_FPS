@@ -2,7 +2,10 @@
 #include <Script3d.h>
 #include <Camera.s3d.h>
 #include "level.s3d"
-#include "menu.s3d"
+#include "menu/menu_utilities.s3d"
+#include "menu/startup_menu.s3d"
+#include "menu/pause_menu.s3d"
+#include "menu/help_menu.s3d"
 
 /* Set global scene parameters */
 SET SCENE_FOV  = 60;
@@ -25,7 +28,9 @@ function CameraMoveMouse();
 function DrawGrid(col, size);
 
 var mylevel;
-var mymenu;
+var my_startup_menu;
+var my_pause_menu;
+var my_help_menu;
 
 function OnDownload()
 {
@@ -46,36 +51,54 @@ function OnInit(params)
 	Light0.Enable();	
 
 	// TODO: put your initialization code here
+	window = CVmWebBrowser();
+	window.Fullscreen(true);
+	resolution = get_resolution();
+	
 	mylevel = level();
 	mylevel.init();
 	mylevel.addplayer(0, [1, 0, 0], [2, 0, 2]);
-	mymenu = menu();
-	mymenu.init();
+	
+	my_help_menu = help_menu();
+	my_help_menu.init();
+	
+	my_startup_menu = startup_menu();
+	my_startup_menu.init(my_help_menu);
+	
+	my_pause_menu = pause_menu();
+	my_pause_menu.init(my_startup_menu, my_help_menu);
 }
 
 
 
 function OnFrame()
 {
-	/* manage camera */
-	CameraMoveMouse();
-	
-	// var t = GetTime();
+	if(!my_pause_menu.show_menu && !my_startup_menu.show_menu)
+		CameraMoveMouse();
 	
 	Light0.SetPosition(CameraGetCurrent().GetPosition());
 	
-	mylevel.update();
-	mymenu.update();
+	// must be executed before drawing
+	resolution = get_resolution();
+	
+	if(!my_pause_menu.show_menu)
+		mylevel.update();
+	
+	if(!my_startup_menu.show_menu)
+		my_pause_menu.update();
 
 	SceneBegin();
 
 	DrawGrid([0.5, 0.5, 0.5], 100);
 
-	// TODO: put your drawing code here
-	mylevel.draw();
+	if(my_startup_menu.show_menu)
+		my_startup_menu.draw();
+	else {
+		mylevel.draw();
 	
-	if(mymenu.show_menu)
-		mymenu.draw();
+		if(my_pause_menu.show_menu)
+			my_pause_menu.draw();
+	}
 
 	SceneEnd();
 }
