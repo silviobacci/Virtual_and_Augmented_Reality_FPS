@@ -2,10 +2,20 @@
 #include <Script3d.h>
 #include <Camera.s3d.h>
 #include "level.s3d"
+#include "resolution/screen_utilities.s3d"
+
+#include "utilities/utilities.s3d"
+
 #include "menu/menu_utilities.s3d"
 #include "menu/startup_menu.s3d"
 #include "menu/pause_menu.s3d"
 #include "menu/help_menu.s3d"
+
+#include "map/map_utilities.s3d"
+#include "map/map.s3d"
+
+#include "player_info/player_info_utilities.s3d"
+#include "player_info/player_info.s3d"
 
 /* Set global scene parameters */
 SET SCENE_FOV  = 60;
@@ -27,10 +37,12 @@ var PosL = [0.0, 10.0, 10.0];	// default light position
 function CameraMoveMouse();
 function DrawGrid(col, size);
 
-var mylevel;
+var my_level;
 var my_startup_menu;
 var my_pause_menu;
 var my_help_menu;
+var my_map;
+var my_player_info;
 
 function OnDownload()
 {
@@ -55,9 +67,12 @@ function OnInit(params)
 	window.Fullscreen(true);
 	resolution = get_resolution();
 	
-	mylevel = level();
-	mylevel.init();
-	mylevel.addplayer(0, [1, 0, 0], [2, 0, 2]);
+	my_level = level();
+	my_level.init();
+	my_level.addplayer(0, [0, 0, 0], [2, 0, 2]);
+	
+	my_map = map();
+	my_player_info = player_info();
 	
 	my_help_menu = help_menu();
 	my_help_menu.init();
@@ -81,8 +96,12 @@ function OnFrame()
 	// must be executed before drawing
 	resolution = get_resolution();
 	
-	if(!my_pause_menu.show_menu)
-		mylevel.update();
+	if(!my_pause_menu.show_menu) {
+		my_level.update();
+		var players = my_level.get_player_position();
+		my_map.update(my_level.matrix_level, players);
+		my_player_info.update(players[0], 0, 0, 1000);
+	}
 	
 	if(!my_startup_menu.show_menu)
 		my_pause_menu.update();
@@ -94,10 +113,14 @@ function OnFrame()
 	if(my_startup_menu.show_menu)
 		my_startup_menu.draw();
 	else {
-		mylevel.draw();
+		my_level.draw();
 	
 		if(my_pause_menu.show_menu)
 			my_pause_menu.draw();
+		else {
+			my_map.draw();
+			my_player_info.draw();
+		}
 	}
 
 	SceneEnd();

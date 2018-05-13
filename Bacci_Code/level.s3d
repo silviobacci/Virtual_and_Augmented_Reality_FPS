@@ -1,5 +1,4 @@
 #include "player.s3d"
-#include "map.s3d"
 
 #define FLOOR_TILING 5
 #define WALL_HEIGHT 3
@@ -20,6 +19,8 @@ class level{
 	draw();
 	addplayer(id, color, p);
 	update();
+	
+	get_player_position();
 };
 
 function level::update(){
@@ -58,7 +59,6 @@ function level::init(){
 	material_wall.diffuse = [1, 1, 1, 1]; // Blending with white means mulitply by 1, so the texture is unchamged
 	material_wall.ChangeTextureParams(VR_V_TILING, WALL_HEIGHT);
 	
-
 	texture_wall = CVmTexture("mattoni04.png");
 	
 	material_wall.SetTexture(texture_wall);
@@ -90,9 +90,18 @@ function level::init(){
 				matrix_level[i][j] = 0;
 		}
 	}
+}
+
+function level::get_player_position() {
+	var n_players = len(array_player);
+	var positions = array(n_players);
+	var i = 0;
+	foreach (var pl in array_player) {
+		positions[i] = pl.get_position();
+		i++;
+	}
 	
-	mymap = map();
-	mymap.init(matrix_level);
+	return positions;
 }
 
 function level::draw(){
@@ -116,6 +125,4 @@ function level::draw(){
 		i++;
 		pl.draw();	
 	}
-		
-	mymap.draw(positions);
 }
