@@ -1,0 +1,35 @@
+class score_info{
+	var players;
+	var scores;
+	var bullets_left;
+	var life_points;
+	var box_x;
+	var box_y;
+	var box_w;
+	var box_h;
+	
+	draw();
+	add_player(id_player);
+	update(player_index, score);
+};
+
+function score_info::add_player(id_player) {
+	aadd(players, id_player);
+	aadd(scores, 0);
+}
+
+function score_info::update(player_id, score) {
+	for(var i = 0; i < len(players); i++)
+		if(players[i] == id)
+			scores[i] = score;
+}
+
+function score_info::draw() {
+	var box = [box_x, box_y, INFO_BOX_WIDTH, INFO_BOX_WIDTH * resolution];
+	draw_info_box(box);
+	draw_score_title(box);
+	
+	
+	draw_score(box, player_position);
+	ConsoleFinish();
+}

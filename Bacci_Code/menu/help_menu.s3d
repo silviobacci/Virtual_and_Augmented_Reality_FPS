@@ -17,7 +17,7 @@ function help_menu::check_mouse_position() {
 }
 
 function help_menu::init() {
-	gobackbox = create_box(0.1, 0.05, 0.5, 0.5);
+	gobackbox = create_box(0.5, 0.5, 0.1, 0.05);
 	
 	show_menu = false;
 }
@@ -26,7 +26,7 @@ function help_menu::draw_commands() {
 	var displacement = 20;
 	var step = -2;
 	
-	var command_text_box = create_box(0.6 / resolution, 0.01, 0.5, 0.5);
+	var command_text_box = create_box(0.5, 0.5, 0.6 / resolution, 0.01);
 	
 	draw_command("ESC: pause the game", command_text_box, displacement += step);
 	draw_command("SPACE: shoots a bullet", command_text_box, displacement += step);

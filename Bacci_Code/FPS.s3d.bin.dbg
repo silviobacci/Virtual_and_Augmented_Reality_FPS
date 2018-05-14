@@ -124,7 +124,7 @@
 	[
 		
 		{
-			"endLine" : 193,
+			"endLine" : 196,
 			"scopes" : 
 			[
 				
@@ -157,21 +157,42 @@
 				},
 				
 				{
-					"endLine" : 124,
+					"endLine" : 127,
 					"functionname" : "ONFRAME",
 					"params" : 0,
 					"scopes" : 
 					[
 						
 						{
-							"endLine" : 103,
+							"endLine" : 104,
 							"startLine" : 99,
-							"type" : "block"
+							"type" : "block",
+							"variables" : 
+							[
+								
+								{
+									"global" : false,
+									"line" : 101,
+									"name" : "PLAYERS",
+									"offset" : 1,
+									"opt" : false,
+									"static" : false
+								}
+							]
 						},
 						
 						{
-							"endLine" : 121,
-							"startLine" : 114,
+							"endLine" : 124,
+							"scopes" : 
+							[
+								
+								{
+									"endLine" : 123,
+									"startLine" : 120,
+									"type" : "block"
+								}
+							],
+							"startLine" : 115,
 							"type" : "block"
 						}
 					],
@@ -180,17 +201,17 @@
 				},
 				
 				{
-					"endLine" : 131,
+					"endLine" : 134,
 					"functionname" : "DOWNLOADREADY",
 					"params" : 1,
-					"startLine" : 128,
+					"startLine" : 131,
 					"type" : "function",
 					"variables" : 
 					[
 						
 						{
 							"global" : false,
-							"line" : 128,
+							"line" : 131,
 							"name" : "REQUESTID",
 							"offset" : -1,
 							"opt" : true,
@@ -200,25 +221,25 @@
 				},
 				
 				{
-					"endLine" : 138,
+					"endLine" : 141,
 					"functionname" : "ONTIMER",
 					"params" : 0,
-					"startLine" : 135,
+					"startLine" : 138,
 					"type" : "function"
 				},
 				
 				{
-					"endLine" : 143,
+					"endLine" : 146,
 					"functionname" : "ONEVENT",
 					"params" : 3,
-					"startLine" : 141,
+					"startLine" : 144,
 					"type" : "function",
 					"variables" : 
 					[
 						
 						{
 							"global" : false,
-							"line" : 141,
+							"line" : 144,
 							"name" : "EVENTID",
 							"offset" : -1,
 							"opt" : true,
@@ -227,7 +248,7 @@
 						
 						{
 							"global" : false,
-							"line" : 141,
+							"line" : 144,
 							"name" : "WPARAM",
 							"offset" : -2,
 							"opt" : true,
@@ -236,7 +257,7 @@
 						
 						{
 							"global" : false,
-							"line" : 141,
+							"line" : 144,
 							"name" : "LPARAM",
 							"offset" : -3,
 							"opt" : true,
@@ -246,55 +267,55 @@
 				},
 				
 				{
-					"endLine" : 147,
+					"endLine" : 150,
 					"functionname" : "ONERROR",
 					"params" : 0,
-					"startLine" : 145,
+					"startLine" : 148,
 					"type" : "function"
 				},
 				
 				{
-					"endLine" : 153,
+					"endLine" : 156,
 					"functionname" : "ONEXIT",
 					"params" : 0,
-					"startLine" : 150,
+					"startLine" : 153,
 					"type" : "function"
 				},
 				
 				{
-					"endLine" : 163,
+					"endLine" : 166,
 					"functionname" : "CAMERAMOVEMOUSE",
 					"params" : 0,
-					"startLine" : 158,
+					"startLine" : 161,
 					"type" : "function"
 				},
 				
 				{
-					"endLine" : 192,
+					"endLine" : 195,
 					"functionname" : "DRAWGRID",
 					"params" : 2,
 					"scopes" : 
 					[
 						
 						{
-							"endLine" : 187,
+							"endLine" : 190,
 							"scopes" : 
 							[
 								
 								{
-									"endLine" : 187,
-									"startLine" : 181,
+									"endLine" : 190,
+									"startLine" : 184,
 									"type" : "block"
 								}
 							],
-							"startLine" : 180,
+							"startLine" : 183,
 							"type" : "block",
 							"variables" : 
 							[
 								
 								{
 									"global" : false,
-									"line" : 180,
+									"line" : 183,
 									"name" : "I",
 									"offset" : 4,
 									"opt" : false,
@@ -303,14 +324,14 @@
 							]
 						}
 					],
-					"startLine" : 167,
+					"startLine" : 170,
 					"type" : "function",
 					"variables" : 
 					[
 						
 						{
 							"global" : false,
-							"line" : 167,
+							"line" : 170,
 							"name" : "COL",
 							"offset" : -1,
 							"opt" : true,
@@ -319,7 +340,7 @@
 						
 						{
 							"global" : false,
-							"line" : 167,
+							"line" : 170,
 							"name" : "SIZE",
 							"offset" : -2,
 							"opt" : true,
@@ -328,7 +349,7 @@
 						
 						{
 							"global" : false,
-							"line" : 175,
+							"line" : 178,
 							"name" : "MAX",
 							"offset" : 1,
 							"opt" : false,
@@ -337,7 +358,7 @@
 						
 						{
 							"global" : false,
-							"line" : 176,
+							"line" : 179,
 							"name" : "MIN",
 							"offset" : 2,
 							"opt" : false,
@@ -346,7 +367,7 @@
 						
 						{
 							"global" : false,
-							"line" : 177,
+							"line" : 180,
 							"name" : "STEP",
 							"offset" : 3,
 							"opt" : false,
@@ -4250,63 +4271,43 @@
 		},
 		
 		{
-			"endLine" : 35,
+			"endLine" : 60,
 			"scopes" : 
 			[
 				
 				{
-					"endLine" : 11,
-					"functionname" : "DRAW_INFO",
-					"params" : 0,
-					"startLine" : 10,
-					"type" : "function"
-				},
-				
-				{
-					"endLine" : 15,
-					"functionname" : "DRAW_PLAYER_POSITION",
-					"params" : 0,
-					"startLine" : 13,
-					"type" : "function"
-				},
-				
-				{
-					"endLine" : 19,
-					"functionname" : "DRAW_GUN_SELECTED",
-					"params" : 0,
-					"startLine" : 17,
-					"type" : "function"
-				},
-				
-				{
-					"endLine" : 23,
-					"functionname" : "DRAW_BULLETS_LEFT",
-					"params" : 0,
-					"startLine" : 21,
-					"type" : "function"
-				},
-				
-				{
-					"endLine" : 27,
-					"functionname" : "DRAW_LIFE_POINTS",
-					"params" : 0,
-					"startLine" : 25,
-					"type" : "function"
-				},
-				
-				{
-					"endLine" : 35,
-					"functionname" : "DRAW_INFO_BOX",
-					"params" : 4,
-					"startLine" : 30,
+					"endLine" : 18,
+					"functionname" : "GET_INSIDE",
+					"params" : 1,
+					"startLine" : 11,
 					"type" : "function",
 					"variables" : 
 					[
 						
 						{
 							"global" : false,
-							"line" : 30,
-							"name" : "X",
+							"line" : 11,
+							"name" : "BOX",
+							"offset" : -1,
+							"opt" : true,
+							"static" : false
+						}
+					]
+				},
+				
+				{
+					"endLine" : 27,
+					"functionname" : "GET_INSIDE_TEXT",
+					"params" : 2,
+					"startLine" : 20,
+					"type" : "function",
+					"variables" : 
+					[
+						
+						{
+							"global" : false,
+							"line" : 20,
+							"name" : "BOX",
 							"offset" : -1,
 							"opt" : true,
 							"static" : false
@@ -4314,27 +4315,165 @@
 						
 						{
 							"global" : false,
-							"line" : 30,
-							"name" : "Y",
+							"line" : 20,
+							"name" : "DISPLACEMENT",
 							"offset" : -2,
 							"opt" : true,
 							"static" : false
-						},
+						}
+					]
+				},
+				
+				{
+					"endLine" : 32,
+					"functionname" : "DRAW_PLAYER_TITLE",
+					"params" : 1,
+					"startLine" : 29,
+					"type" : "function",
+					"variables" : 
+					[
 						
 						{
 							"global" : false,
-							"line" : 30,
-							"name" : "W",
-							"offset" : -3,
+							"line" : 29,
+							"name" : "BOX",
+							"offset" : -1,
+							"opt" : true,
+							"static" : false
+						}
+					]
+				},
+				
+				{
+					"endLine" : 37,
+					"functionname" : "DRAW_PLAYER_POSITION",
+					"params" : 2,
+					"startLine" : 34,
+					"type" : "function",
+					"variables" : 
+					[
+						
+						{
+							"global" : false,
+							"line" : 34,
+							"name" : "BOX",
+							"offset" : -1,
 							"opt" : true,
 							"static" : false
 						},
 						
 						{
 							"global" : false,
-							"line" : 30,
-							"name" : "H",
-							"offset" : -4,
+							"line" : 34,
+							"name" : "PLAYER_POSITION",
+							"offset" : -2,
+							"opt" : true,
+							"static" : false
+						}
+					]
+				},
+				
+				{
+					"endLine" : 42,
+					"functionname" : "DRAW_GUN_SELECTED",
+					"params" : 2,
+					"startLine" : 39,
+					"type" : "function",
+					"variables" : 
+					[
+						
+						{
+							"global" : false,
+							"line" : 39,
+							"name" : "BOX",
+							"offset" : -1,
+							"opt" : true,
+							"static" : false
+						},
+						
+						{
+							"global" : false,
+							"line" : 39,
+							"name" : "GUN_SELECTED",
+							"offset" : -2,
+							"opt" : true,
+							"static" : false
+						}
+					]
+				},
+				
+				{
+					"endLine" : 47,
+					"functionname" : "DRAW_BULLETS_LEFT",
+					"params" : 2,
+					"startLine" : 44,
+					"type" : "function",
+					"variables" : 
+					[
+						
+						{
+							"global" : false,
+							"line" : 44,
+							"name" : "BOX",
+							"offset" : -1,
+							"opt" : true,
+							"static" : false
+						},
+						
+						{
+							"global" : false,
+							"line" : 44,
+							"name" : "BULLETS_LEFT",
+							"offset" : -2,
+							"opt" : true,
+							"static" : false
+						}
+					]
+				},
+				
+				{
+					"endLine" : 52,
+					"functionname" : "DRAW_LIFE_POINTS",
+					"params" : 2,
+					"startLine" : 49,
+					"type" : "function",
+					"variables" : 
+					[
+						
+						{
+							"global" : false,
+							"line" : 49,
+							"name" : "BOX",
+							"offset" : -1,
+							"opt" : true,
+							"static" : false
+						},
+						
+						{
+							"global" : false,
+							"line" : 49,
+							"name" : "LIFE_POINTS",
+							"offset" : -2,
+							"opt" : true,
+							"static" : false
+						}
+					]
+				},
+				
+				{
+					"endLine" : 60,
+					"functionname" : "DRAW_INFO_BOX",
+					"params" : 1,
+					"startLine" : 54,
+					"type" : "function",
+					"variables" : 
+					[
+						
+						{
+							"global" : false,
+							"line" : 54,
+							"name" : "BOX",
+							"offset" : -1,
 							"opt" : true,
 							"static" : false
 						}
@@ -4346,7 +4485,7 @@
 		},
 		
 		{
-			"endLine" : 32,
+			"endLine" : 34,
 			"scopes" : 
 			[
 				
@@ -4409,7 +4548,7 @@
 				
 				{
 					"classname" : "PLAYER_INFO",
-					"endLine" : 32,
+					"endLine" : 34,
 					"methodname" : "DRAW",
 					"params" : 1,
 					"startLine" : 25,
@@ -4422,6 +4561,15 @@
 							"line" : 25,
 							"name" : "THIS",
 							"offset" : -1,
+							"opt" : true,
+							"static" : false
+						},
+						
+						{
+							"global" : false,
+							"line" : 26,
+							"name" : "BOX",
+							"offset" : 1,
 							"opt" : true,
 							"static" : false
 						}
@@ -4455,405 +4603,420 @@
 				},
 				
 				{
-					"line" : 193,
+					"line" : 196,
 					"offset" : 13
 				},
 				
 				{
 					"line" : 47,
-					"offset" : 2287
-				},
-				
-				{
-					"line" : 51,
-					"offset" : 2288
-				},
-				
-				{
-					"line" : 52,
-					"offset" : 2291
-				},
-				
-				{
-					"line" : 54,
-					"offset" : 2292
-				},
-				
-				{
-					"line" : 57,
-					"offset" : 2293
-				},
-				
-				{
-					"line" : 60,
-					"offset" : 2298
-				},
-				
-				{
-					"line" : 61,
-					"offset" : 2300
-				},
-				
-				{
-					"line" : 62,
-					"offset" : 2303
-				},
-				
-				{
-					"line" : 63,
-					"offset" : 2308
-				},
-				
-				{
-					"line" : 66,
-					"offset" : 2310
-				},
-				
-				{
-					"line" : 67,
-					"offset" : 2312
-				},
-				
-				{
-					"line" : 68,
-					"offset" : 2315
-				},
-				
-				{
-					"line" : 70,
-					"offset" : 2317
-				},
-				
-				{
-					"line" : 71,
-					"offset" : 2319
-				},
-				
-				{
-					"line" : 72,
-					"offset" : 2321
-				},
-				
-				{
-					"line" : 74,
-					"offset" : 2327
-				},
-				
-				{
-					"line" : 75,
-					"offset" : 2329
-				},
-				
-				{
-					"line" : 77,
-					"offset" : 2331
-				},
-				
-				{
-					"line" : 78,
-					"offset" : 2333
-				},
-				
-				{
-					"line" : 80,
-					"offset" : 2335
-				},
-				
-				{
-					"line" : 81,
-					"offset" : 2337
-				},
-				
-				{
-					"line" : 83,
-					"offset" : 2340
-				},
-				
-				{
-					"line" : 84,
-					"offset" : 2342
-				},
-				
-				{
-					"line" : 85,
-					"offset" : 2346
-				},
-				
-				{
-					"line" : 89,
-					"offset" : 2347
-				},
-				
-				{
-					"line" : 91,
-					"offset" : 2348
-				},
-				
-				{
-					"line" : 92,
-					"offset" : 2352
-				},
-				
-				{
-					"line" : 94,
-					"offset" : 2354
-				},
-				
-				{
-					"line" : 97,
-					"offset" : 2359
-				},
-				
-				{
-					"line" : 99,
-					"offset" : 2361
-				},
-				
-				{
-					"line" : 100,
-					"offset" : 2363
-				},
-				
-				{
-					"line" : 101,
-					"offset" : 2365
-				},
-				
-				{
-					"line" : 102,
-					"offset" : 2370
-				},
-				
-				{
-					"line" : 105,
-					"offset" : 2376
-				},
-				
-				{
-					"line" : 106,
-					"offset" : 2378
-				},
-				
-				{
-					"line" : 108,
-					"offset" : 2380
-				},
-				
-				{
-					"line" : 110,
-					"offset" : 2382
-				},
-				
-				{
-					"line" : 112,
-					"offset" : 2386
-				},
-				
-				{
-					"line" : 113,
-					"offset" : 2388
-				},
-				
-				{
-					"line" : 121,
-					"offset" : 2390
-				},
-				
-				{
-					"line" : 115,
-					"offset" : 2391
-				},
-				
-				{
-					"line" : 117,
-					"offset" : 2393
-				},
-				
-				{
-					"line" : 118,
-					"offset" : 2395
-				},
-				
-				{
-					"line" : 120,
-					"offset" : 2397
-				},
-				
-				{
-					"line" : 123,
-					"offset" : 2400
-				},
-				
-				{
-					"line" : 124,
-					"offset" : 2402
-				},
-				
-				{
-					"line" : 128,
-					"offset" : 2403
-				},
-				
-				{
-					"line" : 131,
-					"offset" : 2404
-				},
-				
-				{
-					"line" : 135,
-					"offset" : 2405
-				},
-				
-				{
-					"line" : 138,
-					"offset" : 2406
-				},
-				
-				{
-					"line" : 141,
-					"offset" : 2407
-				},
-				
-				{
-					"line" : 143,
-					"offset" : 2408
-				},
-				
-				{
-					"line" : 145,
 					"offset" : 2409
 				},
 				
 				{
-					"line" : 147,
+					"line" : 51,
 					"offset" : 2410
 				},
 				
 				{
-					"line" : 150,
-					"offset" : 2411
-				},
-				
-				{
-					"line" : 153,
-					"offset" : 2412
-				},
-				
-				{
-					"line" : 158,
+					"line" : 52,
 					"offset" : 2413
 				},
 				
 				{
-					"line" : 161,
+					"line" : 54,
 					"offset" : 2414
 				},
 				
 				{
-					"line" : 163,
-					"offset" : 2416
+					"line" : 57,
+					"offset" : 2415
 				},
 				
 				{
-					"line" : 167,
-					"offset" : 2417
+					"line" : 60,
+					"offset" : 2420
 				},
 				
 				{
-					"line" : 170,
-					"offset" : 2418
+					"line" : 61,
+					"offset" : 2422
 				},
 				
 				{
-					"line" : 172,
-					"offset" : 2421
+					"line" : 62,
+					"offset" : 2425
 				},
 				
 				{
-					"line" : 173,
-					"offset" : 2424
-				},
-				
-				{
-					"line" : 174,
-					"offset" : 2427
-				},
-				
-				{
-					"line" : 175,
+					"line" : 63,
 					"offset" : 2430
 				},
 				
 				{
-					"line" : 176,
-					"offset" : 2431
-				},
-				
-				{
-					"line" : 177,
+					"line" : 66,
 					"offset" : 2432
 				},
 				
 				{
-					"line" : 179,
-					"offset" : 2433
+					"line" : 67,
+					"offset" : 2434
 				},
 				
 				{
-					"line" : 180,
-					"offset" : 2436
+					"line" : 68,
+					"offset" : 2437
 				},
 				
 				{
-					"line" : 182,
-					"offset" : 2438
+					"line" : 70,
+					"offset" : 2439
 				},
 				
 				{
-					"line" : 183,
+					"line" : 71,
+					"offset" : 2441
+				},
+				
+				{
+					"line" : 72,
 					"offset" : 2443
 				},
 				
 				{
-					"line" : 185,
-					"offset" : 2448
+					"line" : 74,
+					"offset" : 2449
 				},
 				
 				{
-					"line" : 186,
+					"line" : 75,
+					"offset" : 2451
+				},
+				
+				{
+					"line" : 77,
 					"offset" : 2453
 				},
 				
 				{
-					"line" : 180,
-					"offset" : 2458
+					"line" : 78,
+					"offset" : 2455
 				},
 				
 				{
-					"line" : 187,
+					"line" : 80,
+					"offset" : 2457
+				},
+				
+				{
+					"line" : 81,
 					"offset" : 2459
 				},
 				
 				{
-					"line" : 188,
-					"offset" : 2460
-				},
-				
-				{
-					"line" : 191,
+					"line" : 83,
 					"offset" : 2462
 				},
 				
 				{
-					"line" : 192,
+					"line" : 84,
 					"offset" : 2464
+				},
+				
+				{
+					"line" : 85,
+					"offset" : 2468
+				},
+				
+				{
+					"line" : 89,
+					"offset" : 2469
+				},
+				
+				{
+					"line" : 91,
+					"offset" : 2470
+				},
+				
+				{
+					"line" : 92,
+					"offset" : 2474
+				},
+				
+				{
+					"line" : 94,
+					"offset" : 2476
+				},
+				
+				{
+					"line" : 97,
+					"offset" : 2481
+				},
+				
+				{
+					"line" : 99,
+					"offset" : 2483
+				},
+				
+				{
+					"line" : 100,
+					"offset" : 2485
+				},
+				
+				{
+					"line" : 101,
+					"offset" : 2487
+				},
+				
+				{
+					"line" : 102,
+					"offset" : 2489
+				},
+				
+				{
+					"line" : 103,
+					"offset" : 2494
+				},
+				
+				{
+					"line" : 106,
+					"offset" : 2501
+				},
+				
+				{
+					"line" : 107,
+					"offset" : 2503
+				},
+				
+				{
+					"line" : 109,
+					"offset" : 2505
+				},
+				
+				{
+					"line" : 111,
+					"offset" : 2507
+				},
+				
+				{
+					"line" : 113,
+					"offset" : 2511
+				},
+				
+				{
+					"line" : 114,
+					"offset" : 2513
+				},
+				
+				{
+					"line" : 124,
+					"offset" : 2515
+				},
+				
+				{
+					"line" : 116,
+					"offset" : 2516
+				},
+				
+				{
+					"line" : 118,
+					"offset" : 2518
+				},
+				
+				{
+					"line" : 119,
+					"offset" : 2520
+				},
+				
+				{
+					"line" : 123,
+					"offset" : 2522
+				},
+				
+				{
+					"line" : 121,
+					"offset" : 2523
+				},
+				
+				{
+					"line" : 122,
+					"offset" : 2525
+				},
+				
+				{
+					"line" : 126,
+					"offset" : 2527
+				},
+				
+				{
+					"line" : 127,
+					"offset" : 2529
+				},
+				
+				{
+					"line" : 131,
+					"offset" : 2530
+				},
+				
+				{
+					"line" : 134,
+					"offset" : 2531
+				},
+				
+				{
+					"line" : 138,
+					"offset" : 2532
+				},
+				
+				{
+					"line" : 141,
+					"offset" : 2533
+				},
+				
+				{
+					"line" : 144,
+					"offset" : 2534
+				},
+				
+				{
+					"line" : 146,
+					"offset" : 2535
+				},
+				
+				{
+					"line" : 148,
+					"offset" : 2536
+				},
+				
+				{
+					"line" : 150,
+					"offset" : 2537
+				},
+				
+				{
+					"line" : 153,
+					"offset" : 2538
+				},
+				
+				{
+					"line" : 156,
+					"offset" : 2539
+				},
+				
+				{
+					"line" : 161,
+					"offset" : 2540
+				},
+				
+				{
+					"line" : 164,
+					"offset" : 2541
+				},
+				
+				{
+					"line" : 166,
+					"offset" : 2543
+				},
+				
+				{
+					"line" : 170,
+					"offset" : 2544
+				},
+				
+				{
+					"line" : 173,
+					"offset" : 2545
+				},
+				
+				{
+					"line" : 175,
+					"offset" : 2548
+				},
+				
+				{
+					"line" : 176,
+					"offset" : 2551
+				},
+				
+				{
+					"line" : 177,
+					"offset" : 2554
+				},
+				
+				{
+					"line" : 178,
+					"offset" : 2557
+				},
+				
+				{
+					"line" : 179,
+					"offset" : 2558
+				},
+				
+				{
+					"line" : 180,
+					"offset" : 2559
+				},
+				
+				{
+					"line" : 182,
+					"offset" : 2560
+				},
+				
+				{
+					"line" : 183,
+					"offset" : 2563
+				},
+				
+				{
+					"line" : 185,
+					"offset" : 2565
+				},
+				
+				{
+					"line" : 186,
+					"offset" : 2570
+				},
+				
+				{
+					"line" : 188,
+					"offset" : 2575
+				},
+				
+				{
+					"line" : 189,
+					"offset" : 2580
+				},
+				
+				{
+					"line" : 183,
+					"offset" : 2585
+				},
+				
+				{
+					"line" : 190,
+					"offset" : 2586
+				},
+				
+				{
+					"line" : 191,
+					"offset" : 2587
+				},
+				
+				{
+					"line" : 194,
+					"offset" : 2589
+				},
+				
+				{
+					"line" : 195,
+					"offset" : 2591
 				}
 			],
 			"offsets" : 
 			[
 				
 				{
-					"endoffset" : 2464,
+					"endoffset" : 2591,
 					"startoffset" : 0
 				}
 			]
@@ -9043,90 +9206,205 @@
 			[
 				
 				{
-					"line" : 10,
+					"line" : 11,
 					"offset" : 2217
 				},
 				
 				{
-					"line" : 11,
+					"line" : 12,
 					"offset" : 2218
 				},
 				
 				{
 					"line" : 13,
-					"offset" : 2219
-				},
-				
-				{
-					"line" : 15,
-					"offset" : 2220
-				},
-				
-				{
-					"line" : 17,
-					"offset" : 2221
-				},
-				
-				{
-					"line" : 19,
-					"offset" : 2222
-				},
-				
-				{
-					"line" : 21,
 					"offset" : 2223
 				},
 				
 				{
-					"line" : 23,
-					"offset" : 2224
-				},
-				
-				{
-					"line" : 25,
-					"offset" : 2225
-				},
-				
-				{
-					"line" : 27,
-					"offset" : 2226
-				},
-				
-				{
-					"line" : 30,
-					"offset" : 2227
-				},
-				
-				{
-					"line" : 31,
+					"line" : 14,
 					"offset" : 2228
 				},
 				
 				{
-					"line" : 32,
-					"offset" : 2233
+					"line" : 15,
+					"offset" : 2231
 				},
 				
 				{
-					"line" : 33,
-					"offset" : 2239
+					"line" : 17,
+					"offset" : 2234
+				},
+				
+				{
+					"line" : 20,
+					"offset" : 2235
+				},
+				
+				{
+					"line" : 21,
+					"offset" : 2236
+				},
+				
+				{
+					"line" : 22,
+					"offset" : 2240
+				},
+				
+				{
+					"line" : 23,
+					"offset" : 2245
+				},
+				
+				{
+					"line" : 24,
+					"offset" : 2252
+				},
+				
+				{
+					"line" : 26,
+					"offset" : 2253
+				},
+				
+				{
+					"line" : 29,
+					"offset" : 2254
+				},
+				
+				{
+					"line" : 30,
+					"offset" : 2255
+				},
+				
+				{
+					"line" : 31,
+					"offset" : 2260
+				},
+				
+				{
+					"line" : 32,
+					"offset" : 2265
 				},
 				
 				{
 					"line" : 34,
-					"offset" : 2244
+					"offset" : 2266
 				},
 				
 				{
 					"line" : 35,
-					"offset" : 2256
+					"offset" : 2267
+				},
+				
+				{
+					"line" : 36,
+					"offset" : 2272
+				},
+				
+				{
+					"line" : 37,
+					"offset" : 2284
+				},
+				
+				{
+					"line" : 39,
+					"offset" : 2285
+				},
+				
+				{
+					"line" : 40,
+					"offset" : 2286
+				},
+				
+				{
+					"line" : 41,
+					"offset" : 2291
+				},
+				
+				{
+					"line" : 42,
+					"offset" : 2298
+				},
+				
+				{
+					"line" : 44,
+					"offset" : 2299
+				},
+				
+				{
+					"line" : 45,
+					"offset" : 2300
+				},
+				
+				{
+					"line" : 46,
+					"offset" : 2305
+				},
+				
+				{
+					"line" : 47,
+					"offset" : 2312
+				},
+				
+				{
+					"line" : 49,
+					"offset" : 2313
+				},
+				
+				{
+					"line" : 50,
+					"offset" : 2314
+				},
+				
+				{
+					"line" : 51,
+					"offset" : 2319
+				},
+				
+				{
+					"line" : 52,
+					"offset" : 2326
+				},
+				
+				{
+					"line" : 54,
+					"offset" : 2327
+				},
+				
+				{
+					"line" : 55,
+					"offset" : 2328
+				},
+				
+				{
+					"line" : 56,
+					"offset" : 2333
+				},
+				
+				{
+					"line" : 57,
+					"offset" : 2343
+				},
+				
+				{
+					"line" : 58,
+					"offset" : 2348
+				},
+				
+				{
+					"line" : 59,
+					"offset" : 2352
+				},
+				
+				{
+					"line" : 60,
+					"offset" : 2362
 				}
 			],
 			"offsets" : 
 			[
 				
 				{
-					"endoffset" : 2256,
+					"endoffset" : 2362,
 					"startoffset" : 2217
 				}
 			]
@@ -9138,90 +9416,100 @@
 				
 				{
 					"line" : 15,
-					"offset" : 2257
+					"offset" : 2363
 				},
 				
 				{
 					"line" : 16,
-					"offset" : 2258
+					"offset" : 2364
 				},
 				
 				{
 					"line" : 17,
-					"offset" : 2259
+					"offset" : 2365
 				},
 				
 				{
 					"line" : 18,
-					"offset" : 2260
+					"offset" : 2366
 				},
 				
 				{
 					"line" : 19,
-					"offset" : 2261
+					"offset" : 2367
 				},
 				
 				{
 					"line" : 21,
-					"offset" : 2262
+					"offset" : 2368
 				},
 				
 				{
 					"line" : 22,
-					"offset" : 2263
+					"offset" : 2369
 				},
 				
 				{
 					"line" : 23,
-					"offset" : 2265
+					"offset" : 2371
 				},
 				
 				{
 					"line" : 25,
-					"offset" : 2266
+					"offset" : 2372
 				},
 				
 				{
 					"line" : 26,
-					"offset" : 2267
+					"offset" : 2373
 				},
 				
 				{
 					"line" : 27,
-					"offset" : 2276
+					"offset" : 2380
 				},
 				
 				{
 					"line" : 28,
-					"offset" : 2278
+					"offset" : 2383
 				},
 				
 				{
 					"line" : 29,
-					"offset" : 2280
+					"offset" : 2386
 				},
 				
 				{
 					"line" : 30,
-					"offset" : 2282
+					"offset" : 2391
 				},
 				
 				{
 					"line" : 31,
-					"offset" : 2284
+					"offset" : 2396
 				},
 				
 				{
 					"line" : 32,
-					"offset" : 2286
+					"offset" : 2401
+				},
+				
+				{
+					"line" : 33,
+					"offset" : 2406
+				},
+				
+				{
+					"line" : 34,
+					"offset" : 2408
 				}
 			],
 			"offsets" : 
 			[
 				
 				{
-					"endoffset" : 2286,
-					"startoffset" : 2257
+					"endoffset" : 2408,
+					"startoffset" : 2363
 				}
 			]
 		}

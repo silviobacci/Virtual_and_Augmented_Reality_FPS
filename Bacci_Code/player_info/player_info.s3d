@@ -23,7 +23,7 @@ function player_info::update(pp, gs, bl, lp) {
 }
 
 function player_info::draw() {
-	var box = [INFO_BOX_WIDTH, INFO_BOX_WIDTH * resolution, box_x, box_y];
+	var box = [box_x, box_y, INFO_BOX_WIDTH, INFO_BOX_WIDTH * resolution];
 	draw_info_box(box);
 	draw_player_title(box);
 	draw_player_position(box, player_position);
