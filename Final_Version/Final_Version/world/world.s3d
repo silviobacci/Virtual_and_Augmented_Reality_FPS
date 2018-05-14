@@ -1,0 +1,52 @@
+class world{
+	var mesh_floor;
+	var material_floor;
+	var texture_floor;
+	
+	var mesh_wall;
+	var material_wall;
+	var texture_wall;
+	
+	var matrix;
+	
+	var array_wall;
+	
+	init();
+	draw();
+};
+
+function world::init(){
+	mesh_wall = array(0);
+	var array_matrix = LoadFile(TEXT_FILE_NAME);
+	var array_rows = len(array_matrix) - 1;
+	var array_columns = len(array_matrix[0]);
+	
+	create_floor(&mesh_floor, &material_floor, &texture_floor, &array_columns, &array_rows);
+	
+	array_wall = array(0);
+	
+	matrix = array(array_rows);
+	
+	for (var i = 0; i < array_rows; i++){
+		matrix[i] = array(array_columns);
+
+		for (var j = 0; j < array_columns; j++){
+			matrix[i][j] = val(array_matrix[i][j]);
+
+			if(matrix[i][j] > 0){
+				create_wall(&mesh_wall, &material_wall, &texture_wall, matrix[i][j]);
+				var wall = CVmObj(mesh_wall);
+				wall.SetPosition(j, 0, i);
+				
+				aadd(array_wall, wall);	
+			}
+		}
+	}
+}
+
+function world::draw(){
+	mesh_floor.draw();
+	
+	foreach (var wall in array_wall)
+		wall.draw();
+}

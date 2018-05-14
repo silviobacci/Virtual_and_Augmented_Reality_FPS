@@ -1,0 +1,69 @@
+var CamPos = [0.0, 30, 30.0];
+var CamDir; 
+
+var switched_view = false; 
+var is_first = false;
+
+function CameraMoveMouse() {	
+	CameraMoveMouse_MBL_LC();
+}
+
+function FirstPersonView(){
+	CameraGetCurrent().SetPosition(my_players.array_player[0].obj_player.getPosition()+[0,FIRST_PERSON_HEIGHT,0] ); 	
+	//CameraGetCurrent().SetDirection(my_players.array_player[0].direction);
+	//CameraGetCurrent().setPivotPoint(my_players.array_player[0].obj_player.getPivotPoint());
+}
+
+function MouseOrientPlayer(){
+	if(mouse.ButtonL){
+		CameraMoveMouse();
+		my_players.array_player[0].shootingDirection = CameraGetCurrent().GetDirection();
+		CameraGetCurrent().SetDirection(my_players.array_player[0].shootingDirection);
+		
+		var trc;
+		if(CameraGetCurrent().getDirection()[2] > 0)
+			trc = asin(CameraGetCurrent().GetDirection()[0]);
+		else
+			trc = PI - asin(CameraGetCurrent().GetDirection()[0]);	
+	
+		my_players.array_player[0].obj_player_upper.setRotation(trc * RAD_TO_GRAD,[0,1,0]);
+	}else{
+		//CameraGetCurrent().GetDirection()- 
+	//	CameraGetCurrent().SetDirection(my_players.array_player[0].movingDirection);
+	}
+
+}
+
+function BackSideView(){		
+ 	var pos =[-BACK_SIDE_WIDTH *my_players.array_player[0].direction[0],BACK_SIDE_HEIGHT,-BACK_SIDE_WIDTH *my_players.array_player[0].direction[2]];
+ 	CameraGetCurrent().SetPosition(my_players.array_player[0].obj_player.getPosition()+ pos);
+ 	CameraGetCurrent().SetDirection(my_players.array_player[0].direction+[0, BACK_SIDE_ANGLE,0]);
+}
+
+function init_camera() {
+	CamDir = CameraGetDirection();
+	CameraGetCurrent().SetPosition(CamPos);
+	CameraGetCurrent().SetDirection(-CamDir);
+}
+
+function update_camera() {
+	if(keypressed(VK_LCONTROL)){
+    	is_first = !is_first;
+    	switched_view = true;
+    }
+    	
+	if(!is_first){
+		//BackSideView();
+		if(switched_view){
+			CameraGetCurrent().SetDirection(CamDir);
+			CameraGetCurrent().SetPosition(CamPos);
+			switched_view = false; 
+		}
+		
+		CameraMoveMouse();
+	}
+	else{
+		firstPersonView();
+    	MouseOrientPlayer();
+    }
+}

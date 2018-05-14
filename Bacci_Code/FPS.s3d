@@ -32,7 +32,6 @@ var CamPos = [0.0, 5.0, 30.0]; 	// camera position
 var Light0;
 var PosL = [0.0, 10.0, 10.0];	// default light position
 
-
 /* Function declarations */
 function CameraMoveMouse();
 function DrawGrid(col, size);

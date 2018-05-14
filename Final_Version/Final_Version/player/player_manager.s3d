@@ -1,0 +1,45 @@
+class player_manager {
+	var matrix_level;
+	var array_player; 
+	
+	init(ml);
+	draw();
+	addplayer(id, color,pos);
+	update();
+	
+	get_player_position();
+	
+};
+
+function player_manager::init(ml){
+	matrix_level = ml;
+	array_player = array(0);
+}
+
+function player_manager::update(){
+	foreach(var i in array_player)
+		i.update(matrix_level);
+}
+
+function player_manager::addplayer(id, color,pos){
+		var p = player();
+		p.init(id, color,pos);
+		aadd(array_player, p);
+}
+
+function player_manager::get_player_position() {
+	var n_players = len(array_player);
+	var positions = array(n_players);
+	var i = 0;
+	foreach (var pl in array_player) {
+		positions[i] = pl.get_position();
+		i++;
+	}
+	
+	return positions;
+}
+
+function player_manager::draw(){
+	foreach (var player in array_player)				//another way
+		player.Draw();
+}
