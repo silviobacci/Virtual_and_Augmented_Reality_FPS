@@ -46,6 +46,7 @@ function OnInit(params)
 	/* initialize camera */
 	CamDir = CameraGetDirection();
 	CameraGetCurrent().SetPosition(CamPos);
+	CameraGetCurrent().SetDirection(-CamDir);
 
 
 	
@@ -68,12 +69,31 @@ function FirstPersonView(){
 		var pos,index;
 	
 	 	CameraGetCurrent().SetPosition(my_level.array_player[0].obj_player.getPosition()+[0,FIRST_PERSON_HEIGHT,0] ); 	
-	 	CameraGetCurrent().SetDirection(my_level.array_player[0].direction);
+	 //	CameraGetCurrent().SetDirection(my_level.array_player[0].direction);
 	 	
 	 	//CameraGetCurrent().setPivotPoint(my_level.array_player[0].obj_player.getPivotPoint());
 	 
 }
 
+function MouseOrientPlayer(){
+	if(mouse.ButtonL){
+		CameraMoveMouse();
+		my_level.array_player[0].shootingDirection = CameraGetCurrent().GetDirection();
+		CameraGetCurrent().SetDirection(my_level.array_player[0].shootingDirection);
+		var trc;
+		if(CameraGetCurrent().getDirection()[2] > 0)
+		 	 trc= asin(CameraGetCurrent().GetDirection()[0]);
+		 else
+		 	trc = PI -asin(CameraGetCurrent().GetDirection()[0]);	
+	
+		my_level.array_player[0].obj_player_upper.setRotation(trc * RAD_TO_GRAD,[0,1,0]);
+	
+	}else{
+		//CameraGetCurrent().GetDirection()- 
+	//	CameraGetCurrent().SetDirection(my_level.array_player[0].movingDirection);
+	}
+
+}
 function BackSideView(){		
 	 	var pos =[-BACK_SIDE_WIDTH *my_level.array_player[0].direction[0],BACK_SIDE_HEIGHT,-BACK_SIDE_WIDTH *my_level.array_player[0].direction[2]];
 	 	CameraGetCurrent().SetPosition(my_level.array_player[0].obj_player.getPosition()+ pos);
@@ -82,7 +102,7 @@ function BackSideView(){
 }
 function OnFrame()
 {
-	 my_level.array_player[0].obj_player_lower.DrawBoundingBox () ;
+	
 	if(keypressed(VK_LCONTROL)){
     	isFirst = !isFirst;
     	switchedView = true;
@@ -95,12 +115,15 @@ function OnFrame()
 			CameraGetCurrent().SetDirection(CamDir);
 			CameraGetCurrent().SetPosition(CamPos);
 			switchedView = false; 
+		
 		}
 		
-		CameraMoveMouse();
+	CameraMoveMouse();
 		
-	}else if(isFirst)
+	}else if(isFirst){
 		firstPersonView();
+    	MouseOrientPlayer();
+    }
     
     light0.setPosition(CameragetCurrent().getPosition());           //every time i move the camera the light is set on camera position
 	//my_player.update(my_level.matrix_level);

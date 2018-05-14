@@ -1,5 +1,8 @@
 #include "bullet.s3d"
 #include "Mesher.s3d"
+#include "Constant.s3d"
+
+
 #define PLAYER_SPEED 0.03
 #define PLAYER_ANGLE_STEP 0.01
 #define SWAT_START_WALK 16
@@ -20,7 +23,9 @@ class player{
 	
 	var position;
 	var angleY;
-	var direction;
+	var angleView;
+	var movingDirection;
+	var shootingDirection;
 	var current_frame; 
 	var id;
 	var color;
@@ -40,11 +45,17 @@ class player{
 	check_Collision(matrix_level);
 	shoot(p,d);
 	jump_check();
+	updateAngle();
+	updateAngleView();
 };
+
+function updateAngleView(){
+	
+}
 
 function player::shoot(p,d){
 	if(bullets > 0){
-		my_bullet[bullets-1].shoot(position, direction);
+		my_bullet[bullets-1].shoot(position, shootingDirection);
 		bullets--;
 		
 	}
@@ -58,7 +69,9 @@ function player::init(i,c,p){
 	fx_shoot = CVmVRAWav("shoot.wav",true);    //the second param is to enable 3d sound effect
 	position= p;
 	angleY = 0;
-	direction = [sin(angleY), 0 , cos(angleY)]; 
+	angleView = 0;
+	movingDirection = [sin(angleY), 0 , cos(angleY)]; 
+	shootingDirection = movingDirection;
 	id=i;
 	color=c;
 	bullets= CLIP_SIZE ;
@@ -87,7 +100,7 @@ function player::init(i,c,p){
 	my_bullet= array( CLIP_SIZE );
 	for(var i=0; i < bullets; i++){
 		var b =bullet();
-	    b.init(position,direction,color);			//pos e dir actully not neebuded
+	    b.init(position,shootingDirection,color);			//pos e dir actully not neebuded
 	   my_bullet[i] = b;
 	}
 	current_frame= 0;										//player's movement
@@ -123,9 +136,16 @@ function player::jump_check(){
 		else
 			jump-=0.045;	
 }
+
+function player::updateAngle(){
+	angleY = asin(movingDirection[0]);
+}
+
 function player::update(matrix_level){			//update on key press
 	var run=1; 
 	var old_position = position;
+	var pivot = obj_player.GetPivotPoint( ); 
+	
 	
 	//if(keypressed(VK_SHIFT))					//speed
 		//run=2;			//speed
@@ -134,17 +154,30 @@ function player::update(matrix_level){			//update on key press
 		shoot();
 	}
 	
-	if(keypressed(VK_LEFT))						
+	if(keypressed(VK_A)){						
 		angleY += PLAYER_ANGLE_STEP;
-	else if(keypressed(VK_RIGHT))
-		angleY -= PLAYER_ANGLE_STEP;										//player motion
+		angleY = angleY % (2*PI);
+		trace(angleY);
+		var a = asin(angleY);
+		trace(a);
+		shootingDirection = [sin(angleY), 0 ,cos(angleY)];
+		movingDirection = [sin(angleY), 0 ,cos(angleY)];	
+		}
+	else if(keypressed(VK_D)){
+		angleY -= PLAYER_ANGLE_STEP;
+		angleY = angleY % (2*PI);
+		shootingDirection = [sin(angleY), 0 ,cos(angleY)];
+		movingDirection = [sin(angleY), 0 ,cos(angleY)];	
+		}										//player motion
 	
-	if(keypressed(VK_UP)){
-		position += PLAYER_SPEED * direction*run;	
+	if(keypressed(VK_W)){
+	
+		var movingDir = [movingDirection[0],0,movingDirection[2]];
+		position += PLAYER_SPEED * movingDir*run;	
 		current_frame = (current_frame +0.35*run)%SWAT_TOTAL_FRAMES;
 	}
-	else if(keypressed(VK_DOWN)){
-		position -= PLAYER_SPEED * direction*run;	
+	else if(keypressed(VK_S)){
+		position -= PLAYER_SPEED * movingDirection*run;	
 		current_frame = (current_frame -0.35*run)%SWAT_TOTAL_FRAMES;
 		if(current_frame <= 0)
 			current_frame+=SWAT_TOTAL_FRAMES;
@@ -156,8 +189,7 @@ function player::update(matrix_level){			//update on key press
 		//shoot();
 		jump=PI;	
 	}
-		
-	direction = [sin(angleY), 0 ,cos(angleY)];	//spatial and horientational data updating
+
 	var intx = int(position.x);
 	var intz = int(position.z);
 	
@@ -167,7 +199,9 @@ function player::update(matrix_level){			//update on key press
 
 	
 	obj_player.setposition(position);			//obj updating
+	
 	obj_player.setRotation(RAD_TO_GRAD * angleY, [0,1,0]);
+	
 	foreach (var i in my_bullet)
 		i.update();
 		

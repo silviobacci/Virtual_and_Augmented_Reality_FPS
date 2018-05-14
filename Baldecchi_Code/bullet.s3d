@@ -1,11 +1,13 @@
 #define BULLET_SPEED 5       
 #define BULLET_MASS	0.008
 #define BULLET_RADIUS 0.003
-#define SHOOT_FORCE 10000
-
+#define SHOOT_FORCE 3000
+#define SHOOT_ANGLE 0
 #define ACCEL_GRAVITY 9.81
 #define VISCOSITY_COEFF 0.0000186
 #define FRAME_SECOND	30
+#define VISCOUS 6* PI* VISCOSITY_COEFF * BULLET_RADIUS  / BULLET_MASS
+//#define RAD_TO_GRAD		PI/180
 	
 
 class bullet{
@@ -20,10 +22,14 @@ class bullet{
 	var dx;
 	var dy;
 	
-	var acc;
-	var speed; 
-
+	var accx;
+	var accy;
+	var speedx;
+	var speedy; 
 	
+	var angle;
+
+	var delta_t;
 	
 	init(p,d,c);
 	update();
@@ -34,16 +40,24 @@ class bullet{
 };
 
 function bullet::computeDynamics(){
-	elapsed_time += 1.0/FRAME_SECOND;
+	accx 	-= VISCOUS* abs(speedx) * cos(angle);
+	accy 	-=  ACCEL_GRAVITY +VISCOUS *abs(speedy)* sin(angle);
 	
-	acc 	-=6* PI* VISCOSITY_COEFF * BULLET_RADIUS * speed / BULLET_MASS;
-	speed	= acc * elapsed_time;
 
-	dx += elapsed_time * speed;
-	dy = ACCEL_GRAVITY * elapsed_time * elapsed_time / 2;
+	trace(accy);
+	speedx	+= accx * delta_t;//elapsed_time;
+	speedy	+= accy * delta_t;//elapsed_time;
+
+	dx = delta_t * speedx;
+	dy = delta_t * speedy;
+	
+	angle =GRAD_TO_RAD* atan(dy/dx);
+		 
 	position[0] += dir[0] * dx;
-	position[1] -=  dy;
+	position[1] +=  dy;
 	position[2] += dir[2] * dx;
+	
+	
 	 
 }
 
@@ -55,18 +69,23 @@ function bullet::shoot(p,d){
 }
 
 function bullet::init(p,d,c){
-	acc =  BULLET_MASS * SHOOT_FORCE;
+
+	accx =  SHOOT_FORCE/BULLET_MASS * cos(GRAD_TO_RAD*SHOOT_ANGLE);
+	accy =  + SHOOT_FORCE/BULLET_MASS* sin(GRAD_TO_RAD*SHOOT_ANGLE);
+	angle = SHOOT_ANGLE;
+	delta_t = 0.01/FRAME_SECOND;
 	isflying = false;
 	elapsed_time = 0.0; 
 	position=p;
 	dir=d;
 	color=c;
 	mesh_bullet= CVmnewMesh(VRP_BOX);
-	mesh_bullet.scale(0.1);
+	mesh_bullet.scale(0.2);
 	mesh_bullet.ModulateMaterials(color);
 	obj_bullet = CVmObj(mesh_bullet);
 	obj_bullet.SetPosition(position);
-	speed= BULLET_SPEED;
+	speedx = 0.0;
+	speedy = 0.0;
 	dx = 0.0; 
 	dy = 0.0;
 }

@@ -2,5 +2,10 @@
 #define BACK_SIDE_HEIGHT 2.25
 #define BACK_SIDE_WIDTH  3
 #define FIRST_PERSON_HEIGHT 1.25
+#define VK_W 	"w"
+#define VK_A 	"a"
+#define VK_S 	"s"
+#define VK_D 	"d"
 
-class Constant{};
+
+//class Constant{};
