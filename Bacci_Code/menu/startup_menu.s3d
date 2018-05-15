@@ -29,13 +29,13 @@ function startup_menu::init(h) {
 }
 
 function startup_menu::check_mouse_position() {
-	if(is_contained(playbox) && mouse.ButtonL)
+	if(my_mouse.is_contained(playbox))
 		show_menu = false;
 
-	if(is_contained(helpbox) && mouse.ButtonL)
+	if(my_mouse.is_contained(helpbox))
 		help.show_menu = true;
 
-	if(is_contained(quitbox) && mouse.ButtonL)
+	if(my_mouse.is_contained(quitbox))
 		quit_game();
 }
 

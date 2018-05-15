@@ -22,15 +22,6 @@ function copy_box(to_copy) {
 	return create_box(to_copy[0], to_copy[1], to_copy[2], to_copy[3]);
 }
 
-function is_contained(box) {
-	var mouse_x = mouse.X / window_w;
-	var mouse_y = 1 - mouse.Y / window_h;
-	
-	if(mouse_x >= box[0] - box[2] / 2.0 && mouse_x <= box[0] + box[2] / 2.0 && mouse_y >= box[1] - box[3] / 2.0 && mouse_y <= box[1] + box[3] / 2.0)
-		return true;
-	return false;
-}
-
 function fontsize_to_boxsize(fontsize, text_len) {
 	var font_h = fontsize * PT_TO_PX;
 	var font_w = font_h * ASPECT_RATIO;

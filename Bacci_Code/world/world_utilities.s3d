@@ -1,17 +1,17 @@
-#define FLOOR_TILING 	5
-#define WALL_HEIGHT 	3
+#define FLOOR_TILING 		5
+#define WALL_HEIGHT 		3
 
-#define	TEXT_FILE_NAME	"level.txt"
+#define	TEXT_FILE_NAME		"level.txt"
 
-#define	DEFAULT_DIM		1
+#define	DEFAULT_DIM			1
 
-#define	FLOOR_COLOR		[0, 255, 0] / 255.0
-#define	FLOOR_IMAGE		"marmo.txt"
+#define	FLOOR_COLOR			[0, 255, 0] / 255.0
+#define	FLOOR_IMAGE			"marmo.png"
 
-#define	WALL_COLOR		[255, 255, 255] / 255.0
-#define	WALL_IMAGE		"mattoni04.txt"
+#define	WORLD_WALL_COLOR	[255, 255, 255] / 255.0
+#define	WALL_IMAGE			"mattoni04.png"
 
-function create_floor(mesh_floor, material_floor, texture_floorm, width, height) {
+function create_floor(mesh_floor, material_floor, texture_floor, width, height) {
 	mesh_floor = CVmNewMesh(VRP_BOX);
 	mesh_floor.scale(width, DEFAULT_DIM, height);
 	mesh_floor.translate(0, -DEFAULT_DIM, 0);
@@ -32,7 +32,7 @@ function create_wall(mesh_wall, material_wall, texture_wall, height_scale) {
 	mesh_wall.scale(DEFAULT_DIM, WALL_HEIGHT * height_scale, DEFAULT_DIM);
 	
 	material_wall = CVmMaterial();
-	material_wall.diffuse = WALL_COLOR; 
+	material_wall.diffuse = WORLD_WALL_COLOR; 
 	material_wall.ChangeTextureParams(VR_V_TILING, WALL_HEIGHT);
 	
 	texture_wall = CVmTexture(WALL_IMAGE);
