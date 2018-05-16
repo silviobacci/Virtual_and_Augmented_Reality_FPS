@@ -46,11 +46,11 @@ class player{
 	shoot(p,d);
 	jump_check();
 	updateAngle();
-	updateAngleView();
+	updateAngleView(angle);
 };
 
-function updateAngleView(){
-	
+function player::updateAngleView( angle){
+	angleView = angle;
 }
 
 function player::shoot(p,d){
@@ -146,7 +146,10 @@ function player::update(matrix_level){			//update on key press
 	var old_position = position;
 	var pivot = obj_player.GetPivotPoint( ); 
 	
-	
+			trace(angleY);
+		trace(angleView);
+		trace(shootingDirection);
+		trace(movingDirection);
 	//if(keypressed(VK_SHIFT))					//speed
 		//run=2;			//speed
 	
@@ -157,7 +160,7 @@ function player::update(matrix_level){			//update on key press
 	if(keypressed(VK_A)){						
 		angleY += PLAYER_ANGLE_STEP;
 		angleY = angleY % (2*PI);
-		trace(angleY);
+
 		var a = asin(angleY);
 		trace(a);
 		shootingDirection = [sin(angleY), 0 ,cos(angleY)];

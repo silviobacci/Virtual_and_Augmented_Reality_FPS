@@ -30,6 +30,12 @@ function DrawGrid(col, size);
 var isFirst= false;
 var my_level;
 
+function stepOnMovingDir(){
+//	CameraGetCurrent().SetDirection(my_level.array_player[0].movingDirection);
+	//	my_level.array_player[0].obj_player_upper.setRotation(0, [0,1,0]);
+	
+}
+
 function OnDownload()
 {
 	// TODO: download your resources here
@@ -65,32 +71,46 @@ function OnInit(params)
 
 }
 
-function FirstPersonView(){
-		var pos,index;
-	
-	 	CameraGetCurrent().SetPosition(my_level.array_player[0].obj_player.getPosition()+[0,FIRST_PERSON_HEIGHT,0] ); 	
-	 //	CameraGetCurrent().SetDirection(my_level.array_player[0].direction);
-	 	
-	 	//CameraGetCurrent().setPivotPoint(my_level.array_player[0].obj_player.getPivotPoint());
-	 
-}
 
 function MouseOrientPlayer(){
+	CameraGetCurrent().SetPosition(my_level.array_player[0].obj_player.getPosition()+[0,FIRST_PERSON_HEIGHT,0] ); 
+	
 	if(mouse.ButtonL){
 		CameraMoveMouse();
 		my_level.array_player[0].shootingDirection = CameraGetCurrent().GetDirection();
-		CameraGetCurrent().SetDirection(my_level.array_player[0].shootingDirection);
+		
+		
+		var angolo =acos(  (my_level.array_player[0].shootingDirection * my_level.array_player[0].movingDirection)
+		/(Norm(my_level.array_player[0].movingDirection)*Norm(my_level.array_player[0].shootingDirection)));
+		
+		trace(angolo);
+		my_level.array_player[0].AngleView;
 		var trc;
-		if(CameraGetCurrent().getDirection()[2] > 0)
+		/*if(CameraGetCurrent().getDirection()[2] > 0)
 		 	 trc= asin(CameraGetCurrent().GetDirection()[0]);
 		 else
 		 	trc = PI -asin(CameraGetCurrent().GetDirection()[0]);	
-	
-		my_level.array_player[0].obj_player_upper.setRotation(trc * RAD_TO_GRAD,[0,1,0]);
-	
+		 	
+		my_level.array_player[0].updateAngleView( trc);*/
+		my_level.array_player[0].obj_player_upper.setRotation(angolo * RAD_TO_GRAD,[0,1,0]);
+		
 	}else{
-		//CameraGetCurrent().GetDirection()- 
-	//	CameraGetCurrent().SetDirection(my_level.array_player[0].movingDirection);
+
+	  //adattare update shooting con angleVView, devono essere equivalenti sfruttare formula var angolo
+		
+		if(abs(my_level.array_player[0].angleView)> 0.025){
+			my_level.array_player[0].angleView -=  0.01;  
+			
+			var dirAdjust = my_level.array_player[0].shootingDirection - my_level.array_player[0].movingDirection;
+		//if(	my_level.array_player[0].shootingDirection - 	my_level.array_player[0].movingDirection < [0.2,0.2,0.2])
+				my_level.array_player[0].shootingDirection -= dirAdjust * 0.01; 
+			   
+		}
+		
+		CameraGetCurrent().SetDirection(my_level.array_player[0].shootingDirection);
+		my_level.array_player[0].obj_player_upper.setRotation(my_level.array_player[0].angleView* RAD_TO_GRAD, [0,1,0]);
+		
+		
 	}
 
 }
@@ -111,7 +131,11 @@ function OnFrame()
 	/* manage camera */
 	if(!isFirst){
 		//BackSideView();
-		if(switchedView){
+		MouseOrientPlayer();
+		
+	}else if(isFirst){
+    	
+    		if(switchedView){
 			CameraGetCurrent().SetDirection(CamDir);
 			CameraGetCurrent().SetPosition(CamPos);
 			switchedView = false; 
@@ -119,10 +143,6 @@ function OnFrame()
 		}
 		
 	CameraMoveMouse();
-		
-	}else if(isFirst){
-		firstPersonView();
-    	MouseOrientPlayer();
     }
     
     light0.setPosition(CameragetCurrent().getPosition());           //every time i move the camera the light is set on camera position
