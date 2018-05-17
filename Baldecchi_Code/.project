@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>AVR_2017</name>
+	<name>Final_Version</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -38,7 +38,7 @@
 				</dictionary>
 				<dictionary>
 					<key>MAIN</key>
-					<value>AVR_2017.s3d</value>
+					<value>main.s3d</value>
 				</dictionary>
 				<dictionary>
 					<key>MAIN_HTML</key>

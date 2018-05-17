@@ -1,0 +1,139 @@
+/* Include s3d symbols */
+#include <Script3d.h>
+#include <Camera.s3d.h>
+
+#include "utilities/includes.s3d"
+
+/* Set global scene parameters */
+SET SCENE_FOV  = 60;
+SET SCENE_NEAR = 0.5;
+SET SCENE_FAR  = 1000;
+SET AUDIO_OPENAL = 1;
+
+/* Light globals */
+var Light0;
+var PosL = [0.0, 10.0, 10.0];	// default light position
+
+/* Function declarations */
+function DrawGrid(col, size);
+
+function OnDownload() {
+	FileDownload("XVRResources.zip");
+}
+
+function OnInit(params) {
+	/* initialize light */
+	Light0 = CVmLight();
+	Light0.SetPosition(PosL);
+	Light0.SetDiffuse(1, 1, 1);
+	Light0.Enable();	
+	
+	window = CVmWebBrowser();
+	//window.Fullscreen(true);
+	resolution = get_resolution();
+	
+	init_camera();
+	
+	my_world = world();
+	my_world.init();
+	
+	my_players = player_manager();
+	my_players.init(my_world.matrix);
+	my_players.addplayer(0, [0, 0, 0], [2, 0, 2]);
+	
+	my_map = map();
+	my_player_info = player_info();
+	
+	my_help_menu = help_menu();
+	my_help_menu.init();
+	
+	my_startup_menu = startup_menu();
+	my_startup_menu.init(my_help_menu);
+	
+	my_pause_menu = pause_menu();
+	my_pause_menu.init(my_startup_menu, my_help_menu);
+}
+
+function OnFrame()
+{
+	if(!my_pause_menu.show_menu && !my_startup_menu.show_menu)
+		update_camera();
+    
+    light0.setPosition(CameragetCurrent().getPosition());
+	
+	// must be executed before drawing
+	resolution = get_resolution();
+	
+	if(!my_pause_menu.show_menu) {
+		my_players.update();
+		var players = my_players.get_player_position();
+		my_map.update(my_players.matrix_level, players);
+		my_player_info.update(players[0], 0, 0, 1000);
+	}
+	
+	if(!my_startup_menu.show_menu)
+		my_pause_menu.update();
+	
+	SceneBegin();
+
+	DrawGrid([0.5, 0.5, 0.5], 100);
+   	
+   	if(my_startup_menu.show_menu)
+		my_startup_menu.draw();
+	else {
+		my_world.draw();
+		my_players.draw();
+	
+		if(my_pause_menu.show_menu)
+			my_pause_menu.draw();
+		else {
+			my_map.draw();
+			my_player_info.draw();
+		}
+	}
+
+	SceneEnd();
+}
+
+function DownloadReady(RequestID) {
+	// TODO
+}
+
+function OnTimer() {
+	// TODO:
+}
+
+function OnEvent(eventID, wparam, lparam) {
+	// TODO: put your events handling code here
+}
+
+function OnError() {
+	// TODO: put your errors handling code here
+}
+
+function OnExit() {
+	// TODO: put your cleanup code here
+}
+
+function DrawGrid(col, size) {
+	glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_CURRENT_BIT);
+	
+	glLineWidth(1);
+	glDisable(GL_LIGHTING);
+	glColor(col);
+	var max = size / 2.0;
+	var min = -max;	
+	var step = size / 10.0;
+	
+	glBegin(GL_LINES);
+		for (var i = min; i <= max; i += step) {
+			glVertex(i, 0, max);
+			glVertex(i, 0, min);
+			
+			glVertex(max, 0, i);
+			glVertex(min, 0, i);
+		}
+	glEnd();
+	
+	glPopAttrib();
+}

@@ -1,0 +1,36 @@
+#define MAP_UNIT_SIZE			0.005
+
+#define MAP_START_POINT_X		0.01
+
+#define GROUND_COLOR			[244, 225, 174] / 255.0
+#define WALL_COLOR				[139, 63, 51] / 255.0
+#define PLAYER_COLOR			[255, 255, 255] / 255.0
+
+function draw_rect(to_draw_x, to_draw_y, height, offset_x, offeset_y) {
+	var w = MAP_UNIT_SIZE;
+	var h = MAP_UNIT_SIZE * resolution;
+	var x = MAP_START_POINT_X + w * to_draw_x - offset_x;
+	var y = MAP_START_POINT_X * resolution + height - h * to_draw_y + offeset_y;
+	
+	ConsoleFilledRect(x, y, w, h);
+}
+
+function draw_wall(matrix_level, rows, columns, height) {
+	ConsoleColor(WALL_COLOR);
+	for(var i = 0; i < rows; i++)
+		for(var j = 0; j < columns; j++)
+			if(matrix_level[i][j] == 1)
+				draw_rect(j, i, height, 0, 0);
+}
+
+function draw_player(players_position, height) {
+	ConsoleColor(PLAYER_COLOR);
+	
+	for(var i = 0; i < len(players_position); i++)
+		draw_rect(players_position[i][0] - MAP_UNIT_SIZE / 2.0, players_position[i][2] + MAP_UNIT_SIZE / 2.0, height, 0.5 * MAP_UNIT_SIZE, 1.5 * MAP_UNIT_SIZE);
+}
+
+function draw_ground(x, y, w, h) {
+	ConsoleColor(GROUND_COLOR);
+	ConsoleFilledRect(x, y, w, h);
+}
