@@ -3,16 +3,17 @@ var CamPos = [0.0, 30, 30.0];
 var CamDir; 
 
 var switched_view = false; 
-var is_first = false;
+var is_first = true;
 var last_mouse_x = 0.0; 
 var last_mouse_y = 0.0;
 var last_mouse_z = 0.0;
 var last_deltax = 0;
 var counter = 0;
-var meshRot_x = 0.0 ;
+var meshRot_x = 0.0;
 var meshRot_y = 0.0;
 var offset_w = 8;
 var offset_h = 30;
+var meshRot_y_cumulative = 0.0;
 
 //=====================================================================================================
 function CameraMoveMouse()
@@ -39,35 +40,37 @@ function CameraMoveMouse()
 
 
 	cam.RotateGlobal(deltax * rot_sensitivity, 0, 1, 0);
-	cam.RotateLocal (deltay * rot_sensitivity, 1, 0, 0);
+	if(is_first)
+		cam.RotateLocal (deltay * rot_sensitivity, 1, 0, 0);
+	
 	my_players.array_player[0].movingDirection = cam.GetDirection();
 	my_players.array_player[0].shootingDirection = cam.GetDirection();
 	
-	meshRot_x += deltax;
-	meshRot_y += deltay;
-	
-	my_players.array_player[0].obj_player_upper.setRotation(-meshRot_x* rot_sensitivity, 0, 1, 0);
-	my_players.array_player[0].obj_player_lower.setRotation(-meshRot_y* rot_sensitivity, 0, 1, 0);
+	meshRot_x = deltax;
+	meshRot_y = deltay;
+
+	my_players.array_player[0].obj_player.Rotate (-meshRot_x* rot_sensitivity, 0, 1, 0);
+	my_players.array_player[0].obj_player.Rotate (meshRot_y* rot_sensitivity, 1, 0, 0);
 	
 }
 
 
 function FirstPersonView(){
-	CameraGetCurrent().SetPosition(my_players.array_player[0].obj_player.getPosition()+[0,FIRST_PERSON_HEIGHT,0] ); 	
-	//CameraGetCurrent().SetDirection(CameraGetCurrent().GetDirection()+ getMouseMovement());
-	//CameraGetCurrent().setPivotPoint(my_players.array_player[0].obj_player.getPivotPoint());
+	meshRot_y_cumulative+= meshRot_y;
+	CameraGetCurrent().SetPosition(my_players.array_player[0].obj_player.getPosition()+[0,FIRST_PERSON_HEIGHT*cos(meshRot_y_cumulative* 0.1*GRAD_TO_RAD),FIRST_PERSON_HEIGHT*sin(meshRot_y_cumulative* 0.1*GRAD_TO_RAD)] ); 	
+
 }
 
 function BackSideView(){		
  	var pos =[-BACK_SIDE_WIDTH *my_players.array_player[0].movingDirection[0],BACK_SIDE_HEIGHT,-BACK_SIDE_WIDTH *my_players.array_player[0].movingDirection[2]];
  	CameraGetCurrent().SetPosition(my_players.array_player[0].obj_player.getPosition()+ pos);
- 	CameraGetCurrent().SetDirection(my_players.array_player[0].movingDirection+[0, BACK_SIDE_ANGLE,0]);
+ 
 }
 
 function init_camera() {
 	CamDir = CameraGetDirection();
 	CameraGetCurrent().SetPosition(CamPos);
-	CameraGetCurrent().SetDirection(CamDir);
+	CameraGetCurrent().SetDirection(-CamDir);
 }
 
 function update_camera() {
@@ -79,9 +82,9 @@ function update_camera() {
     	
 	if(!is_first){
 		BackSideView();
-		
+		CameraMoveMouse();
 		if(switched_view){
-			CameraGetCurrent().SetDirection(-CamDir);
+		//	CameraGetCurrent().SetDirection(-CamDir);
 			CameraGetCurrent().SetPosition(CamPos);
 			switched_view = false; 
 		}

@@ -95,6 +95,7 @@ function player::init(i,c,p){
 	obj_player.AddChild(obj_player_lower);						//objects hierarchy
 	obj_player.AddChild(obj_player_upper);
 	obj_player_upper.AddChild(obj_gun);
+	obj_player_upper.setPivotPoint(0,0,0);
 	obj_player.setposition(position);
 	
 	my_bullet= array( CLIP_SIZE );
@@ -157,9 +158,8 @@ function player::update(matrix_level){			//update on key press
 	if(keypressed(VK_A)){						
 		angleY += PLAYER_ANGLE_STEP;
 		angleY = angleY % (2*PI);
-		trace(angleY);
 		var a = asin(angleY);
-		trace(a);
+	
 		shootingDirection = [sin(angleY), 0 ,cos(angleY)];
 		movingDirection = [sin(angleY), 0 ,cos(angleY)];	
 		}
@@ -175,6 +175,7 @@ function player::update(matrix_level){			//update on key press
 		var movingDir = [movingDirection[0],0,movingDirection[2]];
 		position += PLAYER_SPEED * movingDir*run;	
 		current_frame = (current_frame +0.35*run)%SWAT_TOTAL_FRAMES;
+		
 	}
 	else if(keypressed(VK_S)){
 		position -= PLAYER_SPEED * movingDirection*run;	
@@ -197,10 +198,10 @@ function player::update(matrix_level){			//update on key press
 	if(matrix_level[intz][intx] == 1)
 		position = old_position;	
 
-	
+
 	obj_player.setposition(position);			//obj updating
 	
-	obj_player.setRotation(RAD_TO_GRAD * angleY, [0,1,0]);
+	//obj_player.setRotation(RAD_TO_GRAD * angleY, [0,1,0]);
 	
 	foreach (var i in my_bullet)
 		i.update();

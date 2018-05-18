@@ -6,7 +6,6 @@ var resolution;
 function get_resolution() {
 	var size = window.GetSize();
 	window_w = ToFloat(size[0]);
-
 	window_h = ToFloat(size[1]);
 	return window_w / window_h;
 }

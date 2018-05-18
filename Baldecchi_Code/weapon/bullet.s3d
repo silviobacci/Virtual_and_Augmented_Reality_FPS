@@ -1,9 +1,9 @@
 #define BULLET_SPEED 5       
 #define BULLET_MASS	0.008
 #define BULLET_RADIUS 0.003
-#define SHOOT_FORCE 3000
+#define SHOOT_FORCE 5000
 #define SHOOT_ANGLE 0
-#define ACCEL_GRAVITY 981
+#define ACCEL_GRAVITY 9.81
 #define VISCOSITY_COEFF 0.0000186
 #define FRAME_SECOND	30
 #define VISCOUS 6* PI* VISCOSITY_COEFF * BULLET_RADIUS  / BULLET_MASS
@@ -51,12 +51,10 @@ function bullet::computeDynamics(){
 	
 	
 	angle =GRAD_TO_RAD* atan(dy/dx);
-	trace(speedy);
-	trace(angle);
 	position[0] += dir[0] * dx;
 	position[1] += dir[1] * abs(dy);
 	position[2] += dir[2] * dx;
-	trace(position);
+
 }
 
 
