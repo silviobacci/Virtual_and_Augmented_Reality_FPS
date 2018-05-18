@@ -45,7 +45,7 @@ function OnInit(params) {
 	
 	my_players = player_manager();
 	my_players.init(my_world.matrix);
-	my_players.addplayer(0, [0, 0, 0], [2, 0, 2]);
+	my_players.addplayer(0, [1, 1, 1], [2, 0, 2]);
 	
 	my_map = map();
 	my_player_info = player_info();

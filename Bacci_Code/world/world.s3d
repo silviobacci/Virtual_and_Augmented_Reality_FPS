@@ -1,4 +1,26 @@
+#define FLOOR_TILING 		5
+#define WALL_HEIGHT 		3
+#define SKY_HEIGHT	 		6
+#define SKY_DISPLACEMENT	30 
+
+#define	TEXT_FILE_NAME		"level.txt"
+
+#define	DEFAULT_DIM			1
+
+#define	WORLD_SKY_COLOR		[255, 255, 255] / 255.0
+#define	WORLD_SKY_MESH		"Sky.aam"
+
+#define	WORLD_FLOOR_COLOR	[0, 255, 0] / 255.0
+#define	WORLD_FLOOR_IMAGE	"marmo.png"
+
+#define	WORLD_WALL_COLOR	[255, 255, 255] / 255.0
+#define	WORLD_WALL_IMAGE	"mattoni04.png"
+
 class world{
+	var mesh_sky;
+	var material_sky;
+	var texture_sky;
+	
 	var mesh_floor;
 	var material_floor;
 	var texture_floor;
@@ -13,7 +35,46 @@ class world{
 	
 	init();
 	draw();
+	
+	create_sky(width, height);
+	create_floor(width, height);
+	create_wall(height_scale);
 };
+
+function world::create_sky(width, height) {
+	mesh_sky = CVmNewMesh(WORLD_SKY_MESH);
+	mesh_sky.translate(SKY_DISPLACEMENT, SKY_HEIGHT, SKY_DISPLACEMENT);
+}
+
+function world::create_floor(width, height) {
+	mesh_floor = CVmNewMesh(VRP_BOX);
+	mesh_floor.scale(width, DEFAULT_DIM, height);
+	mesh_floor.translate(0, -DEFAULT_DIM, 0);
+	
+	material_floor = CVmMaterial();
+	material_floor.diffuse = WORLD_FLOOR_COLOR;
+	material_floor.ChangeTextureParams(VR_U_TILING, FLOOR_TILING);
+	material_floor.ChangeTextureParams(VR_V_TILING, FLOOR_TILING);
+	
+	texture_floor = CVmTexture(WORLD_FLOOR_IMAGE);
+	
+	material_floor.SetTexture(texture_floor);
+	mesh_floor.ForceMaterial(material_floor);
+}
+
+function world::create_wall(height_scale) {
+	mesh_wall = CVmNewMesh(VRP_BOX);
+	mesh_wall.scale(DEFAULT_DIM, WALL_HEIGHT * height_scale, DEFAULT_DIM);
+	
+	material_wall = CVmMaterial();
+	material_wall.diffuse = WORLD_WALL_COLOR; 
+	material_wall.ChangeTextureParams(VR_V_TILING, WALL_HEIGHT);
+	
+	texture_wall = CVmTexture(WORLD_WALL_IMAGE);
+	
+	material_wall.SetTexture(texture_wall);
+	mesh_wall.ForceMaterial(material_wall);
+}
 
 function world::init(){
 	mesh_wall = array(0);
@@ -21,7 +82,8 @@ function world::init(){
 	var array_rows = len(array_matrix) - 1;
 	var array_columns = len(array_matrix[0]);
 	
-	create_floor(&mesh_floor, &material_floor, &texture_floor, &array_columns, &array_rows);
+	create_sky(array_columns, array_rows);
+	create_floor(array_columns, array_rows);
 	
 	array_wall = array(0);
 	
@@ -34,7 +96,7 @@ function world::init(){
 			matrix[i][j] = val(array_matrix[i][j]);
 
 			if(matrix[i][j] > 0){
-				create_wall(&mesh_wall, &material_wall, &texture_wall, matrix[i][j]);
+				create_wall(matrix[i][j]);
 				var wall = CVmObj(mesh_wall);
 				wall.SetPosition(j, 0, i);
 				
@@ -45,6 +107,7 @@ function world::init(){
 }
 
 function world::draw(){
+	mesh_sky.draw();
 	mesh_floor.draw();
 	
 	foreach (var wall in array_wall)

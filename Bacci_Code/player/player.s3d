@@ -107,7 +107,10 @@ function player::init(i,c,p){
 	jump=0;
 }
 
-function player::draw(){											
+function player::draw(){	
+	//var bb = mesh_player_upper.GetBoundingBox();	
+	//trace(bb);	
+				
 	obj_player.Draw(VR_FRAMENUMBER, SWAT_START_WALK+current_frame);
 	foreach(var b in my_bullet)
 		b.draw();
@@ -194,7 +197,7 @@ function player::update(matrix_level){			//update on key press
 	var intz = int(position.z);
 	
 	
-	if(matrix_level[intz][intx] == 1)
+	if(matrix_level[intz][intx] > 0)
 		position = old_position;	
 
 	
