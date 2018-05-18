@@ -9,34 +9,46 @@ var last_mouse_y = 0.0;
 var last_mouse_z = 0.0;
 var last_deltax = 0;
 var counter = 0;
-var meshRot = 0.0 ;
+var meshRot_x = 0.0 ;
+var meshRot_y = 0.0;
+var offset_w = 8;
+var offset_h = 30;
 
 //=====================================================================================================
 function CameraMoveMouse()
 //=====================================================================================================
 {	
 	var cam = CameraGetCurrent();
-	var	rot_sensitivity = 0.001;		
-	var deltax = Mouse.X;
+	var	rot_sensitivity = 0.1;			
+ 	var deltax = Mouse.X;
 	var deltay = Mouse.Y;
-   
- 	Mouse.SetStatus(0.5,0.5);
+	
+	Mouse.SetStatus(0.5,0.5);
  	SetCursorPos(0.5,0.5);
-	showCursor(false);
-    if(deltax < (window_w/2)-8)
-    	deltax *=-1;
-    if(deltay < (window_h/2)-30)
-     	deltay*=-1;
+
+	if(window_w % 2 != 0)
+		offset_w =9;
+	
+	if(window_h % 2 == 0)
+		offset_h =31;
+
+	if(deltax != 0)
+		deltax = Floor( deltax -  (window_w/2)+offset_w);
+	if(deltay != 0)
+		deltay = Ceil( deltay - 	(window_h/2)+offset_h);
+
 
 	cam.RotateGlobal(deltax * rot_sensitivity, 0, 1, 0);
 	cam.RotateLocal (deltay * rot_sensitivity, 1, 0, 0);
-
 	my_players.array_player[0].movingDirection = cam.GetDirection();
 	my_players.array_player[0].shootingDirection = cam.GetDirection();
-	meshRot += deltax;
 	
-	my_players.array_player[0].obj_player_upper.setRotation(-meshRot* rot_sensitivity, 0, 1, 0);
-	my_players.array_player[0].obj_player_lower.setRotation(-meshRot* rot_sensitivity, 0, 1, 0);
+	meshRot_x += deltax;
+	meshRot_y += deltay;
+	
+	my_players.array_player[0].obj_player_upper.setRotation(-meshRot_x* rot_sensitivity, 0, 1, 0);
+	my_players.array_player[0].obj_player_lower.setRotation(-meshRot_y* rot_sensitivity, 0, 1, 0);
+	
 }
 
 

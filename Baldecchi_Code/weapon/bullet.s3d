@@ -45,16 +45,18 @@ function bullet::computeDynamics(){
 
 	speedx	+= accx * delta_t;//elapsed_time;
 	speedy	+= accy * delta_t;//elapsed_time;
-
+	
 	dx = delta_t * speedx;
 	dy = delta_t * speedy;
 	
-	angle =GRAD_TO_RAD* atan(dy/dx);
 	
+	angle =GRAD_TO_RAD* atan(dy/dx);
+	trace(speedy);
+	trace(angle);
 	position[0] += dir[0] * dx;
-	position[1] -= dir[1] * dy;
+	position[1] += dir[1] * abs(dy);
 	position[2] += dir[2] * dx;
-
+	trace(position);
 }
 
 
@@ -63,6 +65,7 @@ function bullet::shoot(p,d){
 	dir = d; 
 	dir=d;
 	angle = dir[1]*(90);
+	
 	accx =  SHOOT_FORCE/BULLET_MASS * cos(GRAD_TO_RAD*angle);
 	accy =  SHOOT_FORCE/BULLET_MASS* sin(GRAD_TO_RAD*angle);
 	
