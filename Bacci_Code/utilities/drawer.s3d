@@ -1,0 +1,15 @@
+function OnDraw() {
+	if(my_startup_menu.show_menu)
+		my_startup_menu.draw();
+	else {
+		my_world.draw();
+		my_players.draw();
+	
+		if(my_pause_menu.show_menu)
+			my_pause_menu.draw();
+		else {
+			my_map.draw();
+			my_player_info.draw();
+		}
+	}
+}

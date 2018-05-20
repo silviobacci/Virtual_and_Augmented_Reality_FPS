@@ -1,0 +1,53 @@
+var my_mouse;
+var my_keyboard;
+var my_world;
+var my_players;
+var my_startup_menu;
+var my_pause_menu;
+var my_help_menu;
+var my_map;
+var my_player_info;
+var CamPos = [0.0, 30, 30.0];
+var CamDir; 
+
+var switched_view = false; 
+var is_first = false;
+
+function init_camera() {
+	CamDir = CameraGetDirection();
+	CameraGetCurrent().SetPosition(CamPos);
+	CameraGetCurrent().SetDirection(-CamDir);
+}
+
+function init() {
+	window = CVmWebBrowser();
+	window.Fullscreen(true);
+	resolution = get_resolution();
+	
+	init_camera();
+	
+	my_keyboard = keyboard_manager();
+	my_keyboard.init();
+	
+	my_mouse = mouse_manager();
+	my_mouse.init();
+	
+	my_world = world();
+	my_world.init();
+	
+	my_players = player_manager();
+	my_players.init(my_world.matrix);
+	my_players.addplayer(0, [1, 1, 1], [2, 0, 2]);
+	
+	my_map = map();
+	my_player_info = player_info();
+	
+	my_help_menu = help_menu();
+	my_help_menu.init();
+	
+	my_startup_menu = startup_menu();
+	my_startup_menu.init(my_help_menu);
+	
+	my_pause_menu = pause_menu();
+	my_pause_menu.init(my_startup_menu, my_help_menu);
+}
