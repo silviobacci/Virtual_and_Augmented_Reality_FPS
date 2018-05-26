@@ -5,6 +5,8 @@
 #define SWAT_TOTAL_FRAMES 32
 #define CLIP_SIZE 	1000
 
+var my_players;
+
 class player{
 	//Player-related 
 	var mesh_player_lower;

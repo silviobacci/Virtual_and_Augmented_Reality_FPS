@@ -10,6 +10,7 @@ function OnDraw() {
 		else {
 			my_map.draw();
 			my_player_info.draw();
+			my_score_info.draw();
 		}
 	}
 }

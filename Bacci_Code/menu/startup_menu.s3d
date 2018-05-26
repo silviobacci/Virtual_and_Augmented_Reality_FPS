@@ -1,3 +1,5 @@
+var my_startup_menu;
+
 class startup_menu{
 	var titlebox;
 	var playbox;

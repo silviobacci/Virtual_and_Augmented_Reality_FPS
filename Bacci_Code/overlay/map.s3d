@@ -6,6 +6,8 @@
 #define WALL_COLOR				[139, 63, 51] / 255.0
 #define PLAYER_COLOR			[255, 255, 255] / 255.0
 
+var my_map;
+
 class map{
 	var matrix_level;
 	var players_position;

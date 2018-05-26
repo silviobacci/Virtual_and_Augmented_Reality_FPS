@@ -3,6 +3,12 @@
 #define BACK_SIDE_WIDTH  3
 #define FIRST_PERSON_HEIGHT 1.25
 
+var CamPos = [0.0, 30, 30.0];
+var CamDir; 
+
+var switched_view = false; 
+var is_first = false;
+
 function CameraMoveMouse() {	
 	CameraMoveMouse_MBL_LC();
 }

@@ -1,3 +1,5 @@
+var my_help_menu;
+
 class help_menu{
 	var gobackbox;
 	

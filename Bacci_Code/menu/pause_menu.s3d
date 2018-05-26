@@ -1,3 +1,5 @@
+var my_pause_menu;
+
 class pause_menu{
 	var continuebox;
 	var helpbox;

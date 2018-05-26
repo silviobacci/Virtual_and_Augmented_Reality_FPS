@@ -1,6 +1,7 @@
 #define WORLD_FLOOR_TILING 		30
 #define WORLD_WALL_HEIGHT 		3
 #define WORLD_SKY_HEIGHT	 	0
+#define WORLD_SUN_HEIGHT	 	45
 
 #define	WORLD_MAP_FILENAME		"level.txt"
 
@@ -17,6 +18,8 @@
 
 #define	WORLD_WALL_COLOR		[255, 255, 255] / 255.0
 #define	WORLD_WALL_IMAGE		"bricks.png"
+
+var my_world;
 
 class world{
 	var mesh_sky;
@@ -75,7 +78,7 @@ function world::create_map() {
 
 function world::create_sun() {
 	var sun = CVmLight();
-	sun.SetPosition([10.0, 20.0, 10.0]);
+	sun.SetPosition([width / 2.0, WORLD_SUN_HEIGHT, height / 2.0]);
 	sun.SetDiffuse(1, 1, 1);
 	sun.Enable();
 }

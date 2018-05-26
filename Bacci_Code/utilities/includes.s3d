@@ -1,6 +1,7 @@
 #include "../utilities/resolution.s3d"
 #include "../utilities/keyboard.s3d"
 #include "../utilities/mouse.s3d"
+#include "../utilities/quit_functions.s3d"
 
 #include "../world/world.s3d"
 
@@ -8,13 +9,8 @@
 
 #include "../player/mesher.s3d"
 #include "../player/player.s3d"
-
-#include "../utilities/initializer.s3d"
-
 #include "../player/player_manager.s3d"
 
-#include "../utilities/updater.s3d"
-#include "../utilities/drawer.s3d"
 #include "../utilities/camera.s3d"
 
 #include "../menu/menu_utilities.s3d"
@@ -22,9 +18,10 @@
 #include "../menu/pause_menu.s3d"
 #include "../menu/help_menu.s3d"
 
-
-#include "../utilities/quit_functions.s3d"
-
-
 #include "../overlay/map.s3d"
 #include "../overlay/player_info.s3d"
+#include "../overlay/score_info.s3d"
+
+#include "../utilities/initializer.s3d"
+#include "../utilities/updater.s3d"
+#include "../utilities/drawer.s3d"

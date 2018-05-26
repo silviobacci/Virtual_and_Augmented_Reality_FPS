@@ -1,18 +1,3 @@
-var my_mouse;
-var my_keyboard;
-var my_world;
-var my_players;
-var my_startup_menu;
-var my_pause_menu;
-var my_help_menu;
-var my_map;
-var my_player_info;
-var CamPos = [0.0, 30, 30.0];
-var CamDir; 
-
-var switched_view = false; 
-var is_first = false;
-
 function init_camera() {
 	CamDir = CameraGetDirection();
 	CameraGetCurrent().SetPosition(CamPos);
@@ -41,6 +26,14 @@ function init() {
 	
 	my_map = map();
 	my_player_info = player_info();
+	my_score_info = score_info();
+	my_score_info.init();
+	my_score_info.update(32, 50);
+	my_score_info.update(33, 10);
+	my_score_info.update(17, 90);
+	my_score_info.update(28, 80);
+	my_score_info.update(19, 70);
+	my_score_info.update(68, 60);
 	
 	my_help_menu = help_menu();
 	my_help_menu.init();

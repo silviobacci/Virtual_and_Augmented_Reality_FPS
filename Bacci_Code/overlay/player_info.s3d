@@ -8,6 +8,8 @@
 #define INFO_BOX_COLOR			[139, 63, 51] / 255.0
 #define INFO_TEXT_COLOR			[255, 255, 255] / 255.0
 
+var my_player_info;
+
 class player_info{
 	var player_position;
 	var gun_selected;
@@ -39,7 +41,7 @@ function player_info::update(pp, gs, bl, lp) {
 	bullets_left = bl;
 	life_points = lp;
 	
-	box_x = 1 - INFO_START_POINT_X - INFO_BOX_WIDTH;
+	box_x = INFO_START_POINT_X;	
 	box_y = (INFO_START_POINT_X + INFO_BOX_WIDTH) * resolution;
 }
 

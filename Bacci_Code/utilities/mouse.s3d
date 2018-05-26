@@ -1,5 +1,7 @@
 #define TIME_DELAY_MOUSE	300
 
+var my_mouse;
+
 class mouse_manager {
 	var old_time;
 	var clickable;
