@@ -18,6 +18,8 @@ function OnInit(params) {
 function OnFrame() {
 	OnUpdate();
 	
+	//OnSend();
+	
 	SceneBegin();
    	
    	OnDraw();
@@ -25,22 +27,14 @@ function OnFrame() {
 	SceneEnd();
 }
 
-function DownloadReady(RequestID) {
-	// TODO: 
-}
+function DownloadReady(RequestID) {}
 
 function OnTimer() {
-	// TODO: put your timers handling code here
+	//OnReceive();
 }
 
-function OnEvent(eventID, wparam, lparam) {
-	// TODO: put your events handling code here
-}
+function OnEvent(eventID, wparam, lparam) {}
 
-function OnError() {
-	// TODO: put your errors handling code here
-}
+function OnError() {}
 
-function OnExit() {
-	// TODO: put your cleanup code here
-}
+function OnExit() {}

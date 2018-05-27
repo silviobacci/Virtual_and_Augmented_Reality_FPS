@@ -1,5 +1,4 @@
-#define	FRAME_RATE			60
-#define	TIME_STEP			1
+#define	RECEIVE_PERIOD		1
 
 #define SOURCE_IP_ADDRESS	"0.0.0.0"
 #define DEST_IP_ADDRESS		"192.168.1.255"	
@@ -8,11 +7,13 @@
 #define TIME_FILTER			1000	
 
 #define POSITION_PDU 	1
-#define MISSILE_PDU		2
+#define BULLET_PDU		2
 #define	KEEPALIVE_PDU	3
 #define	EXPLOSION_PDU	4
 #define	SCORE_PDU		5
 #define	RESET_PDU		6
+
+var my_network;
 
 class network{
 	var channel;
@@ -23,7 +24,7 @@ class network{
 	create_KEEPALIVE_PDU();
 	create_POSITION_PDU(position, direction, velocity);
 	create_SCORE_PDU(scores);
-	create_MISSILE_PDU(position, direction, fire_life);
+	create_BULLET_PDU(type, position, direction, fire_life);
 	create_EXPLOSION_PDU(enemy);
 	send(PDU);
 	receive();
@@ -31,9 +32,8 @@ class network{
 
 function network::init() {
 	channel = NetCreateChannel(PORT, SOURCE_IP_ADDRESS, VR_NO_BLOCKING);
-	
-	SetFrameRate(FRAME_RATE);	
-	SetTimeStep(TIME_STEP);
+
+	SetTimeStep(RECEIVE_PERIOD);
 	
 	id = 1;
 }
@@ -70,15 +70,16 @@ function network::create_SCORE_PDU(scores) {
 		PDU[2 + i] = scores[i];
 }
 
-function network::create_MISSILE_PDU(position, direction, fire_life) {
+function network::create_BULLET_PDU(type, position, direction, fire_life) {
 	var PDU = vector(7);
-	PDU[0] = MISSILE_PDU;
+	PDU[0] = BULLET_PDU;
 	PDU[1] = id;
-	PDU[2] = position[0];
-	PDU[3] = position[1];
-	PDU[4] = position[2];
-	PDU[5] = fire_life;
-	PDU[6] = direction;	
+	PDU[2] = type;
+	PDU[3] = position[0];
+	PDU[4] = position[1];
+	PDU[5] = position[2];
+	PDU[6] = fire_life;
+	PDU[7] = direction;	
 }
 
 function network::create_EXPLOSION_PDU(enemy) {
@@ -93,6 +94,6 @@ function network::send(PDU){
 }
 
 function network::receive() {
-	var address;	
+	var address = 0;	
 	return NetVarReceiveFrom(channel, &address);
 }

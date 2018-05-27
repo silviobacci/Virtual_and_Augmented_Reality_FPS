@@ -1,0 +1,44 @@
+#define POSITION_PDU_PERIOD		100
+#define KEEPALIVE_PDU_PERIOD	500
+#define SCORE_PDU_PERIOD		3000
+#define BULLET_PDU_PERIOD		50
+
+var timer_POSITION_PDU = 0;
+var timer_KEEPALIVE_PDU = 0;
+var timer_SCORE_PDU = 0;
+var timer_BULLET_PDU = 0;
+var PDU;
+
+function OnSend() {
+	// send position pdu.
+	if(getTime() - timer_POSITION_PDU > POSITION_PDU_PERIOD){
+		timer_POSITION_PDU = getTime();
+		PDU = my_network.create_PDU_POSITION();
+		my_network.send(PDU);
+	}
+	
+	// send keepalive pdu.
+	if(getTime() - timer_KEEPALIVE_PDU > KEEPALIVE_PDU_PERIOD){
+		timer_KEEPALIVE_PDU = getTime();
+		PDU = my_network.create_KEEPALIVE_PDU();
+		my_network.send(PDU);
+	}
+	
+	// send score pdu.
+	if(getTime() - timer_SCORE_PDU > SCORE_PDU_PERIOD){
+		timer_SCORE_PDU = getTime();
+		PDU = my_network.create_SCORE_PDU();
+		my_network.send(PDU);
+	}
+	
+	// send bullet pdu (also if fire_life == 0)
+	if(getTime() - timer_BULLET_PDU > BULLET_PDU_PERIOD){
+		timer_BULLET_PDU = getTime();
+		PDU = my_network.create_BULLET_PDU();
+		my_network.send(PDU);
+	}
+	
+	// TODO: send reset pdu on click of button.
+	
+	// TODO: send bullet explosion pdu when it exploses.
+}

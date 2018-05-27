@@ -1,0 +1,26 @@
+function OnReceive() {
+	var received_data;
+	
+	while(true){
+		received_data = my_network.receive();
+		
+		if(received_data == void)
+			break;
+		
+		if(received_data[1] != my_network.id)
+			switch(received_data[0]) {
+				case POSITION_PDU:
+					break;
+				case BULLET_PDU:
+					break;
+				case KEEPALIVE_PDU:
+					break;
+				case EXPLOSION_PDU:
+					break;
+				case SCORE_PDU:
+					break;
+				case RESET_PDU:
+					break;
+			}
+	}
+}

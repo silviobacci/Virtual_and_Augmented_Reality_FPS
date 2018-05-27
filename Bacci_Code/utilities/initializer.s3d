@@ -1,3 +1,5 @@
+#define	FRAME_RATE			60
+
 function init_camera() {
 	CamDir = CameraGetDirection();
 	CameraGetCurrent().SetPosition(CamPos);
@@ -5,6 +7,8 @@ function init_camera() {
 }
 
 function init() {
+	SetFrameRate(FRAME_RATE);	
+	
 	window = CVmWebBrowser();
 	window.Fullscreen(true);
 	resolution = get_resolution();
@@ -16,6 +20,9 @@ function init() {
 	
 	my_mouse = mouse_manager();
 	my_mouse.init();
+	
+	my_network = network();
+	my_network.init();
 	
 	my_world = world();
 	my_world.init();
