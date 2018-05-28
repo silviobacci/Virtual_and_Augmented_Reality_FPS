@@ -5,7 +5,7 @@ function OnUpdate() {
 	
 	if(!my_pause_menu.show_menu && !my_startup_menu.show_menu)
 		update_camera();
-	
+
 	if(!my_pause_menu.show_menu) {
 		my_players.update();
 		var players = my_players.get_player_position();

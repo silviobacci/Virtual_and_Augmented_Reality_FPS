@@ -1,16 +1,21 @@
 function OnDraw() {
-	if(my_startup_menu.show_menu)
+	if(my_startup_menu.show_menu) {
+		ShowCursor(true);
 		my_startup_menu.draw();
-	else {
-		my_world.draw();
-		my_players.draw();
-	
-		if(my_pause_menu.show_menu)
-			my_pause_menu.draw();
-		else {
-			my_map.draw();
-			my_player_info.draw();
-			my_score_info.draw();
-		}
+		return;
 	}
+	
+	my_world.draw();
+	my_players.draw();
+	
+	if(my_pause_menu.show_menu) {
+		ShowCursor(true);
+		my_pause_menu.draw();
+		return;
+	}
+	
+	ShowCursor(false);
+	my_map.draw();
+	my_player_info.draw();
+	my_score_info.draw();
 }

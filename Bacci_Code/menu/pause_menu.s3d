@@ -43,7 +43,7 @@ function pause_menu::check_mouse_position() {
 		help.show_menu = true;
 
 	if(my_mouse.is_contained(exitbox))
-		exit_game(startup);
+		exit_game(this, startup);
 }
 
 function pause_menu::draw() {

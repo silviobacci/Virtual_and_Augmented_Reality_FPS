@@ -28,15 +28,23 @@ function mouse_manager::update() {
 }
 
 function mouse_manager::is_contained(box) {
-	if(!clickable)
+	if(!clickable) {
+		SetCursorShape(VR_CUR_ARROW);
 		return false;
+	}
 		
 	var mouse_x = mouse.X / window_w;
 	var mouse_y = 1 - mouse.Y / window_h;
 	
-	if(mouse_x >= box[0] - box[2] / 2.0 && mouse_x <= box[0] + box[2] / 2.0 && mouse_y >= box[1] - box[3] / 2.0 && mouse_y <= box[1] + box[3] / 2.0 &&  mouse.ButtonL) {
-		clickable = false;
-		return true;
+	if(!(mouse_x >= box[0] - box[2] / 2.0 && mouse_x <= box[0] + box[2] / 2.0 && mouse_y >= box[1] - box[3] / 2.0 && mouse_y <= box[1] + box[3] / 2.0)) {
+		SetCursorShape(VR_CUR_ARROW);
+		return false;
 	}
+		
+	if(mouse.ButtonL) {
+		clickable = false;
+		return true;	
+	}
+	
 	return false;
 }

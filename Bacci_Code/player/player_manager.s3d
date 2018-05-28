@@ -1,3 +1,5 @@
+var my_players;
+
 class player_manager {
 	var matrix_level;
 	var array_player; 

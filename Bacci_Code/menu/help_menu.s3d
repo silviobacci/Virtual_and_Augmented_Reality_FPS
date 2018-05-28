@@ -6,6 +6,7 @@ class help_menu{
 	var show_menu;
 	
 	init();
+	update();
 	draw();
 	
 	// utility functions
@@ -16,6 +17,10 @@ class help_menu{
 function help_menu::check_mouse_position() {
 	if(my_mouse.is_contained(gobackbox))
 		show_menu = false;
+}
+
+function help_menu::update() {
+	check_mouse_position();
 }
 
 function help_menu::init() {
