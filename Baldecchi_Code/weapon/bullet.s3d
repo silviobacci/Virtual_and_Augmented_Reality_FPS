@@ -1,12 +1,12 @@
 #define BULLET_SPEED 5       
 #define BULLET_MASS	0.008
 #define BULLET_RADIUS 0.003
-#define SHOOT_FORCE 5000
+#define SHOOT_FORCE 80
 #define SHOOT_ANGLE 0
 #define ACCEL_GRAVITY 9.81
 #define VISCOSITY_COEFF 0.0000186
-#define FRAME_SECOND	30
-#define VISCOUS 6* PI* VISCOSITY_COEFF * BULLET_RADIUS  / BULLET_MASS
+#define FRAME_SECOND	60
+#define VISCOUS_BULLET 6* PI* VISCOSITY_COEFF * BULLET_RADIUS  / BULLET_MASS
 //#define RAD_TO_GRAD		PI/180
 	
 
@@ -40,8 +40,8 @@ class bullet{
 };
 
 function bullet::computeDynamics(){
-	accx 	-= VISCOUS* abs(speedx) * cos(angle);
-	accy 	-=  ACCEL_GRAVITY +VISCOUS *abs(speedy)* sin(angle);
+	accx 	-= VISCOUS_BULLET* abs(speedx) * cos(angle);
+	accy 	-=  ACCEL_GRAVITY +VISCOUS_BULLET *abs(speedy)* sin(angle);
 
 	speedx	+= accx * delta_t;//elapsed_time;
 	speedy	+= accy * delta_t;//elapsed_time;
@@ -49,10 +49,15 @@ function bullet::computeDynamics(){
 	dx = delta_t * speedx;
 	dy = delta_t * speedy;
 	
-	
 	angle =GRAD_TO_RAD* atan(dy/dx);
+	trace(accx);
+	trace(accy);
+	trace(dx);
+	trace(dy);
+	trace(speedx);
+	trace(speedy);
 	position[0] += dir[0] * dx;
-	position[1] += dir[1] * abs(dy);
+	position[1] +=  dy;
 	position[2] += dir[2] * dx;
 
 }
@@ -72,7 +77,7 @@ function bullet::shoot(p,d){
 
 function bullet::init(p,d,c){
 	
-	delta_t = 0.01/FRAME_SECOND;
+	delta_t = 1.0/FRAME_SECOND;
 	isflying = false;
 	elapsed_time = 0.0; 
 	position=p;

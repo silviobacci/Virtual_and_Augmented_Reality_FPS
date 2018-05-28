@@ -52,12 +52,13 @@ function OnInit(params) {
 	
 	my_pause_menu = pause_menu();
 	my_pause_menu.init(my_startup_menu, my_help_menu);
+	setFrameRate(60);
+	
 }
 
 function OnFrame()
 {
-	if(!my_pause_menu.show_menu && !my_startup_menu.show_menu)
-		update_camera();
+	
     
     light0.setPosition(CameragetCurrent().getPosition());
 	
@@ -70,6 +71,9 @@ function OnFrame()
 		my_map.update(my_players.matrix_level, players);
 		my_player_info.update(players[0], 0, 0, 1000);
 	}
+	
+	if(!my_pause_menu.show_menu && !my_startup_menu.show_menu)
+		update_camera();
 	
 	if(!my_startup_menu.show_menu)
 		my_pause_menu.update();
