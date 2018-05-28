@@ -7,8 +7,8 @@
 #define VISCOSITY_COEFF 0.0000186
 #define FRAME_SECOND	60
 #define VISCOUS_BULLET 6* PI* VISCOSITY_COEFF * BULLET_RADIUS  / BULLET_MASS
-//#define RAD_TO_GRAD		PI/180
-	
+#define GUN_H_OFFSET 1.1
+#define GUN_W_OFFSET 0.5
 
 class bullet{
 	var mesh_bullet;
@@ -40,8 +40,7 @@ class bullet{
 };
 
 function bullet::computeDynamics(){
-	accx 	= VISCOUS_BULLET* abs(speedx) * cos(angle);
-	accy 	=  ACCEL_GRAVITY -VISCOUS_BULLET *abs(speedy)* sin(angle);
+	
 
 	speedx	+= accx * delta_t;//elapsed_time;
 	speedy	+= accy * delta_t;//elapsed_time;
@@ -60,11 +59,14 @@ function bullet::computeDynamics(){
 	position[1] +=  dy;
 	position[2] += dir[2] * dx;
 
+	accx 	= VISCOUS_BULLET* abs(speedx) * cos(angle);
+	accy 	=  -ACCEL_GRAVITY -VISCOUS_BULLET *abs(speedy)* sin(angle);
 }
 
 
 function bullet::shoot(p,d){
-	position = p + [0,1,0];
+	trace(d);
+	position = p + GUN_W_OFFSET*[-d[2],0,d[0]]+[0,GUN_W_OFFSET-d[1],0];
 	dir = d; 
 	dir=d;
 	angle = dir[1]*(90);
@@ -100,14 +102,12 @@ function bullet::draw(){
 }
 
 function bullet::update(){
-	
+	obj_bullet.setposition(position);
 	if(isflying){
 		computeDynamics();
-		
-		obj_bullet.setposition(position);
-		if(position[1] <= 0)
-			isflying = false; 
+
+	if(position[1] <= 0)
+		isflying = false; 
 			
 	}
-	
 }
