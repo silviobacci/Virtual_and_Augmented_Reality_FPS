@@ -1,4 +1,4 @@
-#define PLAYER_SPEED 0.05
+#define PLAYER_SPEED 0.07
 #define PLAYER_SPEED_STEP 0.001
 #define PLAYER_ANGLE_STEP 0.01
 #define SWAT_START_WALK 16
@@ -8,15 +8,12 @@
 #define CLIP_SIZE 	500
 #define PLAYER_RADIUS	30
 #define VISCOUS_PLAYER 6* PI* VISCOSITY_COEFF * PLAYER_RADIUS  / PLAYER_MASS
-
-//jump related 
-//#define PLAYER_SPEED 5       
+   
 #define PLAYER_MASS	80
 
-#define JUMP_FORCE 500
+#define JUMP_FORCE 12000
 #define JUMP_ANGLE 0
-//#define ACCEL_GRAVITY 9.81
-//#define FRAME_SECOND	30
+
 
 
 class player{
@@ -105,8 +102,7 @@ function player::get_position(){
 }
 
 function player::computeDynamics(){
-	accx 	-= VISCOUS_PLAYER* abs(speedx) * cos(angle);
-	accy 	-=  ACCEL_GRAVITY*delta_t;
+	
  
 	trace(accx);
 	trace(accy);
@@ -134,6 +130,8 @@ function player::computeDynamics(){
 		position[1] = 0;
 		resetJumpDynamics();
 	}
+	accx 	= VISCOUS_PLAYER* abs(speedx) * cos(angle);
+	accy     = -ACCEL_GRAVITY;
 }
 
 function updateAngleView(){

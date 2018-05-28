@@ -40,8 +40,8 @@ class bullet{
 };
 
 function bullet::computeDynamics(){
-	accx 	-= VISCOUS_BULLET* abs(speedx) * cos(angle);
-	accy 	-=  ACCEL_GRAVITY +VISCOUS_BULLET *abs(speedy)* sin(angle);
+	accx 	= VISCOUS_BULLET* abs(speedx) * cos(angle);
+	accy 	=  ACCEL_GRAVITY -VISCOUS_BULLET *abs(speedy)* sin(angle);
 
 	speedx	+= accx * delta_t;//elapsed_time;
 	speedy	+= accy * delta_t;//elapsed_time;
