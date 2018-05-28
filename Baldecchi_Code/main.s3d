@@ -29,7 +29,7 @@ function OnInit(params) {
 	Light0.Enable();	
 	
 	window = CVmWebBrowser();
-	//window.Fullscreen(true);
+//	window.Fullscreen(true);
 	resolution = get_resolution();
 	
 	init_camera();
