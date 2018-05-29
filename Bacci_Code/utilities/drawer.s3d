@@ -1,6 +1,6 @@
 function OnDraw() {
 	if(my_startup_menu.show_menu) {
-		ShowCursor(true);
+		my_mouse.set_visible();
 		my_startup_menu.draw();
 		return;
 	}
@@ -9,12 +9,12 @@ function OnDraw() {
 	my_players.draw();
 	
 	if(my_pause_menu.show_menu) {
-		ShowCursor(true);
+		my_mouse.set_visible();
 		my_pause_menu.draw();
 		return;
 	}
 	
-	ShowCursor(false);
+	my_mouse.set_invisible();
 	my_map.draw();
 	my_player_info.draw();
 	my_score_info.draw();

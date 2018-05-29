@@ -1,7 +1,7 @@
 function OnUpdate() {
-	resolution = get_resolution();
 	my_mouse.update();
 	my_keyboard.update();
+	resolution = get_resolution();
 	
 	if(!my_pause_menu.show_menu && !my_startup_menu.show_menu)
 		update_camera();

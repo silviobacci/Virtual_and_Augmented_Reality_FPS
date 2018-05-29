@@ -11,7 +11,7 @@
    
 #define PLAYER_MASS	80
 
-#define JUMP_FORCE 12000
+#define JUMP_FORCE 30000
 #define JUMP_ANGLE 0
 
 class player{
@@ -85,12 +85,12 @@ function player::jumpD(){
 	speedx = speed;
 
 	if(speed > 0)
-		angle = 45;
+		angle = GRAD_TO_RAD * 45;
 	else
-		angle = 90;
+		angle = GRAD_TO_RAD * 90;
 		
-	accx =  JUMP_FORCE/PLAYER_MASS * cos(GRAD_TO_RAD*angle);
-	accy =  JUMP_FORCE/PLAYER_MASS* sin(GRAD_TO_RAD*angle);
+	accx =  JUMP_FORCE/PLAYER_MASS * cos(angle);
+	accy =  JUMP_FORCE/PLAYER_MASS * sin(angle) - ACCEL_GRAVITY;
 	isflying = true;
 	
 }
@@ -100,25 +100,13 @@ function player::get_position(){
 }
 
 function player::computeDynamics(){
-	
- 
-	trace(accx);
-	trace(accy);
-	trace(dx);
-	trace(dy);
-	trace(speedx);
-	trace(speedy);
-	//quanto è step by step?????
-	
-	speedx	+= accx * delta_t;//elapsed_time;
-	speedy	+= accy * delta_t;//elapsed_time;
-	
-	
+	speedx += accx * delta_t; 
+	speedy += accy * delta_t;
+		
 	dx = delta_t * speedx;
 	dy = delta_t * speedy;
 		
-	angle =GRAD_TO_RAD* atan(dy/dx);
-	trace(angle);
+	angle = atan(dy/dx);
 	position[0] += shootingDirection[0] * dx;
 	position[1] += dy;
 	position[2] += shootingDirection[2] * dx;
@@ -128,8 +116,9 @@ function player::computeDynamics(){
 		position[1] = 0;
 		resetJumpDynamics();
 	}
-	accx 	= VISCOUS_PLAYER* abs(speedx) * cos(angle);
-	accy     = -ACCEL_GRAVITY;
+	
+	accx = - VISCOUS_PLAYER / PLAYER_MASS * sqrt(speedx^2 + speedy^2) * cos(angle);
+	accy = - VISCOUS_PLAYER / PLAYER_MASS * sqrt(speedx^2 + speedy^2) * sin(angle) - ACCEL_GRAVITY ;
 }
 
 function updateAngleView(){
@@ -200,9 +189,9 @@ function player::draw(){
 }
 
 function player::turnings(){
-	if(keypressed(VK_LEFT))						
+	if(my_keyboard.is_pressed(VK_LEFT))						
 		angleY += PLAYER_ANGLE_STEP;
-	else if(keypressed(VK_RIGHT))
+	else if(my_keyboard.is_pressed(VK_RIGHT))
 		angleY -= PLAYER_ANGLE_STEP;	
 }
 
@@ -219,11 +208,11 @@ function player::updateAngle(){
 }
 
 function player::updateSpeedPosition(movingDir){
-	if(keypressed(VK_W)){
+	if(my_keyboard.is_pressed(VK_W)){
 		if(speed < PLAYER_SPEED)
 			speed += PLAYER_SPEED_STEP;
 	
-	}else if(keypressed(VK_S)){
+	}else if(my_keyboard.is_pressed(VK_S)){
 		if(speed > -PLAYER_SPEED/2)
 			speed -= 2*PLAYER_SPEED_STEP;
 			
@@ -254,14 +243,14 @@ function player::update(matrix_level){			//update on key press
 	var old_position = position;
 	var pivot = obj_player.GetPivotPoint( ); 
 
-	if(keypressed(VK_SHIFT )){
+	if(my_keyboard.is_pressed(VK_SHIFT )){
 		shoot();
 	}
-	else if(keypressed(VK_A)){						
+	else if(my_keyboard.is_pressed(VK_A)){						
 			var dir_ortho =[movingDirection[2],0,-movingDirection[0]];
 			position += PLAYER_SPEED * dir_ortho*run;	
 		}
-	else if(keypressed(VK_D)){
+	else if(my_keyboard.is_pressed(VK_D)){
 		
 		var dir_ortho =[-movingDirection[2],0,movingDirection[0]];
 		position += PLAYER_SPEED * dir_ortho*run;	
@@ -269,7 +258,7 @@ function player::update(matrix_level){			//update on key press
 		}										//player motion
 	
 	
-	if(keypressed(VK_SPACE) && !isflying){
+	if(my_keyboard.is_pressed(VK_SPACE) && !isflying){
 		//shoot();
 		jump=PI;	
 		jumpD();

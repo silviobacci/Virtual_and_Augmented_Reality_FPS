@@ -33,17 +33,28 @@ function pause_menu::init(s, h) {
 function pause_menu::update(){
 	if (my_keyboard.is_pressed(VK_ESCAPE))
 		show_menu = !show_menu;
+	
+	my_mouse.change_to_arrow();
 }
 
 function pause_menu::check_mouse_position() {
-	if(my_mouse.is_contained(continuebox))
-		show_menu = false;
+	if(my_mouse.is_contained(continuebox)) {
+		if(my_mouse.is_clicked())
+			show_menu = false;
+		return;
+	}
 
-	if(my_mouse.is_contained(helpbox))
-		help.show_menu = true;
+	if(my_mouse.is_contained(helpbox)) {
+		if(my_mouse.is_clicked())
+			help.show_menu = true;
+		return;
+	}
 
-	if(my_mouse.is_contained(exitbox))
-		exit_game(this, startup);
+	if(my_mouse.is_contained(exitbox)) {
+		if(my_mouse.is_clicked())
+			exit_game(this, startup);
+		return;
+	}
 }
 
 function pause_menu::draw() {
@@ -55,9 +66,9 @@ function pause_menu::draw() {
 		draw_text("CONTINUE", continuebox, 3);	
 		draw_text("HELP", helpbox, 0);	
 		draw_text("EXIT", exitbox, -3);
+		
+		check_mouse_position();
 	}
-	
-	check_mouse_position();
 	
 	ConsoleFinish();
 }

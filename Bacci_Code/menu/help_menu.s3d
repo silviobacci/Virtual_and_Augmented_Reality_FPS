@@ -6,21 +6,15 @@ class help_menu{
 	var show_menu;
 	
 	init();
-	update();
 	draw();
 	
-	// utility functions
 	check_mouse_position();
 	draw_commands();
 };
 
 function help_menu::check_mouse_position() {
-	if(my_mouse.is_contained(gobackbox))
-		show_menu = false;
-}
-
-function help_menu::update() {
-	check_mouse_position();
+	if(my_mouse.is_contained(gobackbox) && my_mouse.is_clicked())
+		show_menu = false;	
 }
 
 function help_menu::init() {

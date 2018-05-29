@@ -29,7 +29,6 @@ function CameraMoveMouse()
  	var deltax = Mouse.X;
 	var deltay = Mouse.Y;
 	
-	Mouse.SetStatus(0.5, 0.5);
  	SetCursorPos(0.5, 0.5);
 
 	if(deltax != 0)
@@ -86,7 +85,7 @@ function FirstPersonView(){
 }
 
 function update_camera() {
-	if(keypressed(VK_LCONTROL)){
+	if(my_keyboard.is_pressed(VK_LCONTROL)){
     	is_first = !is_first;
     	switched_view = true;
     	 meshRot_y_cumulative = 0.0;
