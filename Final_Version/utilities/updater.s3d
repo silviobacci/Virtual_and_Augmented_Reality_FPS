@@ -1,0 +1,18 @@
+function OnUpdate() {
+	my_mouse.update();
+	my_keyboard.update();
+	resolution = get_resolution();
+	
+	if(!my_pause_menu.show_menu && !my_startup_menu.show_menu)
+		update_camera();
+
+	if(!my_pause_menu.show_menu) {
+		my_players.update();
+		var players = my_players.get_player_position();
+		my_map.update(my_players.matrix_level, players);
+		my_player_info.update(players[0], 0, 0, 1000);
+	}
+	
+	if(!my_startup_menu.show_menu)
+		my_pause_menu.update();
+}

@@ -1,0 +1,134 @@
+#define WORLD_FLOOR_TILING 		30
+#define WORLD_WALL_HEIGHT 		3
+#define WORLD_SKY_HEIGHT	 	0
+#define WORLD_SUN_HEIGHT	 	45
+
+#define	WORLD_MAP_FILENAME		"level.txt"
+
+#define	WORLD_DEFAULT_DIM		1
+
+#define	WORLD_SUN_POSITION		[10.0, 20.0, 10.0]
+#define	WORLD_SUN_DIFFUSE		[255, 255, 255] / 255.0
+
+#define	WORLD_SKY_COLOR			[255, 255, 255] / 255.0
+#define	WORLD_SKY_MESH			"sky.aam"
+
+#define	WORLD_FLOOR_COLOR		[0, 255, 0] / 255.0
+#define	WORLD_FLOOR_IMAGE		"grass.jpg"
+
+#define	WORLD_WALL_COLOR		[255, 255, 255] / 255.0
+#define	WORLD_WALL_IMAGE		"bricks.png"
+
+var my_world;
+
+class world{
+	var mesh_sky;
+	var material_sky;
+	var texture_sky;
+	
+	var mesh_floor;
+	var material_floor;
+	var texture_floor;
+	
+	var mesh_wall;
+	var material_wall;
+	var texture_wall;
+	
+	var matrix;
+	var width;
+	var height;
+	
+	var array_wall;
+	
+	init();
+	draw();
+	
+	create_map();
+	create_sun();
+	create_sky();
+	create_floor();
+	create_wall(height_scale);
+};
+
+function world::create_map() {
+	var array_matrix = LoadFile(WORLD_MAP_FILENAME);
+	height = len(array_matrix) - 1;
+	width = len(array_matrix[0]);
+	
+	array_wall = array(0);
+	
+	matrix = array(height);
+	
+	for (var i = 0; i < height; i++){
+		matrix[i] = array(width);
+
+		for (var j = 0; j < width; j++){
+			matrix[i][j] = val(array_matrix[i][j]);
+
+			if(matrix[i][j] > 0){
+				create_wall(matrix[i][j]);
+				var wall = CVmObj(mesh_wall);
+				wall.SetPosition(j, 0, i);
+				
+				aadd(array_wall, wall);	
+			}
+		}
+	}
+}
+
+function world::create_sun() {
+	var sun = CVmLight();
+	sun.SetPosition([width / 2.0, WORLD_SUN_HEIGHT, height / 2.0]);
+	sun.SetDiffuse(1, 1, 1);
+	sun.Enable();
+}
+
+function world::create_sky() {
+	mesh_sky = CVmNewMesh(WORLD_SKY_MESH);
+	mesh_sky.translate(width / 2.0, WORLD_SKY_HEIGHT, height / 2.0);
+}
+
+function world::create_floor() {
+	mesh_floor = CVmNewMesh(VRP_BOX);
+	mesh_floor.scale(width, WORLD_DEFAULT_DIM, height);
+	mesh_floor.translate(0, -WORLD_DEFAULT_DIM, 0);
+	
+	material_floor = CVmMaterial();
+	material_floor.diffuse = WORLD_FLOOR_COLOR;
+	material_floor.ChangeTextureParams(VR_U_TILING, WORLD_FLOOR_TILING);
+	material_floor.ChangeTextureParams(VR_V_TILING, WORLD_FLOOR_TILING);
+	
+	texture_floor = CVmTexture(WORLD_FLOOR_IMAGE);
+	
+	material_floor.SetTexture(texture_floor);
+	mesh_floor.ForceMaterial(material_floor);
+}
+
+function world::create_wall(height_scale) {
+	mesh_wall = CVmNewMesh(VRP_BOX);
+	mesh_wall.scale(WORLD_DEFAULT_DIM, WORLD_WALL_HEIGHT * height_scale, WORLD_DEFAULT_DIM);
+	
+	material_wall = CVmMaterial();
+	material_wall.diffuse = WORLD_WALL_COLOR; 
+	material_wall.ChangeTextureParams(VR_V_TILING, WORLD_WALL_HEIGHT);
+	
+	texture_wall = CVmTexture(WORLD_WALL_IMAGE);
+	
+	material_wall.SetTexture(texture_wall);
+	mesh_wall.ForceMaterial(material_wall);
+}
+
+function world::init(){
+	create_map();
+	create_sun();
+	create_sky();
+	create_floor();
+}
+
+function world::draw(){
+	mesh_sky.draw();
+	mesh_floor.draw();
+	
+	foreach (var wall in array_wall)
+		wall.draw();
+}

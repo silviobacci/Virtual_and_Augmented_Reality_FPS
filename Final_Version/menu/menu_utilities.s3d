@@ -1,0 +1,77 @@
+#define MENU_TITLE_FONT_SIZE			30
+#define MENU_TEXT_FONT_SIZE			20
+#define MENU_COMMAND_FONT_SIZE		10
+
+#define PT_TO_PX				96.0 / 72.0
+#define ASPECT_RATIO			0.415f
+
+#define MENU_BACKGROUND_COLOR		[244, 225, 174] / 255.0
+#define MENU_BOX_COLOR				[139, 63, 51] / 255.0
+#define MENU_TEXT_COLOR				[255, 255, 255] / 255.0
+
+function create_box(w, h, x, y) {
+	var box = array(4);
+	box[0] = w;
+	box[1] = h;
+	box[2] = x;
+	box[3] = y;
+	return box;
+}
+
+function copy_box(to_copy) {
+	return create_box(to_copy[0], to_copy[1], to_copy[2], to_copy[3]);
+}
+
+function fontsize_to_boxsize(fontsize, text_len) {
+	var font_h = fontsize * PT_TO_PX;
+	var font_w = font_h * ASPECT_RATIO;
+	
+	var dim_h = font_h / window_h;
+	var dim_w = font_w / window_w;
+	
+	var boxsize = array(2);
+	boxsize[0] = text_len * dim_w;
+	boxsize[1] = dim_h / 2;
+	
+	return boxsize;
+}
+
+function draw_box(box, text, fontsize) {
+	ConsoleColor(MENU_BOX_COLOR);
+	ConsoleFilledRect(box[0] - box[2] / 2.0, box[1] + box[3] / 2.0, box[2], box[3]);
+	
+	fontsize = ceil(fontsize * resolution);
+	var boxsize = fontsize_to_boxsize(fontsize, len(text));
+	
+	ConsoleColor(MENU_TEXT_COLOR);
+	ConsoleFont("Consolas",  fontsize);
+	ConsoleText(box[0] - boxsize[0] / 2.0, box[1] - boxsize[1] / 2.0, text);
+}
+
+function draw_title(box, displacement) {
+	box[1]  = 0.5 + displacement * box[3];
+	
+	draw_box(box, "First Person Shooter", MENU_TITLE_FONT_SIZE);
+}
+
+function draw_text(text, box, displacement) {
+	box[1]  = 0.5 + displacement * box[3];
+	
+	draw_box(box, text, MENU_TEXT_FONT_SIZE);
+}
+
+function draw_command(text, box, displacement) {
+	box[1]  = 0.5 + displacement * box[3];
+	
+	draw_box(box, text, MENU_COMMAND_FONT_SIZE);
+}
+
+function draw_background(box) {
+	ConsoleColor(MENU_BACKGROUND_COLOR);
+	ConsoleFilledRect(box[0], box[1], box[2], box[3]);
+}
+
+function draw_placeholder(box) {
+	ConsoleColor(MENU_BOX_COLOR);
+	ConsoleFilledRect(box[0], box[1], box[2], box[3]);
+}

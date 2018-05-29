@@ -1,0 +1,68 @@
+var my_startup_menu;
+
+class startup_menu{
+	var titlebox;
+	var playbox;
+	var helpbox;
+	var quitbox;
+	
+	var show_menu;
+	
+	var help;
+	
+	init(h);
+	draw();
+	
+	// utility functions
+	check_mouse_position();
+};
+
+function startup_menu::init(h) {
+	titlebox = create_box(0.5, 0.5, 0.5, 0.1);
+	
+	var box = create_box(0.5, 0.5, 0.1, 0.05);
+	playbox = copy_box(box);
+	helpbox = copy_box(box);
+	quitbox = copy_box(box);
+	
+	help = h;
+	
+	show_menu = true;
+}
+
+function startup_menu::check_mouse_position() {
+	if(my_mouse.is_contained(playbox)) {
+		if(my_mouse.is_clicked())
+			show_menu = false;	
+		return;
+	}
+
+	if(my_mouse.is_contained(helpbox)) {
+		if(my_mouse.is_clicked())
+			help.show_menu = true;
+		return;
+	}
+
+	if(my_mouse.is_contained(quitbox)) {
+		if(my_mouse.is_clicked())
+			quit_game();
+		return;
+	}
+}
+
+function startup_menu::draw() {
+	draw_background([0, 1, 1, 1]);	
+	
+	if(help.show_menu)
+		help.draw();
+	else {
+		draw_title(titlebox, 2);
+		draw_text("PLAY", playbox, 0);	
+		draw_text("HELP", helpbox, -3);	
+		draw_text("QUIT", quitbox, -6);	
+		
+		check_mouse_position();
+	}
+	
+	ConsoleFinish();
+}

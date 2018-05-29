@@ -1,0 +1,94 @@
+#define TIME_DELAY_MOUSE	300
+
+var my_mouse;
+
+class mouse_manager {
+	var old_time;
+	var clickable;
+	var cursor_shape;
+	var visible;
+	
+	init();
+	update();
+	
+	is_clicked();
+	is_contained(box);
+	
+	change_to_hand();
+	change_to_arrow();
+	set_visible();
+	set_invisible();
+};
+
+function mouse_manager::init() {
+	cursor_shape = VR_CUR_ARROW;
+	visible = true;
+	clickable = true;
+	old_time = 0;
+}
+
+function mouse_manager::update() {
+	ShowCursor(visible);
+	SetCursorShape(cursor_shape);
+	
+	if(getTime() - old_time < TIME_DELAY_MOUSE)
+		return;
+	
+	if(mouse.ButtonL) {
+		clickable = true;
+		old_time = getTime();
+	}
+}
+
+function mouse_manager::change_to_hand() {
+	if(cursor_shape == VR_CUR_HAND)
+		return;
+		
+	cursor_shape = VR_CUR_HAND;
+}
+
+function mouse_manager::change_to_arrow() {
+	if(cursor_shape == VR_CUR_ARROW)
+		return;
+		
+	cursor_shape = VR_CUR_ARROW;
+}
+
+function mouse_manager::set_visible() {
+	if(visible)
+		return;
+		
+	visible = true;
+}
+
+function mouse_manager::set_invisible() {
+	if(!visible)
+		return;
+		
+	visible = false;
+}
+
+function mouse_manager::is_clicked() {
+	if(!clickable)
+		return false;
+		
+	if(mouse.ButtonL) {
+		clickable = false;
+		return true;	
+	}
+	
+	return false;
+}
+
+function mouse_manager::is_contained(box) {
+	var mouse_x = mouse.X / window_w;
+	var mouse_y = 1 - mouse.Y / window_h;
+	
+	if(!(mouse_x >= box[0] - box[2] / 2.0 && mouse_x <= box[0] + box[2] / 2.0 && mouse_y >= box[1] - box[3] / 2.0 && mouse_y <= box[1] + box[3] / 2.0)) {
+		cursor_shape = VR_CUR_ARROW;
+		return false;	
+	}
+	
+	cursor_shape = VR_CUR_HAND;
+	return true;
+}

@@ -1,0 +1,286 @@
+#define PLAYER_SPEED 		0.07
+#define PLAYER_SPEED_STEP 	0.001
+#define PLAYER_ANGLE_STEP 	0.01
+#define SWAT_START_WALK 	16
+#define SWAT_END_WALK 		48
+#define SWAT_TOTAL_FRAMES 	32
+#define SWAT_FRAME_STEP 	0.35
+#define CLIP_SIZE 			500
+#define PLAYER_RADIUS		30
+#define VISCOUS_PLAYER 		6* PI* VISCOSITY_COEFF * PLAYER_RADIUS  / PLAYER_MASS
+#define PLAYER_MASS			80
+#define JUMP_FORCE 			15000
+#define JUMP_ANGLE 			0
+
+class player{
+	//Player-related 
+	var mesh_player_lower;
+	var mesh_player_upper;
+	var mesh_gun;
+	
+	var obj_player_lower;
+	var obj_player_upper;
+	var obj_gun;
+	var obj_player;
+	
+	var position;
+	var angleY;
+	var angleView;
+	var movingDirection;
+	var shootingDirection;
+	var current_frame; 
+	var id;
+	var color;
+	var my_bullet; 
+	var fx_shoot;
+	var jump; 
+	var bullets;
+	var speed;
+	
+	//jump related 
+	var isflying;
+	var elapsed_time;
+	var dx;
+	var dy;
+	var accx;
+	var accy;
+	var speedx;
+	var speedy; 
+	var angle;
+	var delta_t;
+	
+	//Player-associated
+	var CurrentWeapon; 
+	
+	init(i,c,p);
+	draw();
+	update(matrix_level);
+	turnings();
+	movement(run);
+	check_Collision(matrix_level);
+	shoot(p,d);
+	jump_check();
+	updateAngle();
+	updateAngleView();
+	get_position();
+	jumpD();
+	computeDynamics();
+	resetJumpDynamics();
+	updateSpeedPosition(movingDir);
+	
+};
+
+function player::resetJumpDynamics(){
+	accx =0.0;
+	accy=0.0;
+	speedx = 0.0;
+	speedy = 0.0;
+	dx = 0.0;
+	dy = 0.0;
+}
+
+function player::jumpD(){	
+	speedx = speed;
+
+	if(speed > 0)
+		angle = GRAD_TO_RAD * 45;
+	else
+		angle = GRAD_TO_RAD * 90;
+		
+	accx =  JUMP_FORCE/PLAYER_MASS * cos(angle);
+	accy =  JUMP_FORCE/PLAYER_MASS * sin(angle) - ACCEL_GRAVITY;
+	isflying = true;
+	
+}
+
+function player::get_position(){
+	return obj_player.GetPosition();
+}
+
+function player::computeDynamics(){
+	speedx += accx * delta_t; 
+	speedy += accy * delta_t;
+		
+	dx = delta_t * speedx;
+	dy = delta_t * speedy;
+		
+	angle = atan(dy/dx);
+	position[0] += shootingDirection[0] * dx;
+	position[1] += dy;
+	position[2] += shootingDirection[2] * dx;
+	
+	if(position[1] <= 0){
+			isflying = false; 
+		position[1] = 0;
+		resetJumpDynamics();
+	}
+	
+	accx = - VISCOUS_PLAYER / PLAYER_MASS * sqrt(speedx^2 + speedy^2) * cos(angle);
+	accy = - VISCOUS_PLAYER / PLAYER_MASS * sqrt(speedx^2 + speedy^2) * sin(angle) - ACCEL_GRAVITY ;
+}
+
+function updateAngleView(){
+	
+}
+
+function player::shoot(p,d){
+	if(bullets > 0){
+		my_bullet[bullets-1].shoot(position, shootingDirection);
+		bullets--;
+		
+	}
+	//fx_shoot.setposition(position);
+	//fx_shoot.setlistenerposition(cameragetposition());
+	//fx_shoot.setlistenerorientation(-cameragetdirection());
+	//fx_shoot.play();
+}
+
+function player::init(i,c,p){
+	fx_shoot = CVmVRAWav("shoot.wav",true);    //the second param is to enable 3d sound effect
+	position= p;
+	speed= 0.0;
+	angleY = 0;
+	angleView = 0;
+	movingDirection = [sin(angleY), 0 , cos(angleY)]; 
+	shootingDirection = movingDirection;
+	id=i;
+	color=c;
+	bullets= CLIP_SIZE ;
+	
+	delta_t = 1.0/FRAME_SECOND;
+	isflying = false;
+	elapsed_time = 0.0; 
+	
+	color=c;
+	speedx = 0.0;
+	speedy = 0.0;
+	dx = 0.0; 
+	dy = 0.0;
+
+    initPlayerMeshes(&mesh_player_upper,&mesh_player_lower, &mesh_gun,color);
+	obj_gun = CVmObj(mesh_gun);
+
+	obj_player_upper = CVmObj(mesh_player_upper);			//player's object
+	obj_player_lower = CVmObj(mesh_player_lower);
+	obj_player = CVmObj();
+	
+	obj_player.AddChild(obj_player_lower);						//objects hierarchy
+	obj_player.AddChild(obj_player_upper);
+	obj_player_upper.AddChild(obj_gun);
+	obj_player_upper.setPivotPoint(0,0,0);
+	obj_player.setposition(position);
+	
+	my_bullet= array( CLIP_SIZE );
+	for(var i=0; i < bullets; i++){
+		var b = bullet();
+	    b.init(position,shootingDirection,color);			//pos e dir actully not neebuded
+	   my_bullet[i] = b;
+	}
+	current_frame= 0;										//player's movement
+	jump=0;
+}
+
+function player::draw(){											
+	obj_player.Draw(VR_FRAMENUMBER, SWAT_START_WALK+current_frame);
+	foreach(var b in my_bullet)
+		b.draw();
+}
+
+function player::turnings(){
+	if(my_keyboard.is_pressed(VK_LEFT))						
+		angleY += PLAYER_ANGLE_STEP;
+	else if(my_keyboard.is_pressed(VK_RIGHT))
+		angleY -= PLAYER_ANGLE_STEP;	
+}
+
+function player::check_Collision(block){
+		
+}
+
+function player::movement(run){
+	
+}
+
+function player::updateAngle(){
+	angleY = asin(movingDirection[0]);
+}
+
+function player::updateSpeedPosition(movingDir){
+	if(my_keyboard.is_pressed(VK_W)){
+		if(speed < PLAYER_SPEED)
+			speed += PLAYER_SPEED_STEP;
+	
+	}else if(my_keyboard.is_pressed(VK_S)){
+		if(speed > -PLAYER_SPEED/2)
+			speed -= 2*PLAYER_SPEED_STEP;
+			
+		
+	
+	}else if(speed > 0)
+		speed -= PLAYER_SPEED_STEP;
+	else if(speed < 0)
+		speed += PLAYER_SPEED_STEP;
+		
+	if(abs(speed) < 0.001)
+		speed = 0;
+	
+	if(speed > 0)
+		current_frame = (current_frame +SWAT_FRAME_STEP*(0.95+speed))%SWAT_TOTAL_FRAMES;
+	else if (speed < 0){
+		current_frame = (current_frame -SWAT_FRAME_STEP*(0.95+speed))%SWAT_TOTAL_FRAMES;
+		if(current_frame <= 0)
+			current_frame += SWAT_TOTAL_FRAMES;
+	}	
+
+	position += speed * movingDir ;
+}
+
+function player::update(matrix_level){			//update on key press
+	var run=1; 
+	var movingDir = [movingDirection[0],0,movingDirection[2]];
+	var old_position = position;
+	var pivot = obj_player.GetPivotPoint( ); 
+
+	if(my_keyboard.is_pressed(VK_SHIFT )){
+		shoot();
+	}
+	else if(my_keyboard.is_pressed(VK_A)){						
+			var dir_ortho =[movingDirection[2],0,-movingDirection[0]];
+			position += PLAYER_SPEED * dir_ortho*run;	
+		}
+	else if(my_keyboard.is_pressed(VK_D)){
+		
+		var dir_ortho =[-movingDirection[2],0,movingDirection[0]];
+		position += PLAYER_SPEED * dir_ortho*run;	
+
+		}										//player motion
+	
+	
+	if(my_keyboard.is_pressed(VK_SPACE) && !isflying){
+		//shoot();
+		jump=PI;	
+		jumpD();
+	}
+	
+	if(!isflying)
+		updateSpeedPosition(movingDir);
+	if(isflying)
+		computeDynamics();
+
+	var intx = int(position.x);
+	var intz = int(position.z);
+	
+	
+	if(matrix_level[intz][intx] == 1)
+		position = old_position;	
+
+
+	obj_player.setposition(position);			//obj updating
+	
+	//obj_player.setRotation(RAD_TO_GRAD * angleY, [0,1,0]);
+	
+	foreach (var i in my_bullet)
+		i.update();
+	
+		
+}

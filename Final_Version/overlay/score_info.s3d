@@ -1,0 +1,136 @@
+#define SCORE_BOX_WIDTH			0.15
+
+#define SCORE_START_POINT_X		0.01
+
+#define SCORE_FONT_SIZE			10
+
+#define SCORE_COLOR				[244, 225, 174] / 255.0
+#define SCORE_BOX_COLOR			[139, 63, 51] / 255.0
+#define SCORE_TEXT_COLOR		[255, 255, 255] / 255.0
+
+#define MAX_VISIBLE_SCORES		4
+
+var my_score_info;
+
+class score_info{
+	var players;
+	var scores;
+	var box;
+	var box_x;
+	var box_y;
+	var box_w;
+	var box_h;
+	
+	init();
+	
+	add_score(player_id, score);
+	update(player_id, score);
+	
+	get_inside();
+	get_inside_text(displacement);
+	draw_score_box();
+	draw_score_title();
+	draw_score();
+	draw();
+};
+
+function score_info::init() {
+	players = array(0);
+	scores = array(0);
+}
+
+function score_info::add_score(player_id, score) {
+	var index = -1;
+	var n_players = len(players);
+	var new_scores = array(n_players + 1);
+	var new_players = array(n_players + 1);
+	
+	for(var i = len(scores) - 1; i >= 0; i--)
+		if(scores[i] > score) {
+			index = i;
+			break;
+		}
+		
+	index += 1;
+	
+	for(var i = len(new_scores) - 1; i >= 0; i--)
+		if(i > index) {
+			new_scores[i] = scores[i - 1];
+			new_players[i] = players[i - 1];	
+		}	
+		else if(i < index) {
+			new_scores[i] = scores[i];
+			new_players[i] = players[i];	
+		}
+		else {
+			new_scores[i] = score;
+			new_players[i] = player_id;
+		}	
+	
+	scores = new_scores;
+	players = new_players;		
+}
+
+function score_info::update(player_id, score) {
+	for(var i = 0; i < len(players); i++)
+		if(players[i] == player_id) {
+			adel(players, i);
+			adel(scores, i);
+			break;
+		}
+		
+	add_score(player_id, score);
+}
+
+function score_info::get_inside() {
+	var tmp_box = array(4);
+	tmp_box[0] = box[0] + box[2] * 0.05; 
+	tmp_box[1] = box[1] - box[3] * 0.05; 
+	tmp_box[2] = box[2] * 0.9; 
+	tmp_box[3] = box[3] * 0.9;
+	
+	return tmp_box;
+}
+
+function score_info::get_inside_text(displacement) {
+	var tmp_box = get_inside(box);
+	tmp_box[0] += tmp_box[2] / 2.0; 
+	tmp_box[1] -= tmp_box[3] / 2.0 - displacement * 0.01; 
+	tmp_box[3] = 0.01;
+	
+	return tmp_box;
+}
+	
+function  score_info::draw_score_box() {
+	ConsoleColor(SCORE_COLOR);
+	ConsoleFilledRect(box[0], box[1], box[2], box[3]);
+	ConsoleColor(SCORE_BOX_COLOR);
+	var tmp_box = get_inside();
+	ConsoleFilledRect(tmp_box[0], tmp_box[1], tmp_box[2], tmp_box[3]);
+}
+
+function  score_info::draw_score_title() {
+	var tmp_box = get_inside_text(8);
+	draw_box(tmp_box, "BEST SCORES", SCORE_FONT_SIZE);
+}
+
+function  score_info::draw_score() {
+	var tmp_box;
+	
+	var min = len(players) < MAX_VISIBLE_SCORES ? len(players) : MAX_VISIBLE_SCORES;
+	
+	for(var i = 0; i < min; i++) {
+		tmp_box = get_inside_text(4 - 4 * i);
+		draw_box(tmp_box, str(i + 1) + ") PLAYER " + str(players[i]) + ": " + str(scores[i]), SCORE_FONT_SIZE);
+	}
+}
+
+function score_info::draw() {
+	box_x = 1 - SCORE_START_POINT_X - SCORE_BOX_WIDTH;
+	box_y = 1 - SCORE_START_POINT_X * resolution;
+	box = [box_x, box_y, SCORE_BOX_WIDTH, SCORE_BOX_WIDTH * resolution];
+	draw_score_box();
+	draw_score_title();
+	draw_score();
+	ConsoleFinish();
+}

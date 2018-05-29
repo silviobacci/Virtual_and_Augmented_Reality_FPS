@@ -1,0 +1,78 @@
+#define MAP_UNIT_SIZE			0.003
+
+#define MAP_START_POINT_X		0.01
+
+#define GROUND_COLOR			[244, 225, 174] / 255.0
+#define WALL_COLOR				[139, 63, 51] / 255.0
+#define PLAYER_COLOR			[255, 255, 255] / 255.0
+
+var my_map;
+
+class map{
+	var matrix_level;
+	var players_position;
+	var rows;
+	var columns;
+	var map_position_x;
+	var map_position_y;
+	var width;
+	var height;
+	
+	draw();
+	update(ml, pp);
+	
+	draw_rect(to_draw_x, to_draw_y, height, offset_x, offeset_y);
+	draw_wall();
+	draw_player();
+	draw_ground(x, y, w, h);
+};
+
+function map::update(ml, pp) {
+	matrix_level = ml;
+	players_position = pp;
+	
+	rows = len(matrix_level);
+	columns = len(matrix_level[0]);
+	
+	width = columns * MAP_UNIT_SIZE;
+	height = rows * MAP_UNIT_SIZE * resolution;
+	
+	map_position_x = MAP_START_POINT_X;
+	map_position_y = 1 - MAP_START_POINT_X * resolution;
+}
+
+function map::draw_rect(to_draw_x, to_draw_y, height, offset_x, offeset_y) {
+	var w = MAP_UNIT_SIZE;
+	var h = MAP_UNIT_SIZE * resolution;
+	var x = map_position_x + w * to_draw_x - offset_x;
+	var y = map_position_y - h * to_draw_y + offeset_y;
+	
+	ConsoleFilledRect(x, y, w, h);
+}
+
+function map::draw_wall() {
+	ConsoleColor(WALL_COLOR);
+	for(var i = 0; i < rows; i++)
+		for(var j = 0; j < columns; j++)
+			if(matrix_level[i][j] > 0)
+				draw_rect(j, i, height, 0, 0);
+}
+
+function map::draw_player() {
+	ConsoleColor(PLAYER_COLOR);
+	
+	for(var i = 0; i < len(players_position); i++)
+		draw_rect(players_position[i][0] - MAP_UNIT_SIZE / 2.0, players_position[i][2] + MAP_UNIT_SIZE / 2.0, height, 0.5 * MAP_UNIT_SIZE, 1.5 * MAP_UNIT_SIZE);
+}
+
+function map::draw_ground(x, y, w, h) {
+	ConsoleColor(GROUND_COLOR);
+	ConsoleFilledRect(x, y, w, h);
+}
+
+function map::draw() {
+	draw_ground(map_position_x, map_position_y, width, height);
+	draw_wall(matrix_level, rows, columns, height);
+	draw_player(players_position, height);		
+	ConsoleFinish();
+}

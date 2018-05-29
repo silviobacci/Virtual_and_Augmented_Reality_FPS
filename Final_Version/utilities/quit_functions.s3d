@@ -1,0 +1,9 @@
+function quit_game() {
+	window.Fullscreen(false);
+	window.Quit();
+}
+
+function exit_game(pause, startup) {
+	pause.show_menu = false;
+	startup.show_menu = true;
+}

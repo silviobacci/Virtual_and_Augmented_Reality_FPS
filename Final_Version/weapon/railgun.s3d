@@ -1,0 +1,37 @@
+#define BULLETS_NUMBER 		1000
+
+class railgun {
+	var bullets;
+	var fx_shoot;
+};
+
+function railgun::init(position, shootingDirection, color){
+	fx_shoot = CVmVRAWav("shoot.wav",true);
+	add_bullets(BULLETS_NUMBER);
+}
+
+function railgun::add_bullets(to_add){
+	var bullets_left = 0;
+	if(bullets != void)
+		bullets_left = len(bullets);
+	
+	bullets = array(bullets_left + to_add);
+	for(var i = 0; i < len(bullets); i++){
+		var b = bullet();
+		b.init(position, shootingDirection, color);
+		bullets[i] = b;
+	}
+}
+
+function railgun::shoot(p, d){
+	if(len(bullets) > 0){
+		bullets[0].shoot(p, d);
+		adel(bullets, 0);
+	}
+	
+	fx_shoot.setposition(p);
+	fx_shoot.setlistenerposition(CameraGetCurrent().GetPostion());
+	fx_shoot.setlistenerorientation(-CameraGetCurrent().GetDirection());
+	fx_shoot.play();
+}
+

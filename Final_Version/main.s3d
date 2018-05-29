@@ -1,0 +1,40 @@
+#include <Script3d.h>
+#include <Camera.s3d.h>
+#include "utilities/includes.s3d"
+
+SET SCENE_FOV  = 60;
+SET SCENE_NEAR = 0.5;
+SET SCENE_FAR  = 1000;
+SET AUDIO_OPENAL = 1;
+
+function OnDownload() {
+	FileDownload("XVRResources.zip");
+}
+
+function OnInit(params) {
+	init();
+}
+
+function OnFrame() {
+	OnUpdate();
+	
+	//OnSend();
+	
+	SceneBegin();
+   	
+   	OnDraw();
+
+	SceneEnd();
+}
+
+function DownloadReady(RequestID) {}
+
+function OnTimer() {
+	//OnReceive();
+}
+
+function OnEvent(eventID, wparam, lparam) {}
+
+function OnError() {}
+
+function OnExit() {}

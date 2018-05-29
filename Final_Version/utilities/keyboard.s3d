@@ -1,0 +1,104 @@
+#define BUTTON_NUMBER			10
+
+#define TIME_DELAY_KEYBOARD		100
+
+#define VK_W 					"w"
+#define VK_A 					"a"
+#define VK_S 					"s"
+#define VK_D 					"d"
+
+var my_keyboard;
+
+class keyboard_manager {
+	var key_pressed;
+	var old_times;
+	
+	init();
+	is_free(index);
+	index_to_key(index);
+	check_if_pressed(index);
+	update();
+	
+	is_pressed(key);
+};
+
+function keyboard_manager::init() {
+	old_times = array(BUTTON_NUMBER);
+	for(var i = 0; i < len(old_times); i++)
+		old_times[i] = 0;
+}
+
+function keyboard_manager::is_free(index) {
+	switch(index) {
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+		case 8:
+		case 9:
+			return true;
+		default:
+			return false;
+	}
+}
+
+function keyboard_manager::index_to_key(index) {
+	switch(index) {
+		case 0:
+			return VK_SHIFT;
+		case 1:
+			return VK_LCONTROL;
+		case 2:
+			return VK_W;
+		case 3:
+			return VK_A;
+		case 4:
+			return VK_S;
+		case 5:
+			return VK_D;
+		case 6:
+			return VK_ESCAPE;
+		case 7:
+			return VK_SPACE;
+		case 8:
+			return VK_LEFT;
+		case 9:
+			return VK_RIGHT;
+	}
+}
+
+function keyboard_manager::check_if_pressed(index) {
+	if(!keypressed(index_to_key(index)))
+		return false;
+		
+	if(is_free(index))
+		return true;
+	
+	if(getTime() - old_times[index] < TIME_DELAY_KEYBOARD)
+		return false;
+		
+	old_times[index] = getTime();
+	return true;
+}
+
+function keyboard_manager::update() {
+	key_pressed = array(0);
+	
+	for(var i = 0; i < BUTTON_NUMBER; i++)
+		if(check_if_pressed(i))
+			aadd(key_pressed, index_to_key(i));
+}
+
+function keyboard_manager::is_pressed(key) {
+	foreach(var pressed in key_pressed) {
+		if(valtype(key) == "S")
+			key = asc(key);
+			
+		if(valtype(pressed) == "S")
+			pressed = asc(pressed);
+			
+		if(key == pressed)
+				return true;
+	}
+	return false;
+}
