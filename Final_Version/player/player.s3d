@@ -24,21 +24,15 @@ class player{
 	var obj_player;
 	
 	var position;
-	var angleY;
-	var angleView;
-	var movingDirection;
-	var shootingDirection;
+	var angle_direction;
+	var moving_direction;
 	var current_frame; 
 	var id;
 	var color;
-	var my_bullet; 
-	var fx_shoot;
-	var jump; 
-	var bullets;
 	var speed;
 	
 	//jump related 
-	var isflying;
+	var isjumping;
 	var elapsed_time;
 	var dx;
 	var dy;
@@ -50,36 +44,89 @@ class player{
 	var delta_t;
 	
 	//Player-associated
-	var CurrentWeapon; 
+	var my_railgun; 
 	
 	init(i,c,p);
-	draw();
-	update(matrix_level);
-	turnings();
-	movement(run);
-	check_Collision(matrix_level);
-	shoot(p,d);
-	jump_check();
-	updateAngle();
-	updateAngleView();
-	get_position();
-	jumpD();
-	computeDynamics();
-	resetJumpDynamics();
-	updateSpeedPosition(movingDir);
+	init_meshes();
 	
+	get_position();
+	
+	shoot();
+	init_jump_dynamic();
+	update_jump_dynamics();
+	resetJumpDynamics();
+	check_collision();
+	update_speed_position();
+	turnings();
+	update(matrix_level);
+	
+	draw();
 };
 
+function player::init_meshes(){
+	mesh_player_lower = CVmNewMesh("swat_lower.aam");
+	mesh_player_lower.ModulateMaterials(color);
+	var sf1 =mesh_player_lower.Normalize(1);
+	
+	mesh_player_upper = CVmNewMesh("swat_upper.aam"); 
+	mesh_player_upper.ModulateMaterials(color);
+	mesh_player_upper.scale(sf1);
+	
+	
+	mesh_gun = CVmNewMesh("rocketl.aam");
+	mesh_gun.scale(sf1);	
+}
+
+function player::init(i, c, p){
+	position = p;
+	speed= 0.0;
+	angle_direction = 0;
+	moving_direction = [sin(angle_direction), 0 , cos(angle_direction)]; 
+	id = i;
+	color = c;
+	
+	delta_t = 1.0 / FRAME_SECOND;
+	isjumping = false;
+	elapsed_time = 0.0; 
+	
+	speedx = 0.0;
+	speedy = 0.0;
+	dx = 0.0; 
+	dy = 0.0;
+
+    init_meshes();
+	obj_gun = CVmObj(mesh_gun);
+
+	obj_player_upper = CVmObj(mesh_player_upper);
+	obj_player_lower = CVmObj(mesh_player_lower);
+	obj_player = CVmObj();
+	
+	obj_player.AddChild(obj_player_lower);
+	obj_player.AddChild(obj_player_upper);
+	obj_player_upper.AddChild(obj_gun);
+	obj_player_upper.setPivotPoint(0,0,0);
+	obj_player.setposition(position);
+	
+	my_railgun = railgun();
+	my_railgun.init(position, moving_direction, color);
+	
+	current_frame = 0;
+}
+
+function player::get_position(){
+	return obj_player.GetPosition();
+}
+
 function player::resetJumpDynamics(){
-	accx =0.0;
-	accy=0.0;
+	accx = 0.0;
+	accy = 0.0;
 	speedx = 0.0;
 	speedy = 0.0;
 	dx = 0.0;
 	dy = 0.0;
 }
 
-function player::jumpD(){	
+function player::init_jump_dynamic(){	
 	speedx = speed;
 
 	if(speed > 0)
@@ -89,15 +136,11 @@ function player::jumpD(){
 		
 	accx =  JUMP_FORCE/PLAYER_MASS * cos(angle);
 	accy =  JUMP_FORCE/PLAYER_MASS * sin(angle) - ACCEL_GRAVITY;
-	isflying = true;
+	isjumping = true;
 	
 }
 
-function player::get_position(){
-	return obj_player.GetPosition();
-}
-
-function player::computeDynamics(){
+function player::update_jump_dynamics(){
 	speedx += accx * delta_t; 
 	speedy += accy * delta_t;
 		
@@ -105,12 +148,12 @@ function player::computeDynamics(){
 	dy = delta_t * speedy;
 		
 	angle = atan(dy/dx);
-	position[0] += shootingDirection[0] * dx;
+	position[0] += moving_direction[0] * dx;
 	position[1] += dy;
-	position[2] += shootingDirection[2] * dx;
+	position[2] += moving_direction[2] * dx;
 	
 	if(position[1] <= 0){
-			isflying = false; 
+			isjumping = false; 
 		position[1] = 0;
 		resetJumpDynamics();
 	}
@@ -119,104 +162,54 @@ function player::computeDynamics(){
 	accy = - VISCOUS_PLAYER / PLAYER_MASS * sqrt(speedx^2 + speedy^2) * sin(angle) - ACCEL_GRAVITY ;
 }
 
-function updateAngleView(){
-	
-}
-
-function player::shoot(p,d){
-	if(bullets > 0){
-		my_bullet[bullets-1].shoot(position, shootingDirection);
-		bullets--;
-		
-	}
-	//fx_shoot.setposition(position);
-	//fx_shoot.setlistenerposition(cameragetposition());
-	//fx_shoot.setlistenerorientation(-cameragetdirection());
-	//fx_shoot.play();
-}
-
-function player::init(i,c,p){
-	fx_shoot = CVmVRAWav("shoot.wav",true);    //the second param is to enable 3d sound effect
-	position= p;
-	speed= 0.0;
-	angleY = 0;
-	angleView = 0;
-	movingDirection = [sin(angleY), 0 , cos(angleY)]; 
-	shootingDirection = movingDirection;
-	id=i;
-	color=c;
-	bullets= CLIP_SIZE ;
-	
-	delta_t = 1.0/FRAME_SECOND;
-	isflying = false;
-	elapsed_time = 0.0; 
-	
-	color=c;
-	speedx = 0.0;
-	speedy = 0.0;
-	dx = 0.0; 
-	dy = 0.0;
-
-    initPlayerMeshes(&mesh_player_upper,&mesh_player_lower, &mesh_gun,color);
-	obj_gun = CVmObj(mesh_gun);
-
-	obj_player_upper = CVmObj(mesh_player_upper);			//player's object
-	obj_player_lower = CVmObj(mesh_player_lower);
-	obj_player = CVmObj();
-	
-	obj_player.AddChild(obj_player_lower);						//objects hierarchy
-	obj_player.AddChild(obj_player_upper);
-	obj_player_upper.AddChild(obj_gun);
-	obj_player_upper.setPivotPoint(0,0,0);
-	obj_player.setposition(position);
-	
-	my_bullet= array( CLIP_SIZE );
-	for(var i=0; i < bullets; i++){
-		var b = bullet();
-	    b.init(position,shootingDirection,color);			//pos e dir actully not neebuded
-	   my_bullet[i] = b;
-	}
-	current_frame= 0;										//player's movement
-	jump=0;
-}
-
-function player::draw(){											
-	obj_player.Draw(VR_FRAMENUMBER, SWAT_START_WALK+current_frame);
-	foreach(var b in my_bullet)
-		b.draw();
+function player::shoot(){
+	my_railgun.shoot(position, moving_direction);
 }
 
 function player::turnings(){
 	if(my_keyboard.is_pressed(VK_LEFT))						
-		angleY += PLAYER_ANGLE_STEP;
+		angle_direction += PLAYER_ANGLE_STEP;
 	else if(my_keyboard.is_pressed(VK_RIGHT))
-		angleY -= PLAYER_ANGLE_STEP;	
+		angle_direction -= PLAYER_ANGLE_STEP;	
 }
 
-function player::check_Collision(block){
-		
-}
-
-function player::movement(run){
+function player::check_collision(){
+	var bb1 = mesh_player_upper.GetBoundingBox();
+	var bb2 = mesh_player_lower.GetBoundingBox();
 	
+	var c = array(8);
+	
+	c[0] = position + [bb1[0], 	0, 	bb2[5]];
+	c[1] = position + [0,     	0, 	bb2[5]];
+	c[2] = position + [bb1[3],	0, 	bb2[5]];
+	c[3] = position + [bb1[3],	0, 	0];
+	c[4] = position + [bb1[3],	0, 	bb2[2]];
+	c[5] = position + [0,		0, 	bb2[2]];
+	c[6] = position + [bb1[0],	0, 	bb2[2]];
+	c[7] = position + [bb1[0],	0, 	0];
+	
+	for (var i = 0; i < 8; i++){
+		var ix = int(c[i].x);
+		var iz = int(c[i].z);
+		if(my_world.matrix[iz][ix] == 1) 
+			return true;
+	}
+
+	// obj_player.SetPosition(position);
+	// obj_player.SetRotation(RAD_TO_GRAD * angleY, [0, 1, 0]);
+	return false;
 }
 
-function player::updateAngle(){
-	angleY = asin(movingDirection[0]);
-}
-
-function player::updateSpeedPosition(movingDir){
+function player::update_speed_position(){
 	if(my_keyboard.is_pressed(VK_W)){
 		if(speed < PLAYER_SPEED)
 			speed += PLAYER_SPEED_STEP;
-	
-	}else if(my_keyboard.is_pressed(VK_S)){
+	}
+	else if(my_keyboard.is_pressed(VK_S)){
 		if(speed > -PLAYER_SPEED/2)
 			speed -= 2*PLAYER_SPEED_STEP;
-			
-		
-	
-	}else if(speed > 0)
+	}
+	else if(speed > 0)
 		speed -= PLAYER_SPEED_STEP;
 	else if(speed < 0)
 		speed += PLAYER_SPEED_STEP;
@@ -225,62 +218,54 @@ function player::updateSpeedPosition(movingDir){
 		speed = 0;
 	
 	if(speed > 0)
-		current_frame = (current_frame +SWAT_FRAME_STEP*(0.95+speed))%SWAT_TOTAL_FRAMES;
+		current_frame = (current_frame + SWAT_FRAME_STEP *(0.95 + speed))% SWAT_TOTAL_FRAMES;
 	else if (speed < 0){
-		current_frame = (current_frame -SWAT_FRAME_STEP*(0.95+speed))%SWAT_TOTAL_FRAMES;
+		current_frame = (current_frame - SWAT_FRAME_STEP *(0.95 + speed))% SWAT_TOTAL_FRAMES;
 		if(current_frame <= 0)
 			current_frame += SWAT_TOTAL_FRAMES;
 	}	
 
-	position += speed * movingDir ;
+	position += speed * moving_direction;
 }
 
-function player::update(matrix_level){			//update on key press
-	var run=1; 
-	var movingDir = [movingDirection[0],0,movingDirection[2]];
+function player::update(matrix_level) {
+	var run = 1; 
 	var old_position = position;
-	var pivot = obj_player.GetPivotPoint( ); 
 
 	if(my_keyboard.is_pressed(VK_SHIFT )){
 		shoot();
 	}
 	else if(my_keyboard.is_pressed(VK_A)){						
-			var dir_ortho =[movingDirection[2],0,-movingDirection[0]];
-			position += PLAYER_SPEED * dir_ortho*run;	
-		}
+		var dir_ortho =[moving_direction[2], 0, -moving_direction[0]];
+		position += PLAYER_SPEED * dir_ortho * run;	
+	}
 	else if(my_keyboard.is_pressed(VK_D)){
-		
-		var dir_ortho =[-movingDirection[2],0,movingDirection[0]];
-		position += PLAYER_SPEED * dir_ortho*run;	
-
-		}										//player motion
-	
-	
-	if(my_keyboard.is_pressed(VK_SPACE) && !isflying){
-		//shoot();
-		jump=PI;	
-		jumpD();
+		var dir_ortho =[-moving_direction[2], 0, moving_direction[0]];
+		position += PLAYER_SPEED * dir_ortho * run;	
 	}
 	
-	if(!isflying)
-		updateSpeedPosition(movingDir);
-	if(isflying)
-		computeDynamics();
-
-	var intx = int(position.x);
-	var intz = int(position.z);
-	
-	
-	if(matrix_level[intz][intx] == 1)
-		position = old_position;	
-
-
-	obj_player.setposition(position);			//obj updating
-	
-	//obj_player.setRotation(RAD_TO_GRAD * angleY, [0,1,0]);
-	
-	foreach (var i in my_bullet)
-		i.update();
-	
+	if(!isjumping)
+		update_speed_position();
 		
+	if(check_collision()){
+		position = old_position;
+		speed = 0;
+	}
+	
+	if(my_keyboard.is_pressed(VK_SPACE) && !isjumping)
+		init_jump_dynamic();
+	
+	if(isjumping)
+		update_jump_dynamics();
+
+	obj_player.setposition(position);
+	
+	my_railgun.update();
+	
+	//obj_player.setRotation(RAD_TO_GRAD * angle_direction, [0,1,0]);
+}
+
+function player::draw(){											
+	obj_player.draw(VR_FRAMENUMBER, SWAT_START_WALK + current_frame);
+	my_railgun.draw();
 }
