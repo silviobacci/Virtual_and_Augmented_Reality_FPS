@@ -1,0 +1,73 @@
+class weapon {
+	var mesh_gun;
+	var obj_gun;
+	
+	var shoot_force;
+	var bullet_radius;
+	var bullet_mass;
+	
+	var bullets;
+	var shooted_bullets;
+	var fx_shoot;
+	
+	create_railgun(mesh, scaling_factor);
+	init(n_bullets, mesh, sf, br, bm, scaling_factor);
+	add_bullets(to_add);
+	shoot(position, shooting_direction);
+	
+	update();
+	draw();
+};
+
+function weapon::create_railgun(mesh, scaling_factor) {
+	mesh_gun = CVmNewMesh(mesh);
+	mesh_gun.scale(scaling_factor);
+	obj_gun = CVmObj(mesh_gun);
+}
+
+function weapon::init(n_bullets, mesh, sf, br, bm, scaling_factor){
+	shoot_force = sf;
+	bullet_radius = br;
+	bullet_mass = bm;
+	create_railgun(mesh, scaling_factor);
+	fx_shoot = CVmVRAWav("shoot.wav", true);
+	shooted_bullets = array(0);
+	add_bullets(n_bullets);
+}
+
+function weapon::add_bullets(to_add){
+	var bullets_left = 0;
+	if(bullets != void)
+		bullets_left = len(bullets);
+	
+	bullets = array(bullets_left + to_add);
+	for(var i = 0; i < len(bullets); i++){
+		var b = bullet();
+		b.init(BULLET_RADIUS, BULLET_MASS);
+		bullets[i] = b;
+	}
+}
+
+function weapon::shoot(position, shooting_direction){
+	if(len(bullets) <= 0)
+		return;
+		
+	aadd(shooted_bullets, bullets[0]);
+	bullets[0].shoot(position, shooting_direction, SHOOT_FORCE);
+	adel(bullets, 0);
+	
+	fx_shoot.setposition(position);
+	fx_shoot.setlistenerposition(CameraGetCurrent().GetPosition());
+	fx_shoot.setlistenerorientation(-CameraGetCurrent().GetDirection());
+	fx_shoot.play();
+}
+
+function weapon::update() {
+	foreach (var bullet in shooted_bullets)
+		bullet.update();
+}
+
+function weapon::draw() {
+	foreach (var bullet in shooted_bullets)
+		bullet.draw();
+}

@@ -6,7 +6,7 @@
 #include "../world/world.s3d"
 
 #include "../weapon/bullet.s3d"
-#include "../weapon/railgun.s3d"
+#include "../weapon/weapon.s3d"
 
 #include "../player/player.s3d"
 #include "../player/player_manager.s3d"

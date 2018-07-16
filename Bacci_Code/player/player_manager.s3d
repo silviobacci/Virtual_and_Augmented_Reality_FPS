@@ -6,11 +6,10 @@ class player_manager {
 	
 	init(ml);
 	draw();
-	addplayer(id, color,pos);
+	addplayer(id, pos);
 	update();
 	
 	get_player_position();
-	
 };
 
 function player_manager::init(ml){
@@ -23,9 +22,9 @@ function player_manager::update(){
 		i.update(matrix_level);
 }
 
-function player_manager::addplayer(id, color,pos){
+function player_manager::addplayer(id, pos){
 		var p = player();
-		p.init(id, color,pos);
+		p.init(id, pos);
 		aadd(array_player, p);
 }
 
