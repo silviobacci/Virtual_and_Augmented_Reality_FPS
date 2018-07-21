@@ -11,10 +11,7 @@
 var my_player_info;
 
 class player_info{
-	var player_position;
-	var gun_selected;
-	var bullets_left;
-	var life_points;
+	var player;
 	var box_x;
 	var box_y;
 	var box_w;
@@ -22,7 +19,7 @@ class player_info{
 	var box;
 	
 	draw();
-	update(pp, gs, bl, lp);
+	update(p);
 	
 	draw_info_box();
 	draw_player_title();
@@ -35,11 +32,8 @@ class player_info{
 	get_inside_text(displacement);
 };
 
-function player_info::update(pp, gs, bl, lp) {
-	player_position = pp;
-	gun_selected = gs;
-	bullets_left = bl;
-	life_points = lp;
+function player_info::update(p) {
+	player = p;
 	
 	box_x = INFO_START_POINT_X;	
 	box_y = (INFO_START_POINT_X + INFO_BOX_WIDTH) * resolution;
@@ -71,22 +65,23 @@ function  player_info::draw_player_title() {
 
 function  player_info::draw_player_position() {
 	var tmp_box = get_inside_text(4);
-	draw_box(tmp_box, "GPS: " + str(player_position[0]) + "," + str(player_position[2]), INFO_FONT_SIZE);
+	var position = player.get_position();
+	draw_box(tmp_box, "GPS: " + str(position[0]) + "," + str(position[2]), INFO_FONT_SIZE);
 }
 
 function  player_info::draw_gun_selected() {
 	var tmp_box = get_inside_text(0);
-	draw_box(tmp_box, "GUN: " + str(gun_selected), INFO_FONT_SIZE);
+	draw_box(tmp_box, "GUN: " + player.current_weapon.name, INFO_FONT_SIZE);
 }
 
 function  player_info::draw_bullets_left() {
 	var tmp_box = get_inside_text(-4);
-	draw_box(tmp_box, "BULLETS LEFT: " + str(bullets_left), INFO_FONT_SIZE);
+	draw_box(tmp_box, "BULLETS: " + str(player.current_weapon.bullets_left) + " / " + str(player.current_weapon.n_bullets), INFO_FONT_SIZE);
 }
 
 function  player_info::draw_life_points() {
 	var tmp_box = get_inside_text(-8);
-	draw_box(tmp_box, "LIFE: " + str(life_points), INFO_FONT_SIZE);
+	draw_box(tmp_box, "LIFE: " + str(0), INFO_FONT_SIZE);
 }
 	
 function  player_info::draw_info_box() {

@@ -1,12 +1,13 @@
-#define BUTTON_NUMBER			10
+#define BUTTON_NUMBER			12
 
-#define TIME_DELAY_KEYBOARD		100
+#define TIME_DELAY_KEYBOARD		200
 
 #define VK_W 					"w"
 #define VK_A 					"a"
 #define VK_S 					"s"
 #define VK_D 					"d"
 #define VK_C 					"c"
+#define VK_R 					"r"
 
 var my_keyboard;
 
@@ -65,6 +66,10 @@ function keyboard_manager::index_to_key(index) {
 			return VK_LEFT;
 		case 9:
 			return VK_RIGHT;
+		case 10:
+			return VK_C;
+		case 11:
+			return VK_R;
 	}
 }
 

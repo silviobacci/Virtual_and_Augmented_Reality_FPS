@@ -1,17 +1,19 @@
 #define RAILGUN_N_BULLETS 		20
+#define RAILGUN_NAME			"railgun"
 #define RAILGUN_MESH			"railgun.aam"
 #define RAILGUN_BULLET_MASS		0.008
 #define RAILGUN_BULLET_RADIUS 	0.003
 #define RAILGUN_SHOOT_FORCE 	500
 
 #define ROCKETL_N_BULLETS 		20
+#define ROCKETL_NAME			"rocketl"
 #define ROCKETL_MESH			"rocketl.aam"
 #define ROCKETL_BULLET_MASS		0.008
 #define ROCKETL_BULLET_RADIUS 	0.003
 #define ROCKETL_SHOOT_FORCE 	500
 
-#define g 					9.81
-#define n				 	0.0000186
+#define g 						9.81
+#define n				 		0.0000186
 
 class bullet{
 	var mesh_bullet;
@@ -80,9 +82,6 @@ function bullet::update_dynamics(){
 	position[1] += dy;
 	position[2] += dir[2] * dx;
 	
-	trace(speedx);
-	trace(position);
-	
 	accx = - viscous / mass * sqrt(speedx^2 + speedy^2) * cos(angle);
 	accy = - viscous / mass * sqrt(speedx^2 + speedy^2) * sin(angle) - g;
 }
@@ -102,11 +101,11 @@ function bullet::shoot(p, d, sf){
 	dy = 0.0;
 	speedx = 0.0;
 	speedy = 0.0;
-	angle = 0.0;
+	angle = d[1];
 	accx =  sf / mass * cos(angle);
 	accy =  sf / mass * sin(angle) - g;
 	
-	position = p + [0, 1, 0];
+	position = p + [-0.2, 1, 0];
 	dir = d; 
 	is_flying = true;
 }

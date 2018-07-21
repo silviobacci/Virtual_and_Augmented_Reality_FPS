@@ -6,6 +6,8 @@
 #define SWAT_TOTAL_FRAMES 	32
 #define SWAT_FRAME_STEP 	0.35
 #define CLIP_SIZE 			500
+#define CLIMB_FACTOR 		1
+#define CLIMB_VALUE 		1
 
 #define PLAYER_RADIUS		30
 #define PLAYER_MASS			80
@@ -52,6 +54,7 @@ class player{
 	
 	change_weapon(new_weapon);
 	shoot();
+	climb(slope);
 	reset_jump_dynamics();
 	init_jump_dynamic();
 	update_jump_dynamics();
@@ -68,9 +71,9 @@ function player::create_player(){
 	
 	mesh_player_upper = CVmNewMesh("swat_upper.aam"); 
 	mesh_player_upper.scale(sf1);
-
-	my_railgun.init(RAILGUN_N_BULLETS, RAILGUN_MESH, RAILGUN_BULLET_RADIUS, RAILGUN_BULLET_MASS, RAILGUN_SHOOT_FORCE, sf1);
-	my_rocketl.init(ROCKETL_N_BULLETS, ROCKETL_MESH, ROCKETL_BULLET_RADIUS, ROCKETL_BULLET_MASS, ROCKETL_SHOOT_FORCE, sf1);
+	
+	my_railgun.create_weapon(RAILGUN_MESH, sf1);
+	my_rocketl.create_weapon(ROCKETL_MESH, sf1);
 	
 	obj_player_upper = CVmObj(mesh_player_upper);
 	obj_player_lower = CVmObj(mesh_player_lower);
@@ -96,6 +99,9 @@ function player::init(i, p){
 	my_rocketl = 		weapon();
 	current_weapon =	my_rocketl;
 	
+	my_railgun.init(RAILGUN_NAME, RAILGUN_N_BULLETS, RAILGUN_SHOOT_FORCE, RAILGUN_BULLET_RADIUS, RAILGUN_BULLET_MASS);
+	my_rocketl.init(ROCKETL_NAME, ROCKETL_N_BULLETS, ROCKETL_SHOOT_FORCE, ROCKETL_BULLET_RADIUS, ROCKETL_BULLET_MASS);
+    
     create_player();
     change_weapon(my_rocketl);
 }
@@ -162,6 +168,7 @@ function player::shoot(){
 }
 
 function player::check_collision(matrix_level){
+	var height = int(position[1]);
 	var bb1 = mesh_player_upper.GetBoundingBox();
 	var bb2 = mesh_player_lower.GetBoundingBox();
 	
@@ -176,16 +183,28 @@ function player::check_collision(matrix_level){
 	c[6] = position + [bb1[0],	0, 	bb2[2]];
 	c[7] = position + [bb1[0],	0, 	0];
 	
+	var is_climbing = false;
 	for (var i = 0; i < 8; i++){
 		var ix = int(c[i].x);
 		var iz = int(c[i].z);
-		if(matrix_level[iz][ix] == 1) 
+		var height_diff = abs(matrix_level[iz][ix] - height);
+		if(height_diff > 0 && height_diff <= CLIMB_VALUE)
+			is_climbing = true;
+		else if(height_diff > CLIMB_VALUE)
 			return true;
 	}
-
-	// obj_player.SetPosition(position);
-	// obj_player.SetRotation(RAD_TO_GRAD * angleY, [0, 1, 0]);
+	
+	if(is_climbing) {
+		var tmp = "is climbing";
+		trace(tmp);
+		climb(sin(90 * GRAD_TO_RAD));
+	}
+	
 	return false;
+}
+
+function player::climb(slope) {
+	position += [0, speed * CLIMB_FACTOR * slope, 0];
 }
 
 function player::update_speed_position(){
@@ -212,7 +231,7 @@ function player::update_speed_position(){
 	else if((current_frame = (current_frame - SWAT_FRAME_STEP *(0.95 + speed))% SWAT_TOTAL_FRAMES) <= 0)
 		current_frame += SWAT_TOTAL_FRAMES;
 
-	position += speed * moving_direction;
+	position += [speed * moving_direction[0], 0, speed * moving_direction[2]];
 }
 
 function player::update(matrix_level) {
@@ -234,6 +253,8 @@ function player::update(matrix_level) {
 		else
 			change_weapon(my_railgun);
 	}
+	else if(my_keyboard.is_pressed(VK_R))
+		current_weapon.add_bullets(20);
 	
 	if(my_keyboard.is_pressed(VK_SPACE) && !is_jumping)
 		init_jump_dynamic();
@@ -251,8 +272,6 @@ function player::update(matrix_level) {
 	obj_player.setposition(position);
 	
 	current_weapon.update();
-	
-	//obj_player.setRotation(RAD_TO_GRAD * angle_direction, [0,1,0]);
 }
 
 function player::draw(){											

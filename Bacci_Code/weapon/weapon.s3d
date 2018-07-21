@@ -1,4 +1,5 @@
 class weapon {
+	var name;
 	var mesh_gun;
 	var obj_gun;
 	
@@ -10,8 +11,11 @@ class weapon {
 	var shooted_bullets;
 	var fx_shoot;
 	
-	create_railgun(mesh, scaling_factor);
-	init(n_bullets, mesh, sf, br, bm, scaling_factor);
+	var n_bullets;
+	var bullets_left;
+	
+	create_weapon(mesh, scaling_factor);
+	init(nm, nb, sf, br, bm);
 	add_bullets(to_add);
 	shoot(position, shooting_direction);
 	
@@ -19,28 +23,28 @@ class weapon {
 	draw();
 };
 
-function weapon::create_railgun(mesh, scaling_factor) {
+function weapon::create_weapon(mesh, scaling_factor) {
 	mesh_gun = CVmNewMesh(mesh);
 	mesh_gun.scale(scaling_factor);
 	obj_gun = CVmObj(mesh_gun);
 }
 
-function weapon::init(n_bullets, mesh, sf, br, bm, scaling_factor){
+function weapon::init(nm, nb, sf, br, bm){
+	name = nm;
+	bullets_left = 0;
+	n_bullets = 0;
 	shoot_force = sf;
 	bullet_radius = br;
 	bullet_mass = bm;
-	create_railgun(mesh, scaling_factor);
 	fx_shoot = CVmVRAWav("shoot.wav", true);
 	shooted_bullets = array(0);
-	add_bullets(n_bullets);
+	add_bullets(nb);
 }
 
 function weapon::add_bullets(to_add){
-	var bullets_left = 0;
-	if(bullets != void)
-		bullets_left = len(bullets);
-	
-	bullets = array(bullets_left + to_add);
+	bullets = array(n_bullets + to_add);
+	bullets_left += to_add; 
+	n_bullets = len(bullets);
 	for(var i = 0; i < len(bullets); i++){
 		var b = bullet();
 		b.init(BULLET_RADIUS, BULLET_MASS);
@@ -53,7 +57,8 @@ function weapon::shoot(position, shooting_direction){
 		return;
 		
 	aadd(shooted_bullets, bullets[0]);
-	bullets[0].shoot(position, shooting_direction, SHOOT_FORCE);
+	bullets[0].shoot(position, shooting_direction, shoot_force);
+	bullets_left--;
 	adel(bullets, 0);
 	
 	fx_shoot.setposition(position);

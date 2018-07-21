@@ -1,7 +1,13 @@
 #define WORLD_FLOOR_TILING 		30
-#define WORLD_WALL_HEIGHT 		3
+#define WORLD_WALL_HEIGHT 		1
+#define WORLD_LADDER_HEIGHT		0.2
 #define WORLD_SKY_HEIGHT	 	0
 #define WORLD_SUN_HEIGHT	 	45
+
+#define UP						1
+#define DOWN					2
+#define R						3
+#define L						4
 
 #define	WORLD_MAP_FILENAME		"level.txt"
 
@@ -34,6 +40,10 @@ class world{
 	var material_wall;
 	var texture_wall;
 	
+	var mesh_ladder;
+	var material_ladder;
+	var texture_ladder;
+	
 	var matrix;
 	var width;
 	var height;
@@ -43,12 +53,55 @@ class world{
 	init();
 	draw();
 	
+	find_wall_height(height);
 	create_map();
 	create_sun();
 	create_sky();
 	create_floor();
-	create_wall(height_scale);
+	create_ladder(height_scale, dir, i, j);
+	create_wall(height_scale, i, j);
 };
+
+function world::find_wall_height(height) {
+	// scala su: 		1 2 4 5 7 8
+	// scale giù: 		a b c d e f
+	// scala destra: 	g h i l m n
+	// scala sinistra: 	o p q r s t
+	switch(height) {
+		case "1":
+		case "a":
+		case "g":
+		case "o":
+			return 1;
+		case "2":
+		case "b":
+		case "h":
+		case "p":
+			return 2;
+		case "4":
+		case "c":
+		case "i":
+		case "q":
+			return 3;
+		case "5":
+		case "d":
+		case "l":
+		case "r":
+			return 4;
+		case "7":
+		case "e":
+		case "m":
+		case "s":
+			return 5;
+		case "8":
+		case "f":
+		case "n":
+		case "t":
+			return 6;
+		default:
+			return val(height);
+	}	
+}
 
 function world::create_map() {
 	var array_matrix = LoadFile(WORLD_MAP_FILENAME);
@@ -63,15 +116,48 @@ function world::create_map() {
 		matrix[i] = array(width);
 
 		for (var j = 0; j < width; j++){
-			matrix[i][j] = val(array_matrix[i][j]);
-
-			if(matrix[i][j] > 0){
-				create_wall(matrix[i][j]);
-				var wall = CVmObj(mesh_wall);
-				wall.SetPosition(j, 0, i);
-				
-				aadd(array_wall, wall);	
-			}
+			matrix[i][j] = find_wall_height(array_matrix[i][j]);
+			
+			if(matrix[i][j] > 0)	
+				switch(array_matrix[i][j]) {
+					case "1":
+					case "2":
+					case "4":
+					case "5":
+					case "7":
+					case "8":
+						create_ladder(matrix[i][j] - 1, UP, i, j);
+						break;
+					case "a":
+					case "b":
+					case "c":
+					case "d":
+					case "e":
+					case "f":
+						create_ladder(matrix[i][j] - 1, DOWN, i, j);
+						break;
+					case "g":
+					case "h":
+					case "i":
+					case "l":
+					case "m":
+					case "n":
+						create_ladder(matrix[i][j] - 1, R, i, j);
+						break;
+					case "o":
+					case "p":
+					case "q":
+					case "r":
+					case "s":
+					case "t":
+						create_ladder(matrix[i][j] - 1, L, i, j);
+						break;
+					case "3":
+					case "6":
+					case "9":
+						create_wall(matrix[i][j] - matrix[i][j] / 3, i, j);
+						break;
+				}
 		}
 	}
 }
@@ -104,18 +190,66 @@ function world::create_floor() {
 	mesh_floor.ForceMaterial(material_floor);
 }
 
-function world::create_wall(height_scale) {
+function world::create_ladder(height_scale, dir, i, j) {
+	var ladder;
+	material_ladder = CVmMaterial();
+	material_ladder.diffuse = WORLD_WALL_COLOR; 
+	material_ladder.ChangeTextureParams(VR_V_TILING, WORLD_WALL_HEIGHT * height_scale + WORLD_LADDER_HEIGHT);
+	
+	texture_ladder = CVmTexture(WORLD_WALL_IMAGE);
+	
+	material_ladder.SetTexture(texture_ladder);
+	
+	mesh_ladder = array(WORLD_DEFAULT_DIM / WORLD_LADDER_HEIGHT);
+	
+	for (var k = 0; k < WORLD_DEFAULT_DIM / WORLD_LADDER_HEIGHT; k++) {
+		mesh_ladder[k] = CVmNewMesh(VRP_BOX);
+		mesh_ladder[k].scale(WORLD_DEFAULT_DIM, WORLD_WALL_HEIGHT * height_scale + WORLD_LADDER_HEIGHT, WORLD_DEFAULT_DIM - k * WORLD_LADDER_HEIGHT);
+		mesh_ladder[k].ForceMaterial(material_ladder);
+		
+		switch(dir) {
+			case UP:
+				ladder = CVmObj(mesh_ladder[k]);
+				ladder.SetPosition(j, k * WORLD_LADDER_HEIGHT, i);
+				break;
+			case DOWN:
+				mesh_ladder[k].Rotate(180, 0, 1, 0);
+				ladder = CVmObj(mesh_ladder[k]);
+				ladder.SetPosition(j + 1, k * WORLD_LADDER_HEIGHT, i + 1);
+				break;
+			case R:
+				mesh_ladder[k].Rotate(90, 0, 1, 0);
+				ladder = CVmObj(mesh_ladder[k]);
+				ladder.SetPosition(j, k * WORLD_LADDER_HEIGHT, i + 1);
+				break;
+			case L:
+				mesh_ladder[k].Rotate(270, 0, 1, 0);
+				ladder = CVmObj(mesh_ladder[k]);
+				ladder.SetPosition(j + 1, k * WORLD_LADDER_HEIGHT, i);
+				break;
+		}
+						
+		aadd(array_wall, ladder);	
+	}
+}
+
+function world::create_wall(height_scale, i, j) {
 	mesh_wall = CVmNewMesh(VRP_BOX);
 	mesh_wall.scale(WORLD_DEFAULT_DIM, WORLD_WALL_HEIGHT * height_scale, WORLD_DEFAULT_DIM);
 	
 	material_wall = CVmMaterial();
 	material_wall.diffuse = WORLD_WALL_COLOR; 
-	material_wall.ChangeTextureParams(VR_V_TILING, WORLD_WALL_HEIGHT);
+	material_wall.ChangeTextureParams(VR_V_TILING, WORLD_WALL_HEIGHT * height_scale);
 	
 	texture_wall = CVmTexture(WORLD_WALL_IMAGE);
 	
 	material_wall.SetTexture(texture_wall);
 	mesh_wall.ForceMaterial(material_wall);
+	
+	var wall = CVmObj(mesh_wall);
+	wall.SetPosition(j, 0, i);
+						
+	aadd(array_wall, wall);	
 }
 
 function world::init(){
