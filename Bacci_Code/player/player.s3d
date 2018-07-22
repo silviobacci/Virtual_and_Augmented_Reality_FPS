@@ -58,8 +58,8 @@ class player{
 	init_jump_dynamic();
 	update_jump_dynamics();
 	update_speed_position();
-	check_collision(map);
-	update(map, matrix_level);
+	check_collision(obj_array, map);
+	update(obj_array, map, matrix_level);
 	
 	draw();
 };
@@ -166,43 +166,38 @@ function player::shoot(){
 	current_weapon.shoot(position, moving_direction);
 }
 
-function player::check_collision(map){
-	var bb1 = mesh_player_upper.GetBoundingBox();
-	var bb2 = mesh_player_lower.GetBoundingBox();
-	
-	var c = array(8);
-	
+function player::check_collision(obj_array, matrix_level){
+	var obj_to_check = array(0);
 	var posx = int(position.x);
 	var posz = int(position.z);
-	var height = map[psoz][posx];
+	var jx = int(abs(position.x - posx) * N_STEPS);
+	var jz = int(abs(position.z - posz) * N_STEPS);
 	
-	c[0] = position + [bb1[0], 	0, 	bb2[5]];
-	c[1] = position + [0,     	0, 	bb2[5]];
-	c[2] = position + [bb1[3],	0, 	bb2[5]];
-	c[3] = position + [bb1[3],	0, 	0];
-	c[4] = position + [bb1[3],	0, 	bb2[2]];
-	c[5] = position + [0,		0, 	bb2[2]];
-	c[6] = position + [bb1[0],	0, 	bb2[2]];
-	c[7] = position + [bb1[0],	0, 	0];
-	
-	for (var i = 0; i < 8; i++){
-		var ix = int(c[i].x);
-		var iz = int(c[i].z);
-
-		if(abs(height - position.y) > CLIMB_VALUE) {
-			trace();
-			var tmp = abs(height - position.y);
-			trace(tmp);
-			var pos = position.y;
-			trace(pos);
-			trace(height);
+	for(var i = posz - 1; i <= posz + 1; i++)
+		for(var j = posx - 1; j <= posx + 1; j++)
+			for(var k = 0; k < N_STEPS; k++)
+				for(var v = 0; v < N_STEPS; v++) {
+					var obj = obj_array[i * N_STEPS + k][j * N_STEPS + v];
+	    			if(obj != void)
+	        			aadd(obj_to_check, obj_array[i * N_STEPS + k][j * N_STEPS + k]);
+	        	}
+	          
+	foreach (var obj in obj_to_check){
+		var obj_pos = obj.GetPosition();
+		
+		var posx = int(obj_pos.x);
+		var posz = int(obj_pos.z);
+		var jx = int(abs(obj_pos.x - posx) * N_STEPS);
+		var jz = int(abs(obj_pos.z - posz) * N_STEPS);
+		var height = matrix_level[posz * N_STEPS + jz][posx * N_STEPS + jx];
+		
+		var x = obj_pos.x + 0.5 - position.x;
+		var z = obj_pos.z + 0.5 - position.z;
+		var distance = sqrt(x^2 + z^2);
+		
+		if(distance < 0.9 && abs(height - position.y) > 0.25) 
 			return true;
-			
-			}
 	}
-	
-	//trace(position);
-	
 	return false;
 }
 
@@ -233,7 +228,7 @@ function player::update_speed_position(){
 	position += [speed * moving_direction[0], 0, speed * moving_direction[2]];
 }
 
-function player::update(map, matrix_level) {
+function player::update(obj_array, map, matrix_level) {
 	var old_position = position;
 
 	if(my_keyboard.is_pressed(VK_SHIFT))
@@ -263,7 +258,7 @@ function player::update(map, matrix_level) {
 	else
 		update_speed_position();
 		
-	if(check_collision(map)){
+	if(check_collision(obj_array, matrix_level)){
 		position = old_position;
 		speed = 0;
 	}
@@ -272,14 +267,12 @@ function player::update(map, matrix_level) {
 		var posz = int(position.z);
 		var jx = int(abs(position.x - posx) * N_STEPS);
 		var jz = int(abs(position.z - posz) * N_STEPS);
-		//trace(jz);
 		var height = matrix_level[posz * N_STEPS + jz][posx * N_STEPS + jx];
 		var tmp = height - position.y;
-		//trace(tmp);
 		if(height - position.y > 0) {
 			speed = PLAYER_SPEED_CLIMB;
 			var tmp = "is climbing";
-			//trace(height);
+			trace(tmp);
 			position.y = height;
 		}
 		else if(height - position.y < 0){
