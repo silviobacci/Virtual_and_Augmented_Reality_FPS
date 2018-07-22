@@ -76,6 +76,7 @@ function FirstPersonView(){
 }
 
 function update_camera() {
+	/*
 	if(my_keyboard.is_pressed(VK_LCONTROL)){
 		is_first = !is_first;
 		switched_view = true;
@@ -85,4 +86,6 @@ function update_camera() {
     	
 	firstPersonView();
     CameraMoveMouse();
+    */
+    CameraMoveMouse_MBL_LC();
 }

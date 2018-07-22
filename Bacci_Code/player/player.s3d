@@ -1,4 +1,5 @@
 #define PLAYER_SPEED 		0.07
+#define PLAYER_SPEED_CLIMB 	0.03
 #define PLAYER_SPEED_STEP 	0.001
 #define PLAYER_ANGLE_STEP 	0.01
 #define SWAT_START_WALK 	16
@@ -6,8 +7,7 @@
 #define SWAT_TOTAL_FRAMES 	32
 #define SWAT_FRAME_STEP 	0.35
 #define CLIP_SIZE 			500
-#define CLIMB_FACTOR 		1
-#define CLIMB_VALUE 		1
+#define CLIMB_VALUE 		1.5
 
 #define PLAYER_RADIUS		30
 #define PLAYER_MASS			80
@@ -54,13 +54,12 @@ class player{
 	
 	change_weapon(new_weapon);
 	shoot();
-	climb(slope);
 	reset_jump_dynamics();
 	init_jump_dynamic();
 	update_jump_dynamics();
 	update_speed_position();
-	check_collision(matrix_level);
-	update(matrix_level);
+	check_collision(map);
+	update(map, matrix_level);
 	
 	draw();
 };
@@ -167,12 +166,15 @@ function player::shoot(){
 	current_weapon.shoot(position, moving_direction);
 }
 
-function player::check_collision(matrix_level){
-	var height = int(position[1]);
+function player::check_collision(map){
 	var bb1 = mesh_player_upper.GetBoundingBox();
 	var bb2 = mesh_player_lower.GetBoundingBox();
 	
 	var c = array(8);
+	
+	var posx = int(position.x);
+	var posz = int(position.z);
+	var height = map[psoz][posx];
 	
 	c[0] = position + [bb1[0], 	0, 	bb2[5]];
 	c[1] = position + [0,     	0, 	bb2[5]];
@@ -183,28 +185,25 @@ function player::check_collision(matrix_level){
 	c[6] = position + [bb1[0],	0, 	bb2[2]];
 	c[7] = position + [bb1[0],	0, 	0];
 	
-	var is_climbing = false;
 	for (var i = 0; i < 8; i++){
 		var ix = int(c[i].x);
 		var iz = int(c[i].z);
-		var height_diff = abs(matrix_level[iz][ix] - height);
-		if(height_diff > 0 && height_diff <= CLIMB_VALUE)
-			is_climbing = true;
-		else if(height_diff > CLIMB_VALUE)
+
+		if(abs(height - position.y) > CLIMB_VALUE) {
+			trace();
+			var tmp = abs(height - position.y);
+			trace(tmp);
+			var pos = position.y;
+			trace(pos);
+			trace(height);
 			return true;
+			
+			}
 	}
 	
-	if(is_climbing) {
-		var tmp = "is climbing";
-		trace(tmp);
-		climb(sin(90 * GRAD_TO_RAD));
-	}
+	//trace(position);
 	
 	return false;
-}
-
-function player::climb(slope) {
-	position += [0, speed * CLIMB_FACTOR * slope, 0];
 }
 
 function player::update_speed_position(){
@@ -234,7 +233,7 @@ function player::update_speed_position(){
 	position += [speed * moving_direction[0], 0, speed * moving_direction[2]];
 }
 
-function player::update(matrix_level) {
+function player::update(map, matrix_level) {
 	var old_position = position;
 
 	if(my_keyboard.is_pressed(VK_SHIFT))
@@ -264,9 +263,30 @@ function player::update(matrix_level) {
 	else
 		update_speed_position();
 		
-	if(check_collision(matrix_level)){
+	if(check_collision(map)){
 		position = old_position;
 		speed = 0;
+	}
+	else {
+		var posx = int(position.x);
+		var posz = int(position.z);
+		var jx = int(abs(position.x - posx) * N_STEPS);
+		var jz = int(abs(position.z - posz) * N_STEPS);
+		//trace(jz);
+		var height = matrix_level[posz * N_STEPS + jz][posx * N_STEPS + jx];
+		var tmp = height - position.y;
+		//trace(tmp);
+		if(height - position.y > 0) {
+			speed = PLAYER_SPEED_CLIMB;
+			var tmp = "is climbing";
+			//trace(height);
+			position.y = height;
+		}
+		else if(height - position.y < 0){
+			position.y = height;
+			var tmp = "is falling";
+			trace(tmp);
+		} 
 	}
 
 	obj_player.setposition(position);

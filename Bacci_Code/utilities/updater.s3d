@@ -9,7 +9,7 @@ function OnUpdate() {
 	if(!my_pause_menu.show_menu) {
 		my_players.update();
 		var players = my_players.array_player;
-		my_map.update(my_players.matrix_level, my_players.get_player_position());
+		my_map.update(my_players.map, my_players.get_player_position());
 		my_player_info.update(players[0]);
 	}
 	

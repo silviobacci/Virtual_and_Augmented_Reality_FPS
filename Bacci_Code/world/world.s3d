@@ -4,6 +4,8 @@
 #define WORLD_SKY_HEIGHT	 	0
 #define WORLD_SUN_HEIGHT	 	45
 
+#define	N_STEPS					WORLD_DEFAULT_DIM / WORLD_LADDER_HEIGHT
+
 #define UP						1
 #define DOWN					2
 #define R						3
@@ -25,6 +27,11 @@
 #define	WORLD_WALL_COLOR		[255, 255, 255] / 255.0
 #define	WORLD_WALL_IMAGE		"bricks.png"
 
+// scala su: 		1 2 4 5 7 8
+// scale giù: 		a b c d e f
+// scala destra: 	g h i l m n
+// scala sinistra: 	o p q r s t
+
 var my_world;
 
 class world{
@@ -44,11 +51,12 @@ class world{
 	var material_ladder;
 	var texture_ladder;
 	
+	var map;
 	var matrix;
 	var width;
 	var height;
 	
-	var array_wall;
+	var obj_array;
 	
 	init();
 	draw();
@@ -63,10 +71,6 @@ class world{
 };
 
 function world::find_wall_height(height) {
-	// scala su: 		1 2 4 5 7 8
-	// scale giù: 		a b c d e f
-	// scala destra: 	g h i l m n
-	// scala sinistra: 	o p q r s t
 	switch(height) {
 		case "1":
 		case "a":
@@ -108,17 +112,21 @@ function world::create_map() {
 	height = len(array_matrix) - 1;
 	width = len(array_matrix[0]);
 	
-	array_wall = array(0);
-	
-	matrix = array(height);
+	obj_array = array(0);
+	matrix = array(height * N_STEPS);
+	map = array(height);
 	
 	for (var i = 0; i < height; i++){
-		matrix[i] = array(width);
+		map[i] = array(width);
+		for(var k = 0; k < N_STEPS; k++) {
+			matrix[i * N_STEPS + k] = array(width * N_STEPS);
+			obj_array[i * N_STEPS + k] = array(width * N_STEPS);
+		}
 
 		for (var j = 0; j < width; j++){
-			matrix[i][j] = find_wall_height(array_matrix[i][j]);
+			map[i][j] = find_wall_height(array_matrix[i][j]);
 			
-			if(matrix[i][j] > 0)	
+			if(map[i][j] > 0)	
 				switch(array_matrix[i][j]) {
 					case "1":
 					case "2":
@@ -126,7 +134,12 @@ function world::create_map() {
 					case "5":
 					case "7":
 					case "8":
-						create_ladder(matrix[i][j] - 1, UP, i, j);
+						var ladder_array = create_ladder(map[i][j] - 1, UP, i, j);
+						for(var k = 0; k < N_STEPS; k++)
+							for(var v = 0; v < N_STEPS; v++) {
+								matrix[i * N_STEPS + k][j * N_STEPS + v] = find_wall_height(array_matrix[i+1][j]) + (N_STEPS - 1 - k) / ToFloat(N_STEPS - 1) * map[i][j];
+								obj_array[i * N_STEPS + k][j * N_STEPS + v] = ladder_array[k];	
+							}
 						break;
 					case "a":
 					case "b":
@@ -134,7 +147,12 @@ function world::create_map() {
 					case "d":
 					case "e":
 					case "f":
-						create_ladder(matrix[i][j] - 1, DOWN, i, j);
+						var ladder_array = create_ladder(map[i][j] - 1, DOWN, i, j);
+						for(var k = 0; k < N_STEPS; k++)
+							for(var v = 0; v < N_STEPS; v++) {
+								matrix[i * N_STEPS + k][j * N_STEPS + v] = find_wall_height(array_matrix[i-1][j]) + k / ToFloat(N_STEPS - 1) * map[i][j];
+								obj_array[i * N_STEPS + k][j * N_STEPS + v] = ladder_array[k];	
+							}
 						break;
 					case "g":
 					case "h":
@@ -142,7 +160,12 @@ function world::create_map() {
 					case "l":
 					case "m":
 					case "n":
-						create_ladder(matrix[i][j] - 1, R, i, j);
+						var ladder_array = create_ladder(map[i][j] - 1, R, i, j);
+						for(var k = 0; k < N_STEPS; k++)
+							for(var v = 0; v < N_STEPS; v++) {
+								matrix[i * N_STEPS + k][j * N_STEPS + v] = find_wall_height(array_matrix[i][j+1]) + (N_STEPS - 1 - v) / ToFloat(N_STEPS - 1) * map[i][j];
+								obj_array[i * N_STEPS + k][j * N_STEPS + v] = ladder_array[k];	
+							}
 						break;
 					case "o":
 					case "p":
@@ -150,14 +173,28 @@ function world::create_map() {
 					case "r":
 					case "s":
 					case "t":
-						create_ladder(matrix[i][j] - 1, L, i, j);
+						var ladder_array = create_ladder(map[i][j] - 1, L, i, j);
+						for(var k = 0; k < N_STEPS; k++)
+							for(var v = 0; v < N_STEPS; v++) {
+								matrix[i * N_STEPS + k][j * N_STEPS + v] = find_wall_height(array_matrix[i][j-1]) + v / ToFloat(N_STEPS - 1) * map[i][j];
+								obj_array[i * N_STEPS + k][j * N_STEPS + v] = ladder_array[k];	
+							}
 						break;
 					case "3":
 					case "6":
 					case "9":
-						create_wall(matrix[i][j] - matrix[i][j] / 3, i, j);
+						var wall_array = create_wall(map[i][j] * 2 / 3, i, j);
+						for(var k = 0; k < N_STEPS; k++)
+							for(var v = 0; v < N_STEPS; v++) {
+								matrix[i * N_STEPS + k][j * N_STEPS + v] = map[i][j];
+								obj_array[i * N_STEPS + k][j * N_STEPS + v] = wall_array;		
+						}
 						break;
 				}
+			else
+				for(var k = 0; k < N_STEPS; k++)
+					for(var v = 0; v < N_STEPS; v++)
+						matrix[i * N_STEPS + k][j * N_STEPS + v] = map[i][j];
 		}
 	}
 }
@@ -192,6 +229,7 @@ function world::create_floor() {
 
 function world::create_ladder(height_scale, dir, i, j) {
 	var ladder;
+	var ladder_array = array(0);
 	material_ladder = CVmMaterial();
 	material_ladder.diffuse = WORLD_WALL_COLOR; 
 	material_ladder.ChangeTextureParams(VR_V_TILING, WORLD_WALL_HEIGHT * height_scale + WORLD_LADDER_HEIGHT);
@@ -229,8 +267,10 @@ function world::create_ladder(height_scale, dir, i, j) {
 				break;
 		}
 						
-		aadd(array_wall, ladder);	
+		aadd(ladder_array, ladder);	
 	}
+	
+	return ladder_array;
 }
 
 function world::create_wall(height_scale, i, j) {
@@ -248,8 +288,8 @@ function world::create_wall(height_scale, i, j) {
 	
 	var wall = CVmObj(mesh_wall);
 	wall.SetPosition(j, 0, i);
-						
-	aadd(array_wall, wall);	
+	
+	return wall;
 }
 
 function world::init(){
@@ -263,6 +303,6 @@ function world::draw(){
 	mesh_sky.draw();
 	mesh_floor.draw();
 	
-	foreach (var wall in array_wall)
-		wall.draw();
+	foreach (var obj in obj_array)
+		obj.draw();
 }

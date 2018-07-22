@@ -51,11 +51,12 @@ function map::draw_rect(to_draw_x, to_draw_y, height, offset_x, offeset_y) {
 }
 
 function map::draw_wall() {
-	ConsoleColor(WALL_COLOR);
-	for(var i = 0; i < rows; i++)
-		for(var j = 0; j < columns; j++)
-			if(matrix_level[i][j] > 0)
+	for(var i = 0; i < len(matrix_level); i++)
+		for(var j = 0; j < len(matrix_level[i]); j++)
+			if(matrix_level[i][j] > 0) {
+				ConsoleColor(WALL_COLOR / matrix_level[i][j]);
 				draw_rect(j, i, height, 0, 0);
+			}
 }
 
 function map::draw_player() {
