@@ -138,11 +138,10 @@ function world::create_map() {
 					case "5":
 					case "7":
 					case "8":
-						map[i][j] = map[i][j] - 1;
-						create_ladder(map[i][j], UP, i, j);
+						create_ladder(map[i][j] - 1, UP, i, j);
 						for(var k = 0; k < N_STEPS; k++)
 							for(var v = 0; v < N_STEPS; v++) {
-								matrix[i * N_STEPS + k][j * N_STEPS + v] = find_wall_height(array_matrix[i+1][j]) + (N_STEPS - 1 - k) / ToFloat(N_STEPS - 1) * map[i][j];
+								matrix[i * N_STEPS + k][j * N_STEPS + v] = find_wall_height(array_matrix[i+1][j]) + (N_STEPS - 1 - k) / ToFloat(N_STEPS);
 								obj_array[i * N_STEPS + k][j * N_STEPS + v] = ladder_array[k];	
 							}
 						break;
@@ -152,11 +151,10 @@ function world::create_map() {
 					case "d":
 					case "e":
 					case "f":
-						map[i][j] = map[i][j] - 1;
-						create_ladder(map[i][j], DOWN, i, j);
+						create_ladder(map[i][j] - 1, DOWN, i, j);
 						for(var k = 0; k < N_STEPS; k++)
 							for(var v = 0; v < N_STEPS; v++) {
-								matrix[i * N_STEPS + k][j * N_STEPS + v] = find_wall_height(array_matrix[i-1][j]) + k / ToFloat(N_STEPS - 1) * map[i][j];
+								matrix[i * N_STEPS + k][j * N_STEPS + v] = find_wall_height(array_matrix[i-1][j]) + k / ToFloat(N_STEPS);
 								obj_array[i * N_STEPS + k][j * N_STEPS + v] = ladder_array[N_STEPS - 1 - k];	
 							}
 						break;
@@ -166,11 +164,10 @@ function world::create_map() {
 					case "l":
 					case "m":
 					case "n":
-						map[i][j] = map[i][j] - 1;
-						create_ladder(map[i][j], R, i, j);
+						create_ladder(map[i][j] - 1, R, i, j);
 						for(var k = 0; k < N_STEPS; k++)
 							for(var v = 0; v < N_STEPS; v++) {
-								matrix[i * N_STEPS + k][j * N_STEPS + v] = find_wall_height(array_matrix[i][j+1]) + (N_STEPS - 1 - v) / ToFloat(N_STEPS - 1) * map[i][j];
+								matrix[i * N_STEPS + k][j * N_STEPS + v] = find_wall_height(array_matrix[i][j+1]) + (N_STEPS - 1 - v) / ToFloat(N_STEPS);
 								obj_array[i * N_STEPS + k][j * N_STEPS + v] = ladder_array[N_STEPS - 1 - v];	
 							}
 						break;
@@ -180,23 +177,21 @@ function world::create_map() {
 					case "r":
 					case "s":
 					case "t":
-						map[i][j] = map[i][j] - 1;
-						create_ladder(map[i][j], L, i, j);
+						create_ladder(map[i][j] - 1, L, i, j);
 						for(var k = 0; k < N_STEPS; k++)
 							for(var v = 0; v < N_STEPS; v++) {
-								matrix[i * N_STEPS + k][j * N_STEPS + v] = find_wall_height(array_matrix[i][j-1]) + v / ToFloat(N_STEPS - 1) * map[i][j];
+								matrix[i * N_STEPS + k][j * N_STEPS + v] = find_wall_height(array_matrix[i][j-1]) + v / ToFloat(N_STEPS);
 								obj_array[i * N_STEPS + k][j * N_STEPS + v] = ladder_array[v];	
 							}
 						break;
 					case "3":
 					case "6":
 					case "9":
-						map[i][j] = map[i][j] * 2 / 3;
-						create_wall(map[i][j], i, j);
+						create_wall(map[i][j] * 2 / 3, i, j);
 						for(var k = 0; k < N_STEPS; k++)
 							for(var v = 0; v < N_STEPS; v++) {
-								matrix[i * N_STEPS + k][j * N_STEPS + v] = map[i][j];
-								obj_array[i * N_STEPS + k][j * N_STEPS + v] = wall;		
+								matrix[i * N_STEPS + k][j * N_STEPS + v] = map[i][j] * 2 / 3;
+								obj_array[i * N_STEPS + k][j * N_STEPS + v] = wall;
 						}
 						break;
 				}

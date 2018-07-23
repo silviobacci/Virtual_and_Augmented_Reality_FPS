@@ -1,3 +1,4 @@
+#include "../utilities/utilities.s3d"
 #include "../utilities/resolution.s3d"
 #include "../utilities/keyboard.s3d"
 #include "../utilities/mouse.s3d"

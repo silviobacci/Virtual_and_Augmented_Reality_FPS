@@ -7,13 +7,16 @@
 #define SWAT_TOTAL_FRAMES 	32
 #define SWAT_FRAME_STEP 	0.35
 #define CLIP_SIZE 			500
-#define CLIMB_VALUE 		1.5
+#define COLLISION_RANGE 	0.6
 
 #define PLAYER_RADIUS		30
 #define PLAYER_MASS			80
 #define VISCOUS_PLAYER 		6* PI* n * PLAYER_RADIUS  / PLAYER_MASS
 #define JUMP_FORCE 			15000
 #define JUMP_ANGLE 			0
+
+#define FRONT				1
+#define REAR				2
 
 class player{
 	//Player-related 
@@ -24,12 +27,17 @@ class player{
 	var obj_player_upper;
 	var obj_player;
 	
+	var wall_height;
 	var position;
 	var angle_direction;
 	var moving_direction;
+	var temp_direction;
+	var direction;
 	var current_frame; 
 	var id;
 	var speed;
+	
+	var obj;
 	
 	//jump related 
 	var is_jumping;
@@ -57,7 +65,8 @@ class player{
 	reset_jump_dynamics();
 	init_jump_dynamic();
 	update_jump_dynamics();
-	update_speed_position();
+	update_speed();
+	update_position();
 	check_collision(obj_array, map);
 	update(obj_array, map, matrix_level);
 	
@@ -94,6 +103,8 @@ function player::init(i, p){
 	is_jumping = 		false;
 	delta_t = 			1.0 / FRAME_RATE;
 	moving_direction = 	[sin(angle_direction), 0 , cos(angle_direction)]; 
+	direction = moving_direction;
+	temp_direction = FRONT;
 	my_railgun = 		weapon();
 	my_rocketl = 		weapon();
 	current_weapon =	my_rocketl;
@@ -167,80 +178,133 @@ function player::shoot(){
 }
 
 function player::check_collision(obj_array, matrix_level){
-	var obj_to_check = array(0);
-	var posx = int(position.x);
-	var posz = int(position.z);
-	var jx = int(abs(position.x - posx) * N_STEPS);
-	var jz = int(abs(position.z - posz) * N_STEPS);
+	var phi = atan2pi(moving_direction[0], moving_direction[2]) * RAD_TO_GRAD;
+	var bb1 = mesh_player_upper.GetBoundingBox();
+	var bb2 = mesh_player_lower.GetBoundingBox();
+	var mesh = CVmNewMesh(VRP_BOX);
+	mesh.scale(0.1);
+	var start = 0;
+	var end = 9;
 	
-	for(var i = posz - 1; i <= posz + 1; i++)
-		for(var j = posx - 1; j <= posx + 1; j++)
-			for(var k = 0; k < N_STEPS; k++)
-				for(var v = 0; v < N_STEPS; v++) {
-					var obj = obj_array[i * N_STEPS + k][j * N_STEPS + v];
-	    			if(obj != void)
-	        			aadd(obj_to_check, obj_array[i * N_STEPS + k][j * N_STEPS + k]);
-	        	}
-	          
-	foreach (var obj in obj_to_check){
-		var obj_pos = obj.GetPosition();
-		
-		var posx = int(obj_pos.x);
-		var posz = int(obj_pos.z);
-		var jx = int(abs(obj_pos.x - posx) * N_STEPS);
-		var jz = int(abs(obj_pos.z - posz) * N_STEPS);
-		var height = matrix_level[posz * N_STEPS + jz][posx * N_STEPS + jx];
-		
-		var x = obj_pos.x + 0.5 - position.x;
-		var z = obj_pos.z + 0.5 - position.z;
-		var distance = sqrt(x^2 + z^2);
-		
-		if(distance < 0.9 && abs(height - position.y) > 0.25) 
+	var c = array(end);
+	obj = array(end);
+	
+	for (var i = start; i < end; i++)
+		c[i] = vector(3);
+	
+	c[0] = [bb1[0], 	0, 	bb2[5]];
+	c[1] = [0,     	0, 	bb2[5]];
+	c[2] = [bb1[3],	0, 	bb2[5]];
+	c[3] = [bb1[3],	0, 	0];
+	c[4] = [bb1[3],	0, 	bb2[2]];
+	c[5] = [0,		0, 	bb2[2]];
+	c[6] = [bb1[0],	0, 	bb2[2]];
+	c[7] = [bb1[0],	0, 	0];
+	c[8] = [bb1[0], 	0, 	bb2[5]];
+	
+	var tmp1 = c[1];
+	trace(tmp1);
+	var tmp = c[3];
+	trace(tmp);
+	tmp = c[5];
+	trace(tmp);
+	tmp = c[7];
+	trace(tmp);
+	
+	for (var i = start; i < end; i++){
+		c[i] = position + VectorRotate(phi, 0, 1, 0, c[i], false);
+		obj[i] = CVmObj(mesh);
+		obj[i].SetPosition(c[i]);
+		obj[i].SetPivotPoint(position);
+		obj[i].hide();
+	}
+	
+	switch(temp_direction) {
+		case FRONT:
+			start = 0;
+			end = 2;
+			break;
+		case REAR:
+			start = 4;
+			end = 6;
+			break;
+		case R:
+			start = 6;
+			end = 8;
+			break;
+		case L:
+			start = 2;
+			end = 4;
+			break;
+	}
+	
+	for (var i = start; i <= end; i++){
+		obj[i].unhide();
+		var iz = int(c[i].z);
+		var jz = int(abs(c[i].z - iz) * N_STEPS);
+		var ix = int(c[i].x);
+		var jx = int(abs(c[i].x - ix) * N_STEPS);
+		var height = matrix_level[iz * N_STEPS + jz][ix * N_STEPS + jx];
+
+		if(abs(height - position.y) > COLLISION_RANGE)
 			return true;
 	}
 	return false;
 }
 
-function player::update_speed_position(){
+function player::update_speed() {
 	if(my_keyboard.is_pressed(VK_W)){
+		direction = moving_direction;
+		temp_direction = FRONT;
 		if(speed < PLAYER_SPEED)
 			speed += PLAYER_SPEED_STEP;
 	}
 	else if(my_keyboard.is_pressed(VK_S)){
+		direction = moving_direction;
+		temp_direction = REAR;
 		if(speed > -PLAYER_SPEED/2)
 			speed -= 2*PLAYER_SPEED_STEP;
+	}
+	else if(my_keyboard.is_pressed(VK_A)){	
+		direction = [moving_direction[2], 0, -moving_direction[0]];
+		temp_direction = L;				
+		if(speed < PLAYER_SPEED)
+			speed = PLAYER_SPEED;
+	}
+	else if(my_keyboard.is_pressed(VK_D)) {
+		direction = [-moving_direction[2], 0, moving_direction[0]];
+		temp_direction = R;				
+		if(speed < PLAYER_SPEED)
+			speed += PLAYER_SPEED_STEP;
 	}
 	else if(speed > 0)
 		speed -= PLAYER_SPEED_STEP;
 	else if(speed < 0)
 		speed += PLAYER_SPEED_STEP;
 		
-	if(abs(speed) < 0.001) {
+	if(abs(speed) < 0.001)
 		speed = 0;
+}
+
+function player::update_position(){
+	if(speed == 0)
 		return;
-	}
-		
+
 	if(speed > 0)
 		current_frame = (current_frame + SWAT_FRAME_STEP *(0.95 + speed))% SWAT_TOTAL_FRAMES;
 	else if((current_frame = (current_frame - SWAT_FRAME_STEP *(0.95 + speed))% SWAT_TOTAL_FRAMES) <= 0)
 		current_frame += SWAT_TOTAL_FRAMES;
 
-	position += [speed * moving_direction[0], 0, speed * moving_direction[2]];
+	position += [speed * direction[0], 0, speed * direction[2]];
 }
 
 function player::update(obj_array, map, matrix_level) {
 	var old_position = position;
+	
+	update_speed();
 
 	if(my_keyboard.is_pressed(VK_SHIFT))
 		shoot();
-	else if(my_keyboard.is_pressed(VK_A)){					
-		var dir_ortho = [moving_direction[2], 0, -moving_direction[0]];
-		position += PLAYER_SPEED * dir_ortho;	
-	}
-	else if(my_keyboard.is_pressed(VK_D)){
-		var dir_ortho = [-moving_direction[2], 0, moving_direction[0]];
-		position += PLAYER_SPEED * dir_ortho;	
-	}
 	else if(my_keyboard.is_pressed(VK_C)){
 		if(current_weapon == my_railgun)
 			change_weapon(my_rocketl);	
@@ -249,34 +313,34 @@ function player::update(obj_array, map, matrix_level) {
 	}
 	else if(my_keyboard.is_pressed(VK_R))
 		current_weapon.add_bullets(20);
-	
+		
 	if(my_keyboard.is_pressed(VK_SPACE) && !is_jumping)
 		init_jump_dynamic();
 	
 	if(is_jumping)
 		update_jump_dynamics();
 	else
-		update_speed_position();
+		update_position();
+		
+	var posx = int(position.x);
+	var posz = int(position.z);
+	var jx = int(abs(position.x - posx) * N_STEPS);
+	var jz = int(abs(position.z - posz) * N_STEPS);
+	wall_height = matrix_level[posz * N_STEPS + jz][posx * N_STEPS + jx];
 		
 	if(check_collision(obj_array, matrix_level)){
 		position = old_position;
 		speed = 0;
 	}
 	else {
-		var posx = int(position.x);
-		var posz = int(position.z);
-		var jx = int(abs(position.x - posx) * N_STEPS);
-		var jz = int(abs(position.z - posz) * N_STEPS);
-		var height = matrix_level[posz * N_STEPS + jz][posx * N_STEPS + jx];
-		var tmp = height - position.y;
-		if(height - position.y > 0) {
+		if(wall_height - position.y > 0) {
 			speed = PLAYER_SPEED_CLIMB;
 			var tmp = "is climbing";
 			trace(tmp);
-			position.y = height;
+			position.y = wall_height;
 		}
-		else if(height - position.y < 0){
-			position.y = height;
+		else if(wall_height - position.y < 0){
+			position.y = wall_height;
 			var tmp = "is falling";
 			trace(tmp);
 		} 
@@ -287,7 +351,9 @@ function player::update(obj_array, map, matrix_level) {
 	current_weapon.update();
 }
 
-function player::draw(){											
+function player::draw(){
+	foreach(var o in obj)	
+		o.draw();										
 	obj_player.draw(VR_FRAMENUMBER, SWAT_START_WALK + current_frame);
 	current_weapon.draw();
 }

@@ -1,0 +1,8 @@
+function atan2pi(x,y){
+	var phi = atan2(x,y);
+
+	if(phi < 0)
+		phi = 2*PI - abs(phi);
+
+	return phi;
+}
