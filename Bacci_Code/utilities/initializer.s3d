@@ -21,7 +21,7 @@ function init() {
 	
 	my_players = player_manager();
 	my_players.init(my_world.obj_array, my_world.map, my_world.matrix);
-	my_players.addplayer(0, [2, 0, 2]);
+	my_players.addplayer();
 	
 	my_map = map();
 	my_player_info = player_info();

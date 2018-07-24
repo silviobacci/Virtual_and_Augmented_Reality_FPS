@@ -8,7 +8,9 @@ class player_manager {
 	
 	init(oa, mp, ml);
 	draw();
-	addplayer(id, pos);
+	random_pos();
+	set_orientation(pos);
+	addplayer();
 	update();
 	
 	get_player_position();
@@ -26,9 +28,32 @@ function player_manager::update(){
 		i.update(obj_array, map, matrix_level);
 }
 
-function player_manager::addplayer(id, pos){
+function player_manager::random_pos() {
+	var z;
+	var x;
+	var rows = len(map);
+	var columns = len(map[0]);
+	do {
+		z = rand(rows);
+		x = rand(columns);
+	}while(map[z][x] > 0);
+	
+	return [x, 0, z];
+}
+
+function player_manager::set_orientation(pos) {
+	var center = [len(map) / 2, 0, len(map[0]) / 2];
+	var x = center.x - pos.x;
+	var y = center.y - pos.y;
+	
+	return atan(y/x);
+}
+
+function player_manager::addplayer(){
 		var p = player();
-		p.init(id, pos);
+		var pos = random_pos();
+		var orientation = set_orientation(pos);
+		p.init(len(array_player) + 1, pos, orientation);
 		aadd(array_player, p);
 }
 
