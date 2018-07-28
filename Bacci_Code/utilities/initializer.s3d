@@ -5,10 +5,11 @@ function init() {
 	window.Fullscreen(true);
 	resolution = get_resolution();
 	
-	init_camera();
-	
 	my_keyboard = keyboard_manager();
 	my_keyboard.init();
+	
+	my_sound_player = sound_player();
+	my_sound_player.init();
 	
 	my_mouse = mouse_manager();
 	my_mouse.init();
@@ -20,8 +21,10 @@ function init() {
 	my_world.init();
 	
 	my_players = player_manager();
-	my_players.init(my_world.obj_array, my_world.map, my_world.matrix);
+	my_players.init(my_world.map, my_world.matrix);
 	my_players.addplayer();
+	
+	init_camera();
 	
 	my_map = map();
 	my_player_info = player_info();

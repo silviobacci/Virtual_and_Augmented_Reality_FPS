@@ -1,0 +1,61 @@
+#define PLAYER_RADIUS		30
+#define PLAYER_MASS			80
+#define VISCOUS_PLAYER 		6* PI* n * PLAYER_RADIUS  / PLAYER_MASS
+#define JUMP_FORCE 			15000
+#define JUMP_ANGLE 			0
+
+function player::reset_jump_dynamics(){
+	dx = 			0.0;
+	dy = 			0.0;
+	speedx = 		0.0;
+	speedy = 		0.0;
+	accx =			0.0;
+	accy = 			0.0;
+	is_jumping = 	false;
+	is_falling = 	false;
+}
+
+function player::init_jump_dynamic(){
+	reset_jump_dynamics();
+	
+	if(is_falling && front_speed == 0)
+		return;
+	
+	speedx = front_speed;
+
+	if(front_speed > 0)
+		angle = GRAD_TO_RAD * 45;
+	else if(front_speed < 0)
+		angle = GRAD_TO_RAD * 135;
+	else
+		angle = GRAD_TO_RAD * 90;
+		
+	accx = JUMP_FORCE / PLAYER_MASS * cos(angle);
+	accy = JUMP_FORCE / PLAYER_MASS * sin(angle) - g;
+	is_jumping = true;
+	is_falling = true;
+	
+	my_sound_player.play_jump(position);
+}
+
+function player::update_jump_dynamics(){
+	speedx += accx * delta_t; 
+	speedy += accy * delta_t;
+		
+	dx = delta_t * speedx;
+	dy = delta_t * speedy;
+		
+	angle = atan(dy/dx);
+	
+	position[0] += moving_direction[0] * dx;
+	position[1] += dy;
+	position[2] += moving_direction[2] * dx;
+	
+	if(position[1] <= wall_height) {
+		position[1] = wall_height;
+		reset_jump_dynamics();
+	}
+	
+	accx = - VISCOUS_PLAYER / PLAYER_MASS * sqrt(speedx^2 + speedy^2) * cos(angle);
+	accy = - VISCOUS_PLAYER / PLAYER_MASS * sqrt(speedx^2 + speedy^2) * sin(angle) - g;
+}

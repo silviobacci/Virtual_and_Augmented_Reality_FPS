@@ -1,23 +1,9 @@
-#define PLAYER_SPEED 		0.07
-#define PLAYER_SPEED_STEP 	0.001
-#define CLIMB_FACTOR	 	2
-#define PLAYER_SPEED_SIDE 	0.02
-
-#define PLAYER_ANGLE_STEP 	0.01
-
 #define SWAT_START_WALK 	16
 #define SWAT_END_WALK 		48
+#define SWAT_ONE_STEP 		16
 #define SWAT_TOTAL_FRAMES 	32
 #define SWAT_FRAME_STEP 	0.35
 #define CLIP_SIZE 			500
-
-#define COLLISION_RANGE 	0.7
-
-#define PLAYER_RADIUS		30
-#define PLAYER_MASS			80
-#define VISCOUS_PLAYER 		6* PI* n * PLAYER_RADIUS  / PLAYER_MASS
-#define JUMP_FORCE 			15000
-#define JUMP_ANGLE 			0
 
 #define FRONT				1
 #define REAR				2
@@ -45,8 +31,11 @@ class player{
 	
 	var is_falling;
 	var is_side_walking;
+	var fx_step;
 	
-	var obj;
+	var bounding_box;
+	var mesh_bounding_box;
+	var obj_bounding_box;
 	
 	//jump related 
 	var is_jumping;
@@ -58,6 +47,7 @@ class player{
 	var speedy; 
 	var angle;
 	var delta_t;
+	var fx_jump;
 	
 	//Player-associated
 	var my_railgun; 
@@ -67,17 +57,22 @@ class player{
 	init(i, p, o);
 	create_player();
 	
+	create_bounding_box();
+	check_collision(matrix_level);
+	
 	get_position();
 	
 	change_weapon(new_weapon);
 	shoot();
+	
 	reset_jump_dynamics();
 	init_jump_dynamic();
 	update_jump_dynamics();
+	
 	update_speed();
 	update_position();
-	check_collision(obj_array, map);
-	update(obj_array, map, matrix_level);
+	
+	update(matrix_level);
 	
 	draw();
 };
@@ -126,268 +121,19 @@ function player::init(i, p, o){
 	my_rocketl.init(ROCKETL_NAME, ROCKETL_N_BULLETS, ROCKETL_SHOOT_FORCE, ROCKETL_BULLET_RADIUS, ROCKETL_BULLET_MASS);
     
     create_player();
+    create_bounding_box();
     change_weapon(my_rocketl);
+    trace(angle_direction);
+    //obj_player.setRotation(angle_direction, 0, 1, 0);
+    //obj_player.setRotation(0, 0, 1, 0);
 }
 
 function player::get_position(){
 	return obj_player.GetPosition();
 }
 
-function player::reset_jump_dynamics(){
-	dx = 			0.0;
-	dy = 			0.0;
-	speedx = 		0.0;
-	speedy = 		0.0;
-	accx =			0.0;
-	accy = 			0.0;
-	is_jumping = 	false;
-	is_falling = 	false;
-}
-
-function player::init_jump_dynamic(){
-	reset_jump_dynamics();
-	
-	if(is_falling && front_speed == 0)
-		return;
-	
-	speedx = front_speed;
-
-	if(front_speed > 0)
-		angle = GRAD_TO_RAD * 45;
-	else if(front_speed < 0)
-		angle = GRAD_TO_RAD * 135;
-	else
-		angle = GRAD_TO_RAD * 90;
-		
-	accx = JUMP_FORCE / PLAYER_MASS * cos(angle);
-	accy = JUMP_FORCE / PLAYER_MASS * sin(angle) - g;
-	is_jumping = true;
-	is_falling = true;
-}
-
-function player::update_jump_dynamics(){
-	speedx += accx * delta_t; 
-	speedy += accy * delta_t;
-		
-	dx = delta_t * speedx;
-	dy = delta_t * speedy;
-		
-	angle = atan(dy/dx);
-	
-	position[0] += moving_direction[0] * dx;
-	position[1] += dy;
-	position[2] += moving_direction[2] * dx;
-	
-	if(position[1] <= wall_height){
-		position[1] = wall_height;
-		reset_jump_dynamics();
-	}
-	
-	accx = - VISCOUS_PLAYER / PLAYER_MASS * sqrt(speedx^2 + speedy^2) * cos(angle);
-	accy = - VISCOUS_PLAYER / PLAYER_MASS * sqrt(speedx^2 + speedy^2) * sin(angle) - g;
-}
-
-function player::change_weapon(new_weapon){
-	if(current_weapon != null)
-		obj_player_upper.RemoveChild(current_weapon.obj_gun);
-	current_weapon = new_weapon;
-	obj_player_upper.AddChild(current_weapon.obj_gun);
-}
-
-function player::shoot(){
-	current_weapon.shoot(position, moving_direction);
-}
-
-function player::check_collision(obj_array, matrix_level){
-	var phi = atan2pi(moving_direction[0], moving_direction[2]) * RAD_TO_GRAD;
-	var bb1 = mesh_player_upper.GetBoundingBox();
-	var bb2 = mesh_player_lower.GetBoundingBox();
-	var mesh = CVmNewMesh(VRP_BOX);
-	mesh.scale(0.1);
-	var start = 0;
-	var end = 9;
-	
-	obj = array(end);
-	
-	var c = array(end);
-	for (var i = start; i < end; i++)
-		c[i] = vector(3);
-	
-	c[0] = [bb1[0], 	0, 	bb2[5]];
-	c[1] = [0,     	0, 	bb2[5]];
-	c[2] = [bb1[3],	0, 	bb2[5]];
-	c[3] = [bb1[3],	0, 	0];
-	c[4] = [bb1[3],	0, 	bb2[2]];
-	c[5] = [0,		0, 	bb2[2]];
-	c[6] = [bb1[0],	0, 	bb2[2]];
-	c[7] = [bb1[0],	0, 	0];
-	c[8] = [bb1[0], 	0, 	bb2[5]];
-	
-	for (var i = start; i < end; i++){
-		c[i] = position + VectorRotate(phi, 0, 1, 0, c[i], false);
-		obj[i] = CVmObj(mesh);
-		obj[i].SetPosition(c[i]);
-		obj[i].SetPivotPoint(position);
-		obj[i].hide();
-	}
-	
-	switch(temp_direction) {
-		case FRONT:
-			start = 0;
-			end = 2;
-			break;
-		case REAR:
-			start = 4;
-			end = 6;
-			break;
-		case R:
-			start = 6;
-			end = 8;
-			break;
-		case L:
-			start = 2;
-			end = 4;
-			break;
-	}
-	
-	for (var i = start; i <= end; i++){
-		obj[i].unhide();
-		var iz = int(c[i].z);
-		var jz = int(abs(c[i].z - iz) * N_STEPS);
-		var ix = int(c[i].x);
-		var jx = int(abs(c[i].x - ix) * N_STEPS);
-		var height = matrix_level[iz * N_STEPS + jz][ix * N_STEPS + jx];
-		
-		if(height - position.y < -COLLISION_RANGE) {
-			init_jump_dynamic();
-			is_falling = true;
-			return true;	
-		}
-
-		if(abs(height - position.y) > COLLISION_RANGE)
-			return true;	
-	}
-	
-	return false;
-}
-
-function player::update_speed() {
-	if(my_keyboard.is_pressed(VK_W)){
-		temp_direction = FRONT;
-		front_direction = moving_direction;
-		if(front_speed < PLAYER_SPEED)
-			front_speed += PLAYER_SPEED_STEP;
-	}
-	else if(my_keyboard.is_pressed(VK_S)){
-		temp_direction = REAR;
-		front_direction = moving_direction;
-		if(front_speed > -PLAYER_SPEED/2)
-			front_speed -= 2*PLAYER_SPEED_STEP;
-	}
-	else if(front_speed > 0)
-		front_speed -= PLAYER_SPEED_STEP;
-	else if(front_speed < 0)
-		front_speed += PLAYER_SPEED_STEP;
-	
-	if(my_keyboard.is_pressed(VK_A)){
-		temp_direction = L;	
-		side_direction = [+ moving_direction[2], 0, - moving_direction[0]];
-		if(side_speed < PLAYER_SPEED_SIDE)
-			side_speed += PLAYER_SPEED_STEP;
-		if(front_speed == 0)
-			is_side_walking = true;
-	}
-	else if(my_keyboard.is_pressed(VK_D)) {
-		temp_direction = R;	
-		side_direction = [- moving_direction[2], 0, + moving_direction[0]];
-		if(side_speed < PLAYER_SPEED_SIDE)
-			side_speed += PLAYER_SPEED_STEP;
-		if(front_speed == 0)
-			is_side_walking = true;
-	}
-	else if(side_speed > 0)
-		side_speed -= PLAYER_SPEED_STEP;
-	else if(side_speed < 0)
-		side_speed += PLAYER_SPEED_STEP;
-		
-	if(abs(front_speed) < 0.001)
-		front_speed = 0;
-		
-	if(abs(side_speed) < 0.001) {
-		is_side_walking = false;
-		side_speed = 0;
-	}
-}
-
-function player::update_position(){
-	if(front_speed == 0 && side_speed == 0)
-		return;
-		
-	position += [front_speed * front_direction[0], 0, front_speed * front_direction[2]];
-	position += [side_speed * side_direction[0], 0, side_speed * side_direction[2]];
-			
-	if(is_side_walking)
-		return;
-		
-	if(front_speed > 0)
-		current_frame = (current_frame + SWAT_FRAME_STEP *(0.95 + front_speed))% SWAT_TOTAL_FRAMES;
-	else if((current_frame = (current_frame - SWAT_FRAME_STEP *(0.95 + front_speed))% SWAT_TOTAL_FRAMES) <= 0)
-		current_frame += SWAT_TOTAL_FRAMES;
-}
-
-function player::update(obj_array, map, matrix_level) {
-	var old_position = position;
-	
-	update_speed();
-
-	if(my_keyboard.is_pressed(VK_SHIFT))
-		shoot();
-	else if(my_keyboard.is_pressed(VK_C)){
-		if(current_weapon == my_railgun)
-			change_weapon(my_rocketl);	
-		else
-			change_weapon(my_railgun);
-	}
-	else if(my_keyboard.is_pressed(VK_R))
-		current_weapon.add_bullets(20);
-		
-	if(my_keyboard.is_pressed(VK_SPACE) && !is_jumping)
-		init_jump_dynamic();
-	
-	if(!is_jumping && !is_falling)
-		update_position();
-		
-	var posx = int(position.x);
-	var posz = int(position.z);
-	var jx = int(abs(position.x - posx) * N_STEPS);
-	var jz = int(abs(position.z - posz) * N_STEPS);
-	wall_height = matrix_level[posz * N_STEPS + jz][posx * N_STEPS + jx];
-	
-	if(is_jumping || is_falling)
-		update_jump_dynamics();
-		
-	if(!is_falling && check_collision(obj_array, matrix_level)){
-		if(!is_falling) {
-			position = old_position;
-			front_speed = 0;
-		}
-	}
-	else {
-		if(wall_height - position.y > 0)
-			position.y = wall_height;
-		else if(!is_jumping && wall_height - position.y < 0) {
-			position.y = wall_height;
-		}
-			
-	}
-
-	obj_player.setposition(position);
-	
-	current_weapon.update();
-}
-
 function player::draw(){
-	foreach(var o in obj)	
+	foreach(var o in obj_bounding_box)	
 		o.draw();										
 	obj_player.draw(VR_FRAMENUMBER, SWAT_START_WALK + current_frame);
 	current_weapon.draw();

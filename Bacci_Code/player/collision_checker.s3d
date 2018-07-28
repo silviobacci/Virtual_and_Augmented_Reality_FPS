@@ -1,0 +1,81 @@
+#define COLLISION_RANGE 	0.7
+
+function player::create_bounding_box() {
+	var start = 0;
+	var end = 9;
+	var bb1 = mesh_player_upper.GetBoundingBox();
+	var bb2 = mesh_player_lower.GetBoundingBox();
+	bounding_box = array(end);
+	for (var i = start; i < end; i++)
+		bounding_box[i] = vector(3);
+	
+	bounding_box[0] = [bb1[0], 		0, 	bb2[5]];
+	bounding_box[1] = [0,     		0, 	bb2[5]];
+	bounding_box[2] = [bb1[3],		0, 	bb2[5]];
+	bounding_box[3] = [bb1[3],		0, 	0];
+	bounding_box[4] = [bb1[3],		0, 	bb2[2]];
+	bounding_box[5] = [0,			0, 	bb2[2]];
+	bounding_box[6] = [bb1[0],		0, 	bb2[2]];
+	bounding_box[7] = [bb1[0],		0, 	0];
+	bounding_box[8] = [bb1[0], 		0, 	bb2[5]];
+	
+	mesh_bounding_box = CVmNewMesh(VRP_BOX);
+	mesh_bounding_box.scale(0.1);
+	obj_bounding_box = array(end);
+	
+	for (var i = start; i < end; i++)
+		obj_bounding_box[i] = CVmObj(mesh_bounding_box);
+}
+
+function player::check_collision(matrix_level){
+	var start = 0;
+	var end = 9;
+	var phi = atan2pi(moving_direction[0], moving_direction[2]) * RAD_TO_GRAD;
+	var to_check = array(end);
+	
+	for (var i = start; i < end; i++){
+		to_check[i] = position + VectorRotate(phi, 0, 1, 0, bounding_box[i], false);
+		obj_bounding_box[i].SetPosition(to_check[i]);
+		obj_bounding_box[i].SetPivotPoint(position);
+		obj_bounding_box[i].hide();
+	}
+	
+	switch(temp_direction) {
+		case FRONT:
+			start = 0;
+			end = 2;
+			break;
+		case REAR:
+			start = 4;
+			end = 6;
+			break;
+		case R:
+			start = 6;
+			end = 8;
+			break;
+		case L:
+			start = 2;
+			end = 4;
+			break;
+	}
+	
+	for (var i = start; i <= end; i++){
+		obj_bounding_box[i].unhide();
+		var iz = int(to_check[i].z);
+		var jz = int(abs(to_check[i].z - iz) * N_STEPS);
+		var ix = int(to_check[i].x);
+		var jx = int(abs(to_check[i].x - ix) * N_STEPS);
+		var height = matrix_level[iz * N_STEPS + jz][ix * N_STEPS + jx];
+		
+		if(height - position.y < -COLLISION_RANGE) {
+			init_jump_dynamic();
+			is_falling = true;
+			return true;	
+		}
+
+		if(abs(height - position.y) > COLLISION_RANGE)
+			return true;	
+	}
+	
+	return false;
+}

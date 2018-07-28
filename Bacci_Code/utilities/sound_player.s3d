@@ -1,0 +1,95 @@
+#define TIME_DELAY_SOUND	200
+
+#define N_SOUNDS			6
+
+#define STARTUP_SOUND		"startup.wav"
+#define STEP_SOUND			"step.wav"
+#define JUMP_SOUND			"jump.wav"
+#define JAM_SOUND			"jam.wav"
+#define HIT_SOUND			"jam.wav"
+#define SHOOT_SOUND			"shoot.wav"
+
+var my_sound_player;
+
+class sound_player {
+	var fx_sound;
+	var old_time;
+	
+	init();
+	index_to_sound(index);
+	play_sound_simple(index);
+	play_sound(index, position);
+	play_startup();
+	play_step(position);
+	play_jump(position);
+	play_jam(position);
+	play_hit(position);
+	play_shoot(position);
+};
+
+function sound_player::index_to_sound(index) {
+	switch(index) {
+		case 0:
+			return STARTUP_SOUND;
+		case 1:
+			return STEP_SOUND;
+		case 2:
+			return JUMP_SOUND;
+		case 3:
+			return JAM_SOUND;
+		case 4:
+			return HIT_SOUND;
+		case 5:
+			return SHOOT_SOUND;
+	}
+}
+
+function sound_player::init() {
+	fx_sound = array(N_SOUNDS);
+	old_time = array(N_SOUNDS);
+	
+	for(var i = 0; i < N_SOUNDS; i++) {
+		fx_sound[i] = CVmVRAWav(index_to_sound(i), true);
+		old_time[i] = 0;
+	}
+}
+
+function sound_player::play_sound_simple(index) {
+	fx_sound[index].play();
+}
+
+function sound_player::play_sound(index, position) {
+	if(getTime() - old_time[index] < TIME_DELAY_SOUND)
+		return false;
+		
+	old_time[index] = getTime();
+		
+	fx_sound[index].setposition(position);
+	fx_sound[index].setlistenerposition(CameraGetCurrent().GetPosition());
+	fx_sound[index].setlistenerorientation(-CameraGetCurrent().GetDirection());
+	fx_sound[index].play();
+}
+
+function sound_player::play_startup() {
+	play_sound_simple(0);
+}
+
+function sound_player::play_step(position) {
+	play_sound(1, position);
+}
+
+function sound_player::play_jump(position) {
+	play_sound(2, position);
+}
+
+function sound_player::play_jam(position) {
+	play_sound(3, position);
+}
+
+function sound_player::play_hit(position) {
+	play_sound(4, position);
+}
+
+function sound_player::play_shoot(position) {
+	play_sound(5, position);
+}

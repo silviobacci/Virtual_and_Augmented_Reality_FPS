@@ -1,0 +1,10 @@
+function player::change_weapon(new_weapon){
+	if(current_weapon != null)
+		obj_player_upper.RemoveChild(current_weapon.obj_gun);
+	current_weapon = new_weapon;
+	obj_player_upper.AddChild(current_weapon.obj_gun);
+}
+
+function player::shoot(){
+	current_weapon.shoot(position, moving_direction);
+}

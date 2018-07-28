@@ -1,5 +1,6 @@
 #include "../utilities/utilities.s3d"
 #include "../utilities/resolution.s3d"
+#include "../utilities/sound_player.s3d"
 #include "../utilities/keyboard.s3d"
 #include "../utilities/mouse.s3d"
 #include "../utilities/quit_functions.s3d"
@@ -10,6 +11,10 @@
 #include "../weapon/weapon.s3d"
 
 #include "../player/player.s3d"
+#include "../player/jumper.s3d"
+#include "../player/collision_checker.s3d"
+#include "../player/shooter.s3d"
+#include "../player/updater.s3d"
 #include "../player/player_manager.s3d"
 
 #include "../menu/menu_utilities.s3d"

@@ -72,7 +72,7 @@ function ComputeView(backside_offset){
 	my_players.array_player[0].obj_player.setRotation(phit, 0, 1, 0);
 	my_players.array_player[0].obj_player.rotate(-thetat, 1, 0, 0);
 
-	CameraGetCurrent().setPosition(my_players.array_player[0].position +cam_offset+backside_offset);
+	CameraGetCurrent().setPosition(my_players.array_player[0].position + cam_offset + backside_offset);
 }
 
 function FirstPersonView() {

@@ -36,7 +36,6 @@ function weapon::init(nm, nb, sf, br, bm){
 	shoot_force = sf;
 	bullet_radius = br;
 	bullet_mass = bm;
-	fx_shoot = CVmVRAWav("shoot.wav", true);
 	shooted_bullets = array(0);
 	add_bullets(nb);
 }
@@ -61,10 +60,7 @@ function weapon::shoot(position, shooting_direction){
 	bullets_left--;
 	adel(bullets, 0);
 	
-	fx_shoot.setposition(position);
-	fx_shoot.setlistenerposition(CameraGetCurrent().GetPosition());
-	fx_shoot.setlistenerorientation(-CameraGetCurrent().GetDirection());
-	fx_shoot.play();
+	my_sound_player.play_shoot(position);
 }
 
 function weapon::update() {

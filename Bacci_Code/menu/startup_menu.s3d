@@ -10,6 +10,8 @@ class startup_menu{
 	
 	var help;
 	
+	var fx_startup;
+	
 	init(h);
 	draw();
 	
@@ -28,6 +30,8 @@ function startup_menu::init(h) {
 	help = h;
 	
 	show_menu = true;
+	
+	my_sound_player.play_startup();
 }
 
 function startup_menu::check_mouse_position() {
