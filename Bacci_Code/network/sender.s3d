@@ -13,7 +13,7 @@ function OnSend() {
 	// send position pdu.
 	if(getTime() - timer_POSITION_PDU > POSITION_PDU_PERIOD){
 		timer_POSITION_PDU = getTime();
-		PDU = my_network.create_PDU_POSITION();
+		PDU = my_network.create_POSITION_PDU();
 		my_network.send(PDU);
 	}
 	

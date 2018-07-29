@@ -18,5 +18,6 @@ function OnDraw() {
 	my_map.draw();
 	my_player_info.draw();
 	my_score_info.draw();
-	my_gunsight.draw();
+	if(current_view == FIRST_PERSON_VIEW)
+		my_gunsight.draw();
 }

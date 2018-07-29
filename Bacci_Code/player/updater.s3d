@@ -4,7 +4,7 @@
 #define PLAYER_ANGLE_STEP 	0.01
 
 function player::update_moving_direction() {
-	moving_direction = [sin(angle_direction), 0 , cos(angle_direction)];
+	moving_direction = [CameraGetCurrent().GetDirection().x, 0, CameraGetCurrent().GetDirection().z];
 }
 
 function player::update_speed() {

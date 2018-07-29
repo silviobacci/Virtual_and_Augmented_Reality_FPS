@@ -7,6 +7,7 @@
 #define VK_S 					"s"
 #define VK_D 					"d"
 #define VK_C 					"c"
+#define VK_M 					"m"
 #define VK_R 					"r"
 
 var my_keyboard;
