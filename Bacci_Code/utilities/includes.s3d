@@ -25,6 +25,7 @@
 #include "../overlay/map.s3d"
 #include "../overlay/player_info.s3d"
 #include "../overlay/score_info.s3d"
+#include "../overlay/gunsight.s3d"
 
 #include "../utilities/camera.s3d"
 

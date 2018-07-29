@@ -51,16 +51,16 @@ function player_manager::set_orientation(pos) {
 	var z = center.z - pos.z;
 	trace(x);
 	trace(z);
-	var tmp = atan(x / z) * RAD_TO_GRAD;
-	trace(tmp);
+	var at = atan(x / z) * RAD_TO_GRAD;
+	trace(at);
 	if(x > 0 && z > 0)
-		or = atan(x / z) * RAD_TO_GRAD;
+		or = at;
 	else if(x > 0 && z < 0)
-		or = 180 + atan(x / z) * RAD_TO_GRAD;
+		or = 180 + at;
 	else if(x < 0 && z > 0)
-		or = atan(x / z) * RAD_TO_GRAD;
+		or = at;
 	else if(x < 0 && z < 0)
-		or = 180 + atan(x / z) * RAD_TO_GRAD;
+		or = 180 + at;
 	trace(or);
 	
 	return or;
@@ -68,7 +68,7 @@ function player_manager::set_orientation(pos) {
 
 function player_manager::addplayer(){
 		var p = player();
-		var pos = [2, 0, 2];//random_pos();
+		var pos = [43, 0, 23];//random_pos();
 		var orientation = set_orientation(pos);
 		p.init(len(array_player) + 1, pos, orientation);
 		aadd(array_player, p);

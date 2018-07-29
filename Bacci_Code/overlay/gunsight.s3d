@@ -1,0 +1,37 @@
+#define GUNSIGHT_UNIT_SIZE			0.002
+
+#define GUNSIGHT_COLOR				[255, 0, 0] / 255.0
+
+var my_gunsight;
+
+class gunsight{
+	var gunsight_position_x;
+	var gunsight_position_y;
+	var width;
+	var height;
+	
+	draw();
+	init();
+};
+
+function gunsight::init() {
+	width = GUNSIGHT_UNIT_SIZE;
+	height = GUNSIGHT_UNIT_SIZE * resolution;
+	
+	gunsight_position_x = 0.5 - width / 2;
+	gunsight_position_y = 0.5 + height / 2;
+}
+
+function gunsight::draw() {
+	ConsoleColor(GUNSIGHT_COLOR);
+	ConsoleFilledRect(gunsight_position_x, 				gunsight_position_y, 				width, height);
+	ConsoleFilledRect(gunsight_position_x + width, 		gunsight_position_y, 				width, height);
+	ConsoleFilledRect(gunsight_position_x - width, 		gunsight_position_y, 				width, height);
+	ConsoleFilledRect(gunsight_position_x + 2 * width, 	gunsight_position_y, 				width, height);
+	ConsoleFilledRect(gunsight_position_x - 2 * width, 	gunsight_position_y, 				width, height);
+	ConsoleFilledRect(gunsight_position_x, 				gunsight_position_y + height,		width, height);
+	ConsoleFilledRect(gunsight_position_x, 				gunsight_position_y - height, 		width, height);
+	ConsoleFilledRect(gunsight_position_x, 				gunsight_position_y + 2 * height,	width, height);
+	ConsoleFilledRect(gunsight_position_x, 				gunsight_position_y - 2 * height, 	width, height);
+	ConsoleFinish();	
+}

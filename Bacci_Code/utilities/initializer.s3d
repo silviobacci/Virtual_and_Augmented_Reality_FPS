@@ -14,8 +14,8 @@ function init() {
 	my_mouse = mouse_manager();
 	my_mouse.init();
 	
-	my_network = network();
-	my_network.init();
+	//my_network = network();
+	//my_network.init();
 	
 	my_world = world();
 	my_world.init();
@@ -45,4 +45,7 @@ function init() {
 	
 	my_pause_menu = pause_menu();
 	my_pause_menu.init(my_startup_menu, my_help_menu);
+	
+	my_gunsight = gunsight();
+	my_gunsight.init();
 }

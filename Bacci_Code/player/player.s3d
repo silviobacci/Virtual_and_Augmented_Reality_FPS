@@ -71,6 +71,7 @@ class player{
 	
 	update_speed();
 	update_position();
+	update_moving_direction();
 	
 	update(matrix_level);
 	
@@ -105,11 +106,11 @@ function player::init(i, p, o){
 	side_speed =		0.0;
 	front_speed =		0.0;
 	angle_direction = 	o;
+	update_moving_direction(); 
 	is_falling =		false;
 	is_jumping = 		false;
 	is_side_walking =	false;
 	delta_t = 			1.0 / FRAME_RATE;
-	moving_direction = 	[sin(angle_direction), 0 , cos(angle_direction)]; 
 	front_direction = 	moving_direction;
 	side_direction = 	moving_direction;
 	temp_direction = 	FRONT;
@@ -123,9 +124,6 @@ function player::init(i, p, o){
     create_player();
     create_bounding_box();
     change_weapon(my_rocketl);
-    trace(angle_direction);
-    //obj_player.setRotation(angle_direction, 0, 1, 0);
-    //obj_player.setRotation(0, 0, 1, 0);
 }
 
 function player::get_position(){

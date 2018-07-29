@@ -6,5 +6,5 @@ function player::change_weapon(new_weapon){
 }
 
 function player::shoot(){
-	current_weapon.shoot(position, moving_direction);
+	current_weapon.shoot(position, CameraGetCurrent().GetDirection());
 }

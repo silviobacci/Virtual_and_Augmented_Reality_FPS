@@ -1,4 +1,4 @@
-#define MAX_VERT_ROT 		90
+#define MAX_VERT_ROT 		250
 #define OFFEST_WIDTH		0 //9
 #define OFFEST_HEIGHT		0 //31
 
@@ -25,12 +25,9 @@ var meshRot_x_cumulative = 0.0;
 var rho = 1.2;
 
 function init_camera() {
-	if(my_players != void)
-		CamDir = my_players.array_player[0].moving_direction;
-	else
-		CamDir = -CameraGetCurrent().GetDirection();
-	CameraGetCurrent().SetPosition(CamPos);
-	CameraGetCurrent().SetDirection(CamDir);
+	CameraGetCurrent().SetPosition(my_players.array_player[0].position);
+	CameraGetCurrent().SetRotation (0, 1, 1, 1);
+	CameraGetCurrent().RotateGlobal(180 - my_players.array_player[0].angle_direction, 0, 1, 0);
 }
 
 function CameraMoveMouse() {	
@@ -56,21 +53,44 @@ function CameraMoveMouse() {
 
 	CameraGetCurrent().RotateGlobal(deltax * rot_sensitivity, 0, 1, 0);
 	CameraGetCurrent().RotateLocal (deltay * rot_sensitivity, 1, 0, 0);
+	my_players.array_player[0].angle_direction = (my_players.array_player[0].angle_direction - deltax * rot_sensitivity) % 360;
+	if(my_players.array_player[0].angle_direction < 0)
+		my_players.array_player[0].angle_direction = 360 + my_players.array_player[0].angle_direction;
+	//my_players.array_player[0].moving_direction = [new_direction.x, 0, new_direction.z];
+}
 
-	my_players.array_player[0].moving_direction = CameraGetCurrent().GetDirection();
+function compute_theta(coord) {
+	var x = coord.x;
+	var y = coord.y;
+	var z = coord.z;
+	var theta = PI/2 - acos(y / ((x^2 + y^2 + z^2)^(1/2)));
+	//var theta = PI/2 - atan2pi((x^2 + y^2 + z^2)^(1/2), y);	
+	return theta;
+}
+
+function compute_phi(coord) {
+	var x = coord.x;
+	var z = coord.z;
+	var ratio = x / z;
+	//var phi = atan(z / x);
+	var phi = atan2(x, z);
+	return phi;
 }
 
 function ComputeView(backside_offset){
-	var theta = PI/2 - atan2pi((my_players.array_player[0].moving_direction[0]^2 + my_players.array_player[0].moving_direction[2]^2)^(1/2),my_players.array_player[0].moving_direction[1]);	
-	var phi = atan2pi(my_players.array_player[0].moving_direction[0],my_players.array_player[0].moving_direction[2]);
-
+	//var theta = compute_theta(my_players.array_player[0].moving_direction);
+	//var phi = compute_phi(my_players.array_player[0].moving_direction);
+	var theta = 0;
+	var phi = my_players.array_player[0].angle_direction * GRAD_TO_RAD;
+	
+	//var phit = phi * RAD_TO_GRAD;
 	var thetat = theta * RAD_TO_GRAD;
-	var phit = phi * RAD_TO_GRAD;
+	var phit = my_players.array_player[0].angle_direction;
 
-	var cam_offset = rho*[-sin(theta)*sin(phi),cos(theta),-sin(theta)*cos(phi)];
+	var cam_offset = rho * [sin(theta)*sin(phi), cos(theta), -sin(theta)*cos(phi)];
 
 	my_players.array_player[0].obj_player.setRotation(phit, 0, 1, 0);
-	my_players.array_player[0].obj_player.rotate(-thetat, 1, 0, 0);
+	//my_players.array_player[0].obj_player.rotate(-thetat, 1, 0, 0);
 
 	CameraGetCurrent().setPosition(my_players.array_player[0].position + cam_offset + backside_offset);
 }
@@ -82,7 +102,8 @@ function FirstPersonView() {
 }
 
 function ThirdPerdonView() {
-	var backside_offset = [-my_players.array_player[0].moving_direction[0]*2,1,-my_players.array_player[0].moving_direction[2]*2];
+	var backside_offset = [-my_players.array_player[0].moving_direction.x*2, 1, -my_players.array_player[0].moving_direction.z*2];
+	//var backside_offset = [0,0,0];
 	ComputeView(backside_offset);
 	CameraMoveMouse();
 }
@@ -109,6 +130,7 @@ function update_camera() {
     	case FREE_CAMERA_VIEW:
     		CameraGetCurrent().setPosition([30.0, WORLD_SUN_HEIGHT, 30.0]);
     		CameraSetTarget(my_players.array_player[0].position);
+    		CameraFree();
     		FreeCameraView();
     		break;
     }
