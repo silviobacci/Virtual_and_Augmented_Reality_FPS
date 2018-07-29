@@ -59,6 +59,9 @@ function player::update_position(){
 	if(front_speed == 0 && side_speed == 0)
 		return;
 		
+	trace(front_speed);
+	trace(side_speed);
+		
 	position += [front_speed * front_direction[0], 0, front_speed * front_direction[2]];
 	position += [side_speed * side_direction[0], 0, side_speed * side_direction[2]];
 			

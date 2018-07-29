@@ -27,7 +27,7 @@ var rho = 1.2;
 function init_camera() {
 	CameraGetCurrent().SetPosition(my_players.array_player[0].position);
 	CameraGetCurrent().SetRotation (0, 1, 1, 1);
-	CameraGetCurrent().RotateGlobal(180 - my_players.array_player[0].angle_direction, 0, 1, 0);
+	CameraGetCurrent().RotateGlobal(180 + my_players.array_player[0].angle_direction, 0, 1, 0);
 }
 
 function CameraMoveMouse() {	
@@ -53,7 +53,7 @@ function CameraMoveMouse() {
 
 	CameraGetCurrent().RotateGlobal(deltax * rot_sensitivity, 0, 1, 0);
 	CameraGetCurrent().RotateLocal (deltay * rot_sensitivity, 1, 0, 0);
-	my_players.array_player[0].angle_direction = (my_players.array_player[0].angle_direction - deltax * rot_sensitivity) % 360;
+	my_players.array_player[0].angle_direction = (my_players.array_player[0].angle_direction + deltax * rot_sensitivity) % 360;
 	if(my_players.array_player[0].angle_direction < 0)
 		my_players.array_player[0].angle_direction = 360 + my_players.array_player[0].angle_direction;
 	//my_players.array_player[0].moving_direction = [new_direction.x, 0, new_direction.z];
@@ -89,10 +89,16 @@ function ComputeView(backside_offset){
 
 	var cam_offset = rho * [sin(theta)*sin(phi), cos(theta), -sin(theta)*cos(phi)];
 
-	my_players.array_player[0].obj_player.setRotation(phit, 0, 1, 0);
+	my_players.array_player[0].obj_player.setRotation(-phit, 0, 1, 0);
 	//my_players.array_player[0].obj_player.rotate(-thetat, 1, 0, 0);
+	//trace(cam_offset);
+	//trace(backside_offset);
 
 	CameraGetCurrent().setPosition(my_players.array_player[0].position + cam_offset + backside_offset);
+	var camera_pos = CameraGetCurrent().GetPosition();
+	//trace(camera_pos);
+	var position = my_players.array_player[0].position;
+	//trace(position);
 }
 
 function FirstPersonView() {
@@ -102,13 +108,15 @@ function FirstPersonView() {
 }
 
 function ThirdPerdonView() {
-	var backside_offset = [-my_players.array_player[0].moving_direction.x*2, 1, -my_players.array_player[0].moving_direction.z*2];
-	//var backside_offset = [0,0,0];
+	var backside_offset = [-1, 0.2, -1];
 	ComputeView(backside_offset);
 	CameraMoveMouse();
 }
 
 function FreeCameraView() {
+	CameraGetCurrent().setPosition([30.0, WORLD_SUN_HEIGHT, 30.0]);
+	CameraSetTarget(my_players.array_player[0].position);
+	CameraGetCurrent().Free();
 	CameraMoveMouse_MBL_LC();
 }
 
@@ -128,9 +136,6 @@ function update_camera() {
     		ThirdPerdonView();
     		break;
     	case FREE_CAMERA_VIEW:
-    		CameraGetCurrent().setPosition([30.0, WORLD_SUN_HEIGHT, 30.0]);
-    		CameraSetTarget(my_players.array_player[0].position);
-    		CameraFree();
     		FreeCameraView();
     		break;
     }
