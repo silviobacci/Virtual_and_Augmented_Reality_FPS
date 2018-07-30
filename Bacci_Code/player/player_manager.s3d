@@ -23,8 +23,7 @@ function player_manager::init(mp, ml){
 }
 
 function player_manager::update(){
-	foreach(var i in array_player)
-		i.update(matrix_level);
+	array_player[0].update(matrix_level);
 }
 
 function player_manager::random_pos() {

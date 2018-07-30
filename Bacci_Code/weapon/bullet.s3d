@@ -21,6 +21,7 @@ class bullet{
 	
 	var angle;
 	var position;
+	var old_position;
 	var dir;
 
 	var is_flying;
@@ -37,12 +38,17 @@ class bullet{
 	var speedy; 
 	var accx;
 	var accy;
+	
+	var obj;
+	var mesh;
 
 	create_bullet();
 	init(br, bm);
 	
+	check_if_hit(coord);
+	check_collision(matrix_level);
 	update_dynamics();
-	update();
+	update(matrix_level);
 	
 	draw();
 	
@@ -57,11 +63,15 @@ function bullet::create_bullet() {
 }
 
 function bullet::init(br, bm){
+	obj = array(0);
+	mesh = CVmNewMesh(VRP_BOX);
+	mesh.scale(2);
+	
 	radius = br;
 	mass = bm;
 	viscous = 6* PI* n * radius / mass;
 	
-	delta_t = 1.0 / FRAME_RATE;
+	delta_t = TIME_STEP_UPDATE;
 	
 	is_flying = false;
 	elapsed_time = 0.0;
@@ -86,13 +96,15 @@ function bullet::update_dynamics(){
 	accy = - viscous / mass * sqrt(speedx^2 + speedy^2) * sin(angle) - g;
 }
 
-function bullet::update(){
+function bullet::update(matrix_level){
 	if(is_flying){
+		old_position = position;
 		update_dynamics();
 		
-		obj_bullet.setposition(position);
-		if(position[1] <= 0)
+		if(check_collision(matrix_level) || position[1] <= 0)
 			is_flying = false; 
+		else
+			obj_bullet.setposition(position);
 	}
 }
 
@@ -111,5 +123,8 @@ function bullet::shoot(p, d, sf){
 }
 
 function bullet::draw(){
-	obj_bullet.draw();
+	if(is_flying == true)
+		obj_bullet.draw();
+	foreach(var o in obj)
+		o.draw();
 }

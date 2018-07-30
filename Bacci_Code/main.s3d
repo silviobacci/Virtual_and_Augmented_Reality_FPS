@@ -16,8 +16,6 @@ function OnInit(params) {
 }
 
 function OnFrame() {
-	OnUpdate();
-	
 	//OnSend();
 	
 	SceneBegin();
@@ -31,6 +29,7 @@ function DownloadReady(RequestID) {}
 
 function OnTimer() {
 	//OnReceive();
+	OnUpdate();
 }
 
 function OnEvent(eventID, wparam, lparam) {}

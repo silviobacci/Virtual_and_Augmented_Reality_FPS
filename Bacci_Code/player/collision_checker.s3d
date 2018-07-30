@@ -30,7 +30,7 @@ function player::create_bounding_box() {
 function player::check_collision(matrix_level){
 	var start = 0;
 	var end = 9;
-	var phi = atan2pi(moving_direction[0], moving_direction[2]) * RAD_TO_GRAD;
+	var phi = angle_direction;
 	var to_check = array(end);
 	
 	for (var i = start; i < end; i++){

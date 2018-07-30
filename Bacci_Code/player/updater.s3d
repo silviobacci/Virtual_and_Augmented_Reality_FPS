@@ -1,6 +1,6 @@
-#define PLAYER_SPEED 		0.07
+#define PLAYER_SPEED 		0.02
 #define PLAYER_SPEED_STEP 	0.001
-#define PLAYER_SPEED_SIDE 	0.02
+#define PLAYER_SPEED_SIDE 	0.01
 #define PLAYER_ANGLE_STEP 	0.01
 
 function player::update_moving_direction() {
@@ -59,9 +59,6 @@ function player::update_position(){
 	if(front_speed == 0 && side_speed == 0)
 		return;
 		
-	trace(front_speed);
-	trace(side_speed);
-		
 	position += [front_speed * front_direction[0], 0, front_speed * front_direction[2]];
 	position += [side_speed * side_direction[0], 0, side_speed * side_direction[2]];
 			
@@ -69,8 +66,8 @@ function player::update_position(){
 		return;
 		
 	if(front_speed > 0)
-		current_frame = (current_frame + SWAT_FRAME_STEP *(0.95 + front_speed))% SWAT_TOTAL_FRAMES;
-	else if((current_frame = (current_frame - SWAT_FRAME_STEP *(0.95 + front_speed))% SWAT_TOTAL_FRAMES) <= 0)
+		current_frame = (current_frame + SWAT_FRAME_STEP *(0.4 + front_speed)) % SWAT_TOTAL_FRAMES;
+	else if((current_frame = (current_frame - SWAT_FRAME_STEP *(0.4 + front_speed)) % SWAT_TOTAL_FRAMES) <= 0)
 		current_frame += SWAT_TOTAL_FRAMES;
 		
 	if(abs(current_frame - SWAT_ONE_STEP) < 0.5 || abs(current_frame - SWAT_TOTAL_FRAMES) < 0.5)
@@ -128,5 +125,5 @@ function player::update(matrix_level) {
 
 	obj_player.setposition(position);
 	
-	current_weapon.update();
+	current_weapon.update(matrix_level);
 }

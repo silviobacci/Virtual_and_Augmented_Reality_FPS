@@ -1,5 +1,6 @@
 function init() {
 	SetFrameRate(FRAME_RATE);	
+	SetTimeStep(TIME_STEP_UPDATE * 1000);
 	
 	window = CVmWebBrowser();
 	window.Fullscreen(true);
@@ -22,6 +23,7 @@ function init() {
 	
 	my_players = player_manager();
 	my_players.init(my_world.map, my_world.matrix);
+	my_players.addplayer();
 	my_players.addplayer();
 	
 	init_camera();

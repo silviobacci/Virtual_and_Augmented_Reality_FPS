@@ -1,4 +1,4 @@
-#define BUTTON_NUMBER			12
+#define BUTTON_NUMBER			13
 
 #define TIME_DELAY_KEYBOARD		200
 
@@ -39,6 +39,7 @@ function keyboard_manager::is_free(index) {
 		case 5:
 		case 8:
 		case 9:
+		case 12:
 			return true;
 		default:
 			return false;
@@ -71,6 +72,8 @@ function keyboard_manager::index_to_key(index) {
 			return VK_C;
 		case 11:
 			return VK_R;
+		case 12:
+			return VK_M;
 	}
 }
 

@@ -1,0 +1,45 @@
+#define HIT_RANGE	0.2
+
+function bullet::check_if_hit(coord) {
+	if(abs(coord.x - position.x) > HIT_RANGE)
+		return false;
+	
+	if(abs(coord.z - position.z) > HIT_RANGE)
+		return false;
+	
+	trace(coord); 
+	trace(position);
+		
+	if(coord.y < position.y || coord.y > position.y + 1)
+		return false;
+		
+	return true;
+}
+
+function bullet::check_collision(matrix_level){
+	var y = 0;
+	var iz = int(position.z);
+	var jz = int(abs(position.z - iz) * N_STEPS);
+	var ix = int(position.x);
+	var jx = int(abs(position.x - ix) * N_STEPS);
+	var z = iz * N_STEPS + jz;
+	var x = ix * N_STEPS + jx;
+	if(z >= 0 && z < len(matrix_level) && x >= 0 && x < len(matrix_level))
+		y = matrix_level[z][x];
+		
+	for(var i = 1; i < len(my_players.array_player); i++) {
+		if(check_if_hit(my_players.array_player[i].position)){
+			var player = "player hit";
+			trace(player); 
+			return true;	
+		}
+	}
+	
+	if(y > position.y){
+		var wall = "wall hit";
+		trace(wall); 
+		return true;	
+	}
+	
+	return false;
+}

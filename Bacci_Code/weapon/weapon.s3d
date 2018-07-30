@@ -19,7 +19,7 @@ class weapon {
 	add_bullets(to_add);
 	shoot(position, shooting_direction);
 	
-	update();
+	update(matrix_level);
 	draw();
 };
 
@@ -63,9 +63,9 @@ function weapon::shoot(position, shooting_direction){
 	my_sound_player.play_shoot(position);
 }
 
-function weapon::update() {
+function weapon::update(matrix_level) {
 	foreach (var bullet in shooted_bullets)
-		bullet.update();
+		bullet.update(matrix_level);
 }
 
 function weapon::draw() {

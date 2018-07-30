@@ -1,61 +1,49 @@
-#define MAX_VERT_ROT 		250
-#define OFFEST_WIDTH		0 //9
-#define OFFEST_HEIGHT		0 //31
+#define MAX_VERTICAL_ROTATION 	250
+#define OFFEST_WIDTH			0 //9
+#define OFFEST_HEIGHT			0 //31
+#define RHO					 	1.2
 
-#define FIRST_PERSON_VIEW	0
-#define THIRD_PERSON_VIEW	1
-#define FREE_CAMERA_VIEW	2
-#define N_VIEWS				3
-
-var CamPos = [0.0, 30, 30.0];
-var CamDir; 
+#define FIRST_PERSON_VIEW		0
+#define THIRD_PERSON_VIEW		1
+#define FREE_CAMERA_VIEW		2
+#define GUNSIGHT_VIEW			3
+#define N_VIEWS					3
 
 var current_view = FIRST_PERSON_VIEW;
-var last_mouse_x = 0.0; 
-var last_mouse_y = 0.0;
-var last_mouse_z = 0.0;
-var last_deltax = 0;
-var counter = 0;
-var meshRot_x = 0.0;
-var meshRot_y = 0.0;
-var offset_w = 8;
-var offset_h = 30;
-var meshRot_y_cumulative = 0.0;
-var meshRot_x_cumulative = 0.0;
-var rho = 1.2;
+var previous_view = FIRST_PERSON_VIEW;
+var vertical_rotation = 0.0;
+var my_camera;
 
 function init_camera() {
-	CameraGetCurrent().SetPosition(my_players.array_player[0].position);
-	CameraGetCurrent().SetRotation (0, 1, 1, 1);
-	CameraGetCurrent().RotateGlobal(180 - my_players.array_player[0].angle_direction, 0, 1, 0);
-	meshRot_y_cumulative = 0.0;
-	meshRot_x_cumulative = 0.0;
+	my_camera = CameraGetCurrent();
+	my_camera.SetPosition(my_players.array_player[0].position);
+	my_camera.SetRotation (0, 1, 1, 1);
+	my_camera.RotateGlobal(180 - my_players.array_player[0].angle_direction, 0, 1, 0);
+	vertical_rotation = 0.0;
 }
 
 function CameraMoveMouse() {	
-	var	rot_sensitivity = 0.1;			
- 	var deltax = Mouse.X;
-	var deltay = Mouse.Y;
+	var	rotation_sensitivity = 0.05;			
+ 	var delta_x = Mouse.X;
+	var delta_y = Mouse.Y;
 	
  	SetCursorPos(0.5, 0.5);
 
-	if(deltax != 0)
-		deltax = Floor(deltax - (window_w/2) + OFFEST_WIDTH);
-	if(deltay != 0)
-		deltay = Ceil(deltay - (window_h/2) + OFFEST_HEIGHT);
+	if(delta_x != 0)
+		delta_x = Floor(delta_x - (window_w/2) + OFFEST_WIDTH);
+	if(delta_y != 0)
+		delta_y = Ceil(delta_y - (window_h/2) + OFFEST_HEIGHT);
 
-	meshRot_x_cumulative+= deltax;
-	meshRot_y_cumulative+= deltay;
+	vertical_rotation+= delta_y;
 
-	if(abs(meshRot_y_cumulative) >  MAX_VERT_ROT){
-		meshRot_y_cumulative-= deltay;
-		deltay -= deltay * rot_sensitivity;
-		deltay = 0;
+	if(abs(vertical_rotation) >  MAX_VERTICAL_ROTATION){
+		vertical_rotation -= delta_y;
+		delta_y = 0;
 	}
 
-	CameraGetCurrent().RotateGlobal(deltax * rot_sensitivity, 0, 1, 0);
-	CameraGetCurrent().RotateLocal (deltay * rot_sensitivity, 1, 0, 0);
-	my_players.array_player[0].angle_direction = (my_players.array_player[0].angle_direction - deltax * rot_sensitivity) % 360;
+	my_camera.RotateGlobal(delta_x * rotation_sensitivity, 0, 1, 0);
+	my_camera.RotateLocal (delta_y * rotation_sensitivity, 1, 0, 0);
+	my_players.array_player[0].angle_direction = (my_players.array_player[0].angle_direction - delta_x * rotation_sensitivity) % 360;
 	if(my_players.array_player[0].angle_direction < 0)
 		my_players.array_player[0].angle_direction = 360 + my_players.array_player[0].angle_direction;
 }
@@ -66,10 +54,17 @@ function ComputeView(backside_offset){
 	
 	var thetat = theta * RAD_TO_GRAD;
 	var phit = my_players.array_player[0].angle_direction;
-	var cam_offset = rho * [sin(theta)*sin(phi), cos(theta), -sin(theta)*cos(phi)];
+	
+	var cam_offset = RHO * [sin(theta)*sin(phi), cos(theta), -sin(theta)*cos(phi)];
 
 	my_players.array_player[0].obj_player.setRotation(phit, 0, 1, 0);
-	CameraGetCurrent().setPosition(my_players.array_player[0].position + cam_offset + backside_offset);
+	my_camera.setPosition(my_players.array_player[0].position + cam_offset + backside_offset);
+}
+
+function GunsightView() {
+	var backside_offset = [my_players.array_player[0].moving_direction.x *2, 0, my_players.array_player[0].moving_direction.z*2];
+	ComputeView(backside_offset);
+	CameraMoveMouse();
 }
 
 function FirstPersonView() {
@@ -85,23 +80,36 @@ function ThirdPerdonView() {
 }
 
 function FreeCameraView() {
-	CameraGetCurrent().setPosition([30.0, WORLD_SUN_HEIGHT, 30.0]);
-	CameraSetTarget(my_players.array_player[0].position);
-	CameraGetCurrent().Free();
+	my_camera.SetPosition([30.0, WORLD_SUN_HEIGHT, 30.0]);
+	my_camera.SetTarget(my_players.array_player[0].position);
+	my_camera.Free();
 	CameraMoveMouse_MBL_LC();
 }
 
-function ChangeView(new_view) {
-	if(new_view != void)
-		current_view = new_view;
-	else
-		current_view = (current_view + 1) % N_VIEWS;
+function ChangeView() {
+	current_view = (current_view + 1) % N_VIEWS;
 	init_camera();
+}
+
+function aim() {
+	if(current_view == FIRST_PERSON_VIEW || current_view == THIRD_PERSON_VIEW) {
+		previous_view = current_view;
+		current_view = GUNSIGHT_VIEW;
+	}
+}
+
+function unaim() {
+	if(current_view == GUNSIGHT_VIEW)
+		current_view = previous_view;
 }
 
 function update_camera() {
 	if(my_keyboard.is_pressed(VK_LCONTROL))
 		ChangeView();
+	else if(my_keyboard.is_pressed(VK_M))
+		aim();
+	else if(!my_keyboard.is_pressed(VK_M))
+		unaim();
     
     switch(current_view) {
     	case FIRST_PERSON_VIEW:
@@ -109,6 +117,9 @@ function update_camera() {
     		break;
     	case THIRD_PERSON_VIEW:
     		ThirdPerdonView();
+    		break;
+    	case GUNSIGHT_VIEW:
+    		GunsightView();
     		break;
     	case FREE_CAMERA_VIEW:
     		FreeCameraView();

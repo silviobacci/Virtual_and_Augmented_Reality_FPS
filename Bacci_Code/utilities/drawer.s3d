@@ -15,9 +15,9 @@ function OnDraw() {
 	}
 	
 	my_mouse.set_invisible();
+	if(current_view == FIRST_PERSON_VIEW || current_view == GUNSIGHT_VIEW)
+		my_gunsight.draw();
 	my_map.draw();
 	my_player_info.draw();
 	my_score_info.draw();
-	if(current_view == FIRST_PERSON_VIEW)
-		my_gunsight.draw();
 }
