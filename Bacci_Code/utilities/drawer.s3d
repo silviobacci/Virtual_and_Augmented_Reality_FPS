@@ -1,6 +1,7 @@
 function OnDraw() {
+	my_mouse.draw();
+	
 	if(my_startup_menu.show_menu) {
-		my_mouse.set_visible();
 		my_startup_menu.draw();
 		return;
 	}
@@ -9,14 +10,11 @@ function OnDraw() {
 	my_players.draw();
 	
 	if(my_pause_menu.show_menu) {
-		my_mouse.set_visible();
 		my_pause_menu.draw();
 		return;
 	}
 	
-	my_mouse.set_invisible();
-	if(current_view == FIRST_PERSON_VIEW || current_view == GUNSIGHT_VIEW)
-		my_gunsight.draw();
+	my_gunsight.draw();
 	my_map.draw();
 	my_player_info.draw();
 	my_score_info.draw();

@@ -14,8 +14,11 @@ class weapon {
 	var n_bullets;
 	var bullets_left;
 	
+	var ammunitions;
+	
 	create_weapon(mesh, scaling_factor);
-	init(nm, nb, sf, br, bm);
+	init(nm, nb, am, sf, br, bm);
+	recharge();
 	add_bullets(to_add);
 	shoot(position, shooting_direction);
 	
@@ -29,21 +32,21 @@ function weapon::create_weapon(mesh, scaling_factor) {
 	obj_gun = CVmObj(mesh_gun);
 }
 
-function weapon::init(nm, nb, sf, br, bm){
+function weapon::init(nm, nb, am, sf, br, bm){
 	name = nm;
+	ammunitions = am;
 	bullets_left = 0;
-	n_bullets = 0;
+	n_bullets = nb - am;
 	shoot_force = sf;
 	bullet_radius = br;
 	bullet_mass = bm;
 	shooted_bullets = array(0);
-	add_bullets(nb);
+	add_bullets();
 }
 
 function weapon::add_bullets(to_add){
-	bullets = array(n_bullets + to_add);
-	bullets_left += to_add; 
-	n_bullets = len(bullets);
+	bullets = array(n_bullets + ammunitions);
+	bullets_left = ammunitions;
 	for(var i = 0; i < len(bullets); i++){
 		var b = bullet();
 		b.init(BULLET_RADIUS, BULLET_MASS);
@@ -51,8 +54,17 @@ function weapon::add_bullets(to_add){
 	}
 }
 
+function weapon::recharge(){
+	var to_add = ammunitions - bullets_left;
+	if(n_bullets < to_add)
+		to_add = n_bullets;
+		
+	n_bullets -= to_add;
+	bullets_left += to_add;
+}
+
 function weapon::shoot(position, shooting_direction){
-	if(len(bullets) <= 0)
+	if(bullets_left == 0)
 		return;
 		
 	aadd(shooted_bullets, bullets[0]);

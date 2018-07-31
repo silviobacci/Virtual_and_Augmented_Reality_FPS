@@ -31,16 +31,26 @@ function pause_menu::init(s, h) {
 }
 
 function pause_menu::update(){
-	if (my_keyboard.is_pressed(VK_ESCAPE))
+	if (my_keyboard.is_pressed(VK_ESCAPE)) {
 		show_menu = !show_menu;
-	
-	my_mouse.change_to_arrow();
+		if(show_menu) 
+			my_mouse.set_visible();
+		else
+			my_mouse.set_invisible(); 
+	}
 }
 
 function pause_menu::check_mouse_position() {
+	if(help.show_menu) {
+		help.check_mouse_position();
+		return;
+	}
+		
 	if(my_mouse.is_contained(continuebox)) {
-		if(my_mouse.is_clicked())
+		if(my_mouse.is_clicked()) {
 			show_menu = false;
+			my_mouse.set_invisible(); 
+		}
 		return;
 	}
 
@@ -66,8 +76,6 @@ function pause_menu::draw() {
 		draw_text("CONTINUE", continuebox, 3);	
 		draw_text("HELP", helpbox, 0);	
 		draw_text("EXIT", exitbox, -3);
-		
-		check_mouse_position();
 	}
 	
 	ConsoleFinish();

@@ -7,9 +7,12 @@ class mouse_manager {
 	var clickable;
 	var cursor_shape;
 	var visible;
+	var change_visible;
+	var change_shape;
 	
 	init();
 	update();
+	draw();
 	
 	is_clicked();
 	is_contained(box);
@@ -22,22 +25,32 @@ class mouse_manager {
 
 function mouse_manager::init() {
 	cursor_shape = VR_CUR_ARROW;
+	change_visible = false;
+	change_shape = false;
 	visible = true;
 	clickable = true;
 	old_time = 0;
 }
 
 function mouse_manager::update() {
-	ShowCursor(visible);
-	SetCursorShape(cursor_shape);
-	
 	if(getTime() - old_time < TIME_DELAY_MOUSE)
 		return;
 	
-	if(mouse.ButtonL) {
-		clickable = true;
-		old_time = getTime();
+	clickable = true;
+	old_time = getTime();
+}
+
+function mouse_manager::draw() {
+	if(change_visible) {
+		ShowCursor(visible);
+		ShowCursor(visible);
 	}
+	
+	if(change_shape)
+		SetCursorShape(cursor_shape);
+		
+	change_visible = false;
+	change_shape = false;
 }
 
 function mouse_manager::change_to_hand() {
@@ -45,6 +58,7 @@ function mouse_manager::change_to_hand() {
 		return;
 		
 	cursor_shape = VR_CUR_HAND;
+	change_shape = true;
 }
 
 function mouse_manager::change_to_arrow() {
@@ -52,6 +66,7 @@ function mouse_manager::change_to_arrow() {
 		return;
 		
 	cursor_shape = VR_CUR_ARROW;
+	change_shape = true;
 }
 
 function mouse_manager::set_visible() {
@@ -59,6 +74,7 @@ function mouse_manager::set_visible() {
 		return;
 		
 	visible = true;
+	change_visible = true;
 }
 
 function mouse_manager::set_invisible() {
@@ -66,6 +82,7 @@ function mouse_manager::set_invisible() {
 		return;
 		
 	visible = false;
+	change_visible = true;
 }
 
 function mouse_manager::is_clicked() {
@@ -85,10 +102,10 @@ function mouse_manager::is_contained(box) {
 	var mouse_y = 1 - mouse.Y / window_h;
 	
 	if(!(mouse_x >= box[0] - box[2] / 2.0 && mouse_x <= box[0] + box[2] / 2.0 && mouse_y >= box[1] - box[3] / 2.0 && mouse_y <= box[1] + box[3] / 2.0)) {
-		cursor_shape = VR_CUR_ARROW;
+		change_to_arrow();
 		return false;	
 	}
 	
-	cursor_shape = VR_CUR_HAND;
+	change_to_hand();
 	return true;
 }

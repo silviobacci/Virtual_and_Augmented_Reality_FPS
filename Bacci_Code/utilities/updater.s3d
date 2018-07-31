@@ -3,16 +3,24 @@ function OnUpdate() {
 	my_keyboard.update();
 	resolution = get_resolution();
 	
-	if(!my_pause_menu.show_menu && !my_startup_menu.show_menu)
-		update_camera();
-
-	if(!my_pause_menu.show_menu) {
-		my_players.update();
-		var players = my_players.array_player;
-		my_map.update(my_players.map, my_players.get_player_position());
-		my_player_info.update(players[0]);
-	}
-	
 	if(!my_startup_menu.show_menu)
 		my_pause_menu.update();
+		
+	if(my_pause_menu.show_menu)
+		my_pause_menu.check_mouse_position();
+		
+	if(my_pause_menu.show_menu)
+		return;
+		
+	if(my_startup_menu.show_menu)
+		my_startup_menu.check_mouse_position();
+		
+	if(my_startup_menu.show_menu)
+		return;
+			
+	update_camera();
+		
+	my_players.update();
+	my_map.update(my_players.map, my_players.get_player_position());
+	my_player_info.update(my_players.array_player[0]);
 }

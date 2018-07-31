@@ -1,18 +1,14 @@
-#define HIT_RANGE	0.2
+#define HIT_RANGE	1
 
-function bullet::check_if_hit(coord) {
-	if(abs(coord.x - position.x) > HIT_RANGE)
+function bullet::check_if_hit(player) {
+	var x = abs(player.x - position.x);
+	var z = abs(player.z - position.z);
+	if(x > HIT_RANGE)
 		return false;
-	
-	if(abs(coord.z - position.z) > HIT_RANGE)
+	if(z > HIT_RANGE)
 		return false;
-	
-	trace(coord); 
-	trace(position);
-		
-	if(coord.y < position.y || coord.y > position.y + 1)
-		return false;
-		
+	if(position.y < player.y || position.y > player.y + 1.2)
+		return false;	
 	return true;
 }
 

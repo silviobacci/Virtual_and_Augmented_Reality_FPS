@@ -14,7 +14,7 @@ class help_menu{
 
 function help_menu::check_mouse_position() {
 	if(my_mouse.is_contained(gobackbox) && my_mouse.is_clicked())
-		show_menu = false;	
+		show_menu = false;
 }
 
 function help_menu::init() {
@@ -41,8 +41,6 @@ function help_menu::draw() {
 	draw_placeholder([0.5 - 0.3 / resolution, 0.8, 0.6 / resolution, 0.5]);
 	draw_commands();
 	draw_text("GO BACK", gobackbox, -5.5);
-	
-	check_mouse_position();
 	
 	ConsoleFinish();
 }

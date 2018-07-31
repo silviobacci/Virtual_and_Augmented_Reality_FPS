@@ -7,7 +7,7 @@
 #define THIRD_PERSON_VIEW		1
 #define FREE_CAMERA_VIEW		2
 #define GUNSIGHT_VIEW			3
-#define N_VIEWS					3
+#define N_VIEWS					2
 
 var current_view = FIRST_PERSON_VIEW;
 var previous_view = FIRST_PERSON_VIEW;
@@ -74,7 +74,7 @@ function FirstPersonView() {
 }
 
 function ThirdPerdonView() {
-	var backside_offset = [-my_players.array_player[0].moving_direction.x *2, 1, -my_players.array_player[0].moving_direction.z*2];
+	var backside_offset = [-my_players.array_player[0].moving_direction.x * 3, 0.5, -my_players.array_player[0].moving_direction.z * 3];
 	ComputeView(backside_offset);
 	CameraMoveMouse();
 }

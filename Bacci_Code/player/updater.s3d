@@ -89,7 +89,7 @@ function player::update(matrix_level) {
 			change_weapon(my_railgun);
 	}
 	else if(my_keyboard.is_pressed(VK_R))
-		current_weapon.add_bullets(20);
+		current_weapon.recharge();
 		
 	if(my_keyboard.is_pressed(VK_SPACE) && !is_jumping)
 		init_jump_dynamic();

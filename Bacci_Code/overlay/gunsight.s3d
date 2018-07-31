@@ -53,8 +53,9 @@ function gunsight::draw_black(width, height) {
 }
 
 function gunsight::draw() {
-	draw_simple_gunsight(gunsight_position_x, gunsight_position_y, gunsight_width, gunsight_height);
-	if(current_view == GUNSIGHT_VIEW)
+	if(current_view == FIRST_PERSON_VIEW)
+		draw_simple_gunsight(gunsight_position_x, gunsight_position_y, gunsight_width, gunsight_height);
+	else if(current_view == GUNSIGHT_VIEW)
 		draw_black(gunsight_black_width, gunsight_black_height);
 	ConsoleFinish();	
 }
