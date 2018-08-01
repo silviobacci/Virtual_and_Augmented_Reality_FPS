@@ -15,7 +15,7 @@ class gunsight{
 	var gunsight_black_height;
 	
 	draw_simple_gunsight(position_x, position_y, width, height);
-	draw_black(width, height);
+	draw_complete_gunsight(width, height);
 	draw();
 	init();
 };
@@ -44,19 +44,29 @@ function gunsight::draw_simple_gunsight(position_x, position_y, width, height) {
 	ConsoleFilledRect(position_x, 				position_y - 2 * height, 	width, height);
 }
 
-function gunsight::draw_black(width, height) {
+function gunsight::draw_complete_gunsight(width, height) {
+	var n_pieces = 50;
+	var size_w = 0.001;
+	var size_h = size_w * resolution;
 	ConsoleColor(GUNSIGHT_BLACK_COLOR);
-	ConsoleFilledRect(0, 			1, 				1, 			height);
-	ConsoleFilledRect(0, 			1, 				width, 		1);
-	ConsoleFilledRect(1 - width, 	1, 				width, 		1);
-	ConsoleFilledRect(0, 			height, 		1, 			height);
+	ConsoleFilledRect(0, 				1, 					1, 			height);
+	ConsoleFilledRect(0, 				1, 					width, 		1);
+	ConsoleFilledRect(1 - width, 		1, 					width, 		1);
+	ConsoleFilledRect(0, 				height, 			1, 			height);
+	for(var i = 0; i < n_pieces; i++) {
+		var size_w2 = ToFloat(1) / ToFloat(n_pieces);
+		var size_h2 = ToFloat(1) / ToFloat(n_pieces / resolution);
+		if(i % 2 == 0) {
+			ConsoleFilledRect(i * size_w2 + size_w2/2, 		0.5 + size_h/2, 					size_w2, 		size_h);
+			ConsoleFilledRect(0.5 - size_w/2, 				1 - i * size_h2 + size_h2/2, 		size_w,			size_h2);
+		}
+	}
 }
 
 function gunsight::draw() {
 	if(current_view == GUNSIGHT_VIEW)
-		draw_black(gunsight_black_width, gunsight_black_height);
-		
-	if(current_view == FIRST_PERSON_VIEW || current_view == GUNSIGHT_VIEW)
+		draw_complete_gunsight(gunsight_black_width, gunsight_black_height);
+	else
 		draw_simple_gunsight(gunsight_position_x, gunsight_position_y, gunsight_width, gunsight_height);
 
 	ConsoleFinish();	

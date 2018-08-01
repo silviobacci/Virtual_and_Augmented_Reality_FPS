@@ -1,13 +1,14 @@
-#define MAX_VERTICAL_ROTATION 	1000
-#define OFFEST_WIDTH			0 //9
-#define OFFEST_HEIGHT			0 //31
-#define RHO					 	1.2
+#define MAX_VERTICAL_ROTATION_FP 	1000
+#define MAX_VERTICAL_ROTATION_TP 	200
+#define OFFEST_WIDTH				0 //9
+#define OFFEST_HEIGHT				0 //31
+#define RHO					 		1.2
 
-#define FIRST_PERSON_VIEW		0
-#define THIRD_PERSON_VIEW		1
-#define FREE_CAMERA_VIEW		2
-#define GUNSIGHT_VIEW			3
-#define N_VIEWS					2
+#define FIRST_PERSON_VIEW			0
+#define THIRD_PERSON_VIEW			1
+#define FREE_CAMERA_VIEW			2
+#define GUNSIGHT_VIEW				3
+#define N_VIEWS						2
 
 var current_view = FIRST_PERSON_VIEW;
 var previous_view = FIRST_PERSON_VIEW;
@@ -36,7 +37,7 @@ function CameraMoveMouse() {
 
 	vertical_rotation+= delta_y;
 
-	if(abs(vertical_rotation) >  MAX_VERTICAL_ROTATION){
+	if((current_view == FIRST_PERSON_VIEW && abs(vertical_rotation) >  MAX_VERTICAL_ROTATION_FP) || (current_view == THIRD_PERSON_VIEW && abs(vertical_rotation) >  MAX_VERTICAL_ROTATION_TP)){
 		vertical_rotation -= delta_y;
 		delta_y = 0;
 	}

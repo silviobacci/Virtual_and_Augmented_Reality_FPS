@@ -89,6 +89,9 @@ function bullet::update_dynamics(){
 	dy = delta_t * speedy;
 	
 	angle = atan(dy/dx);
+	
+	var tmp = angle * RAD_TO_GRAD;
+	//trace(tmp);
 		 
 	position[0] += dir[0] * dx;
 	position[1] += dy;
@@ -116,10 +119,15 @@ function bullet::shoot(p, d, sf){
 	speedx = 0.0;
 	speedy = 0.0;
 	angle = d[1];
+	//angle = 0;
+	var tmp = angle * RAD_TO_GRAD;
+	//trace(tmp);
 	accx =  sf / mass * cos(angle);
 	accy =  sf / mass * sin(angle) - g;
 	
-	position = p + [-0.2, 1, 0];
+	//position = p + [-0.2, 1, 0];
+	position = p + [0, 1.2, 0];
+	//position = CameraGetCurrent().GetPosition();
 	dir = d; 
 	is_flying = true;
 }

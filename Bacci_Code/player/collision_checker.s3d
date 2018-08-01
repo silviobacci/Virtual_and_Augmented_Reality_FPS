@@ -25,8 +25,6 @@ function player::create_bounding_box() {
 	
 	for (var i = start; i < end; i++)
 		obj_bounding_box[i] = CVmObj(mesh_bounding_box);
-		
-	trace(bounding_box);
 }
 
 function player::check_collision(matrix_level){

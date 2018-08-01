@@ -1,16 +1,27 @@
 #define PLAYER_DIM		0.5
-#define PLAYER_HIGH		1.6
-#define PLAYER_HEADE	1.3
+#define PLAYER_HEIGHT	1.6
+#define PLAYER_HEAD		1.3
 
 function bullet::check_if_hit(player) {
+	if(position.y < player.y || position.y > player.y + PLAYER_HEIGHT)
+		return false;
+		
 	var x = abs(player.x - position.x);
 	var z = abs(player.z - position.z);
 	if(x > PLAYER_DIM)
 		return false;
 	if(z > PLAYER_DIM)
 		return false;
-	if(position.y < player.y || position.y > player.y + PLAYER_HIGH)
-		return false;	
+		
+	if(position.y > player.y + PLAYER_HEAD) {
+		var headshot = "headshot";
+		trace(headshot); 
+	}
+	else {
+		var bodyshot = "bodyshot";
+		trace(bodyshot); 
+	}
+	
 	return true;
 }
 
@@ -27,15 +38,15 @@ function bullet::check_collision(matrix_level){
 		
 	for(var i = 1; i < len(my_players.array_player); i++) {
 		if(check_if_hit(my_players.array_player[i].position)){
-			var player = "player hit";
-			trace(player); 
+			//var player = "player hit";
+			//trace(player); 
 			return true;	
 		}
 	}
 	
 	if(y > position.y){
-		var wall = "wall hit";
-		trace(wall); 
+		//var wall = "wall hit";
+		//trace(wall); 
 		return true;	
 	}
 	
