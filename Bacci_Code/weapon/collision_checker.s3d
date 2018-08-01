@@ -1,13 +1,15 @@
-#define HIT_RANGE	1
+#define PLAYER_DIM		0.5
+#define PLAYER_HIGH		1.6
+#define PLAYER_HEADE	1.3
 
 function bullet::check_if_hit(player) {
 	var x = abs(player.x - position.x);
 	var z = abs(player.z - position.z);
-	if(x > HIT_RANGE)
+	if(x > PLAYER_DIM)
 		return false;
-	if(z > HIT_RANGE)
+	if(z > PLAYER_DIM)
 		return false;
-	if(position.y < player.y || position.y > player.y + 1.2)
+	if(position.y < player.y || position.y > player.y + PLAYER_HIGH)
 		return false;	
 	return true;
 }
