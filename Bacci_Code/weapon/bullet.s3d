@@ -91,11 +91,16 @@ function bullet::update_dynamics(){
 	angle = atan(dy/dx);
 	
 	var tmp = angle * RAD_TO_GRAD;
-	//trace(tmp);
-		 
-	position[0] += dir[0] * dx;
+	trace(tmp);
+	
+	var a = atan2pi(dir.z, dir.x);
+	
+	var old_position = position;
+	position[0] += dx * cos(a);
 	position[1] += dy;
-	position[2] += dir[2] * dx;
+	position[2] += dx * sin(a);
+	tmp = atan(dy / sqrt((position.x - old_position.x)^2 + (position.z - old_position.z)^2)) * RAD_TO_GRAD;
+	trace(tmp);
 	
 	accx = - viscous / mass * sqrt(speedx^2 + speedy^2) * cos(angle);
 	accy = - viscous / mass * sqrt(speedx^2 + speedy^2) * sin(angle) - g;
@@ -118,16 +123,16 @@ function bullet::shoot(p, d, sf){
 	dy = 0.0;
 	speedx = 0.0;
 	speedy = 0.0;
-	angle = d[1];
+	angle = asin(d[1]);
 	//angle = 0;
 	var tmp = angle * RAD_TO_GRAD;
-	//trace(tmp);
+	trace(tmp);
 	accx =  sf / mass * cos(angle);
 	accy =  sf / mass * sin(angle) - g;
 	
 	//position = p + [-0.2, 1, 0];
-	position = p + [0, 1.2, 0];
-	//position = CameraGetCurrent().GetPosition();
+	//position = p + [0, 1.2, 0];
+	position = CameraGetCurrent().GetPosition();
 	dir = d; 
 	is_flying = true;
 }
