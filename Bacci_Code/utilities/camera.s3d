@@ -1,5 +1,5 @@
-#define MAX_VERTICAL_ROTATION_FP 	1000
-#define MAX_VERTICAL_ROTATION_TP 	200
+#define MAX_VERTICAL_ROTATION_FP 	60
+#define MAX_VERTICAL_ROTATION_TP 	30
 #define OFFEST_WIDTH				0 //9
 #define OFFEST_HEIGHT				0 //31
 #define RHO					 		1.2
@@ -9,6 +9,8 @@
 #define FREE_CAMERA_VIEW			2
 #define GUNSIGHT_VIEW				3
 #define N_VIEWS						2
+
+#define ROTATION_SENSITIVITY		0.05
 
 var current_view = FIRST_PERSON_VIEW;
 var previous_view = FIRST_PERSON_VIEW;
@@ -24,8 +26,7 @@ function init_camera() {
 }
 
 function CameraMoveMouse() {	
-	var	rotation_sensitivity = 0.05;			
- 	var delta_x = Mouse.X;
+	var delta_x = Mouse.X;
 	var delta_y = Mouse.Y;
 	
  	SetCursorPos(0.5, 0.5);
@@ -34,17 +35,20 @@ function CameraMoveMouse() {
 		delta_x = Floor(delta_x - (window_w/2) + OFFEST_WIDTH);
 	if(delta_y != 0)
 		delta_y = Ceil(delta_y - (window_h/2) + OFFEST_HEIGHT);
+		
+	delta_x = delta_x * ROTATION_SENSITIVITY;
+	delta_y = delta_y * ROTATION_SENSITIVITY;
 
-	vertical_rotation+= delta_y;
+	vertical_rotation += delta_y;
 
 	if((current_view == FIRST_PERSON_VIEW && abs(vertical_rotation) >  MAX_VERTICAL_ROTATION_FP) || (current_view == THIRD_PERSON_VIEW && abs(vertical_rotation) >  MAX_VERTICAL_ROTATION_TP)){
 		vertical_rotation -= delta_y;
 		delta_y = 0;
 	}
 
-	my_camera.RotateGlobal(delta_x * rotation_sensitivity, 0, 1, 0);
-	my_camera.RotateLocal (delta_y * rotation_sensitivity, 1, 0, 0);
-	my_players.array_player[0].angle_direction = (my_players.array_player[0].angle_direction - delta_x * rotation_sensitivity) % 360;
+	my_camera.RotateGlobal(delta_x, 0, 1, 0);
+	my_camera.RotateLocal (delta_y, 1, 0, 0);
+	my_players.array_player[0].angle_direction = (my_players.array_player[0].angle_direction - delta_x) % 360;
 	if(my_players.array_player[0].angle_direction < 0)
 		my_players.array_player[0].angle_direction = 360 + my_players.array_player[0].angle_direction;
 }

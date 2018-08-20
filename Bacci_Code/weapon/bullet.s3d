@@ -14,6 +14,10 @@
 #define ROCKETL_BULLET_RADIUS 	0.003
 #define ROCKETL_SHOOT_FORCE 	500
 
+#define GUN_POSITION_X			0
+#define GUN_POSITION_Y			1
+#define GUN_POSITION_Z			0.2
+
 #define g 						9.81
 #define n				 		0.0000186
 
@@ -21,7 +25,8 @@ class bullet{
 	var mesh_bullet;
 	var obj_bullet;
 	
-	var angle;
+	var angle_x;
+	var angle_y;
 	var position;
 	var old_position;
 	var dir;
@@ -54,7 +59,7 @@ class bullet{
 	
 	draw();
 	
-	shoot(p, d, sf);
+	shoot(p, a, d, sf);
 };
 
 function bullet::create_bullet() {
@@ -82,28 +87,21 @@ function bullet::init(br, bm){
 }
 
 function bullet::update_dynamics(){
-	speedx	+= accx * delta_t;
-	speedy	+= accy * delta_t;
+	speedx += accx * delta_t;
+	speedy += accy * delta_t;
+	var speed = sqrt(speedx^2 + speedy^2);
 
 	dx = delta_t * speedx;
 	dy = delta_t * speedy;
 	
-	angle = atan(dy/dx);
+	angle_y = atan(dy/dx);
 	
-	var tmp = angle * RAD_TO_GRAD;
-	trace(tmp);
+	position.x += dx * cos(angle_x);
+	position.y += dy;
+	position.z += dx * sin(angle_x);
 	
-	var a = atan2pi(dir.z, dir.x);
-	
-	var old_position = position;
-	position[0] += dx * cos(a);
-	position[1] += dy;
-	position[2] += dx * sin(a);
-	tmp = atan(dy / sqrt((position.x - old_position.x)^2 + (position.z - old_position.z)^2)) * RAD_TO_GRAD;
-	trace(tmp);
-	
-	accx = - viscous / mass * sqrt(speedx^2 + speedy^2) * cos(angle);
-	accy = - viscous / mass * sqrt(speedx^2 + speedy^2) * sin(angle) - g;
+	accx = - viscous * speed * cos(angle_y) / mass;
+	accy = - viscous * speed * sin(angle_y) / mass - g;
 }
 
 function bullet::update(matrix_level){
@@ -118,21 +116,23 @@ function bullet::update(matrix_level){
 	}
 }
 
-function bullet::shoot(p, d, sf){
+function bullet::shoot(p, a, d, sf){
+	var gun_position = [GUN_POSITION_X, GUN_POSITION_Y, -GUN_POSITION_Z];
+	gun_position = VectorRotate(a, 0, 1, 0, gun_position);
 	dx = 0.0; 
 	dy = 0.0;
 	speedx = 0.0;
 	speedy = 0.0;
-	angle = asin(d[1]);
-	//angle = 0;
-	var tmp = angle * RAD_TO_GRAD;
-	trace(tmp);
-	accx =  sf / mass * cos(angle);
-	accy =  sf / mass * sin(angle) - g;
+	angle_x = atan2pi(d.z, d.x);
+	angle_y = asin(d.y);
+	angle_y += atan(cos(angle_y) / (sin(angle_y) + 1 / (CameraGetCurrent().GetPosition().y - GUN_POSITION_Y)));
+	angle_x += atan(cos(angle_y) / GUN_POSITION_Z);
+	accx = sf * cos(angle_y) / mass;
+	accy = sf * sin(angle_y) / mass - g;
 	
-	//position = p + [-0.2, 1, 0];
+	position = p + gun_position;
 	//position = p + [0, 1.2, 0];
-	position = CameraGetCurrent().GetPosition();
+	//position = CameraGetCurrent().GetPosition();
 	dir = d; 
 	is_flying = true;
 }

@@ -20,7 +20,7 @@ class weapon {
 	init(nm, nb, am, sf, br, bm);
 	recharge();
 	add_bullets(to_add);
-	shoot(position, shooting_direction);
+	shoot(player_position, player_direction, shooting_direction);
 	
 	update(matrix_level);
 	draw();
@@ -63,16 +63,16 @@ function weapon::recharge(){
 	bullets_left += to_add;
 }
 
-function weapon::shoot(position, shooting_direction){
+function weapon::shoot(player_position, player_direction, shooting_direction){
 	if(bullets_left == 0)
 		return;
 		
 	aadd(shooted_bullets, bullets[0]);
-	bullets[0].shoot(position, shooting_direction, shoot_force);
+	bullets[0].shoot(player_position, player_direction, shooting_direction, shoot_force);
 	bullets_left--;
 	adel(bullets, 0);
 	
-	my_sound_player.play_shoot(position);
+	my_sound_player.play_shoot(player_position);
 }
 
 function weapon::update(matrix_level) {
