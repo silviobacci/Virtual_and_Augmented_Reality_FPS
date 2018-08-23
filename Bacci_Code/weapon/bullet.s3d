@@ -119,21 +119,20 @@ function bullet::update(matrix_level){
 function bullet::shoot(p, a, d, sf){
 	var gun_position = [GUN_POSITION_X, GUN_POSITION_Y, -GUN_POSITION_Z];
 	gun_position = VectorRotate(a, 0, 1, 0, gun_position);
-	dx = 0.0; 
+	dx = 0.0;
 	dy = 0.0;
 	speedx = 0.0;
 	speedy = 0.0;
 	angle_x = atan2pi(d.z, d.x);
 	angle_y = asin(d.y);
-	angle_y += atan(cos(angle_y) / (sin(angle_y) + 1 / (CameraGetCurrent().GetPosition().y - GUN_POSITION_Y)));
-	angle_x += atan(cos(angle_y) / GUN_POSITION_Z);
+	//angle_y += atan(cos(angle_y) / (sin(angle_y) + 1 / (CameraGetCurrent().GetPosition().y - GUN_POSITION_Y)));
+	//angle_x += atan(cos(angle_y) / GUN_POSITION_Z);
 	accx = sf * cos(angle_y) / mass;
 	accy = sf * sin(angle_y) / mass - g;
 	
-	position = p + gun_position;
-	//position = p + [0, 1.2, 0];
-	//position = CameraGetCurrent().GetPosition();
-	dir = d; 
+	//position = p + gun_position;
+	position = CameraGetCurrent().GetPosition();
+	dir = d;
 	is_flying = true;
 }
 

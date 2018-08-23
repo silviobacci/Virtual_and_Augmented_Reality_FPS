@@ -15,8 +15,8 @@ function init() {
 	my_mouse = mouse_manager();
 	my_mouse.init();
 	
-	//my_network = network();
-	//my_network.init();
+	my_network = network();
+	my_network.init();
 	
 	my_world = world();
 	my_world.init();

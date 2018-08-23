@@ -131,13 +131,8 @@ function player::get_position(){
 }
 
 function player::draw(){
-	foreach(var o in obj_bounding_box)	
-		o.draw();										
+	//foreach(var o in obj_bounding_box)	
+		//o.draw();										
 	obj_player.draw(VR_FRAMENUMBER, SWAT_START_WALK + current_frame);
-	var mesh = CVmNewMesh(VRP_CYLINDER);
-	mesh.scale(0.5, 1.3, 0.5);
-	var obj = CVmObj(mesh);
-	obj.setposition(position);
-	obj.draw();
 	current_weapon.draw();
 }

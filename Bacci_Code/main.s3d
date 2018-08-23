@@ -16,8 +16,6 @@ function OnInit(params) {
 }
 
 function OnFrame() {
-	//OnSend();
-	
 	SceneBegin();
    	
    	OnDraw();
@@ -28,8 +26,17 @@ function OnFrame() {
 function DownloadReady(RequestID) {}
 
 function OnTimer() {
-	//OnReceive();
+	if(my_network.status == CONNECTING)
+		OnReceiveInit();
+	else
+		OnReceive();
+	
 	OnUpdate();
+	
+	if(my_network.status == CONNECTING)
+		OnSendInit();
+	else
+		OnSend();
 }
 
 function OnEvent(eventID, wparam, lparam) {}
