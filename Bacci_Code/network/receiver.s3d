@@ -1,22 +1,22 @@
-function OnReceiveConnecting() {
-	var received_data;
-	
-	while(true){
-		received_data = my_network.receive_init();
-
-		if(received_data == void)
-			break;
-
-		if(received_data != NetGetIP())
-			my_network.status = MANAGER;
-	}
-}
-
 function OnReceiveManaging() {
 	var received_data;
 	
 	while(true){
-		received_data = my_network.receive_init();
+		received_data = my_network.receive_from_user();
+
+		if(received_data == void)
+			break;
+		
+		if(received_data != NetGetIP())
+			my_network.add_player(received_data);
+	}
+}
+
+function OnReceiveConnecting() {
+	var received_data;
+	
+	while(true){
+		received_data = my_network.receive_from_manager();
 
 		if(received_data == void)
 			break;
@@ -30,7 +30,7 @@ function OnReceive() {
 	var received_data;
 	
 	while(true){
-		received_data = my_network.receive();
+		received_data = my_network.receive_in_game();
 
 		if(received_data == void)
 			break;

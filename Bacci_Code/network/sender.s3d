@@ -10,21 +10,22 @@ var timer_KEEPALIVE_PDU = 0;
 var timer_SCORE_PDU = 0;
 var timer_BULLET_PDU = 0;
 
-function OnSendConnecting() {
-	if(getTime() - timer_INIT_PDU > INIT_PDU_PERIOD){
-		timer_INIT_PDU = getTime();
-		var PDU = my_network.create_IP_PDU();
-		my_network.send_init(PDU);
-	}
-}
-
 function OnSendManaging() {
 	if(getTime() - timer_INIT_PDU > INIT_PDU_PERIOD){
 		timer_INIT_PDU = getTime();
-		foreach(var player in array_player) {
-			var PDU = my_network.create_INIT_PDU(player[0], player[1]);
-			my_network.send_init(PDU);
+		foreach(var player in my_network.player_array) {
+			trace(player);
+			var PDU = my_network.create_MANAGER_PDU(player[0], player[1]);
+			my_network.send_by_manager(PDU);
 		}
+	}
+}
+
+function OnSendConnecting() {
+	if(getTime() - timer_INIT_PDU > INIT_PDU_PERIOD){
+		timer_INIT_PDU = getTime();
+		var PDU = my_network.create_USER_PDU();
+		my_network.send_by_user(PDU);
 	}
 }
 
@@ -34,7 +35,7 @@ function OnSend() {
 		if(getTime() - timer_INIT_PDU > INIT_PDU_PERIOD){
 			timer_INIT_PDU = getTime();
 			PDU = my_network.create_INIT_PDU();
-			my_network.send_init(PDU);
+			my_network.send_in_game(PDU);
 		}
 	/*
 	// send position pdu.

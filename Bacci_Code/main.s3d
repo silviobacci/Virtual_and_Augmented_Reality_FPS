@@ -26,17 +26,31 @@ function OnFrame() {
 function DownloadReady(RequestID) {}
 
 function OnTimer() {
-	if(my_network.status == CONNECTING)
-		OnReceiveInit();
-	else
-		OnReceive();
+	switch(my_network.status) {
+		case MANAGING :
+			OnReceiveManaging();
+			break;
+		case CONNECTING :
+			OnReceiveConnecting();
+			break;
+		case IN_GAME :
+			OnReceive();
+			break;
+	}
 	
 	OnUpdate();
 	
-	if(my_network.status == CONNECTING)
-		OnSendInit();
-	else
-		OnSend();
+	switch(my_network.status) {
+		case MANAGING :
+			OnSendManaging();
+			break;
+		case CONNECTING :
+			OnSendConnecting();
+			break;
+		case IN_GAME :
+			OnSend();
+			break;
+	}
 }
 
 function OnEvent(eventID, wparam, lparam) {}

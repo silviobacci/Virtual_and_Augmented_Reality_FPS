@@ -1,4 +1,4 @@
-#define	MANAGER				0
+#define	MANAGING			0
 #define	CONNECTING			1
 #define	IN_GAME				2
 
@@ -6,8 +6,9 @@
 
 #define SOURCE_IP_ADDRESS	"0.0.0.0"
 #define DEST_IP_ADDRESS		"192.168.1.255"	
-#define PORT				50023	
-#define PORT_INIT			50022	
+#define PORT_GAME			50023	
+#define PORT_USER			50022	
+#define PORT_MANAGER		50021	
 
 #define POSITION_PDU 	1
 #define BULLET_PDU		2
@@ -19,90 +20,96 @@
 var my_network;
 
 class network{
-	var id;
+	var my_id;
 	var status;
-	var channel;
-	var channel_init;
+	var channel_game;
+	var channel_user_to_manager;
+	var channel_manager_to_user;
 	var player_array;
 	
 	init();
 	check_if_manager();
 	add_player(IP);
-	create_INIT_PDU(IP, ID);
-	create_IP_PDU();
+	create_MANAGER_PDU(IP, ID);
+	create_USER_PDU();
 	create_RESET_PDU();
 	create_KEEPALIVE_PDU();
 	create_POSITION_PDU(position, direction, velocity);
 	create_SCORE_PDU(scores);
 	create_BULLET_PDU(type, position, direction, fire_life);
 	create_EXPLOSION_PDU(enemy);
-	send(PDU);
-	receive();
-	send_init(PDU);
-	receive_init();
+	send_in_game(PDU);
+	send_by_user(PDU);
+	send_by_manager(PDU);
+	receive_in_game();
+	receive_from_manager();
+	receive_from_user();
 };
 
 function network::init() {
 	player_array = array(0);
 	status = CONNECTING;
-	channel = NetCreateChannel(PORT, SOURCE_IP_ADDRESS, VR_NO_BLOCKING);
-	channel_init = NetCreateChannel(PORT_INIT, SOURCE_IP_ADDRESS, VR_NO_BLOCKING);
+	channel_game = NetCreateChannel(PORT_GAME, SOURCE_IP_ADDRESS, VR_NO_BLOCKING);
+	channel_user_to_manager = NetCreateChannel(PORT_USER, SOURCE_IP_ADDRESS, VR_NO_BLOCKING);
+	channel_manager_to_user = NetCreateChannel(PORT_MANAGER, SOURCE_IP_ADDRESS, VR_NO_BLOCKING);
 	check_if_manager();
 }
 
 function network::check_if_manager() {
-	var received_data;
-	
-	while(true){
-		received_data = receive_init();
+	var received_data = receive_from_manager();
 
-		if(received_data == void)
-			break;
-
-		if(received_data != NetGetIP())
-			status = MANAGER;
+	if(received_data == void || received_data == NetGetIP()) {
+		status = MANAGING;
+		add_player(NetGetIP());
+		var tmp = "sono manager";
+		trace(tmp);
 	}
 }
 
-function network::add_player(IP) {
+function network::add_player(to_add) {
+	if(valtype(to_add) == "S") {
+		var IP = to_add;
+		to_add = array(2);
+		to_add[0] = IP;
+		to_add[1] = len(player_array);
+	}
+	
 	foreach(var player in player_array)
-		if(player == IP)
+		if(player == to_add[0])
 			return;
-	var player = array(2);
-	player[0] = IP;
-	player[1] = len(player_array);
-	aadd(array_player, player);
+
+	aadd(player_array, to_add);
 }
 
-function network::create_INIT_PDU(IP, ID) {
+function network::create_MANAGER_PDU(IP, ID) {
 	var PDU = vector(2);
 	PDU[0] = IP;
 	PDU[1] = ID;
 	return PDU;
 }
 
-function network::create_IP_PDU(IP, ID) {
+function network::create_USER_PDU() {
 	return NetGetIP();
 }
 
 function network::create_RESET_PDU() {
 	var PDU = vector(2);
 	PDU[0] = RESET_PDU;
-	PDU[1] = id;
+	PDU[1] = my_id;
 	return PDU;
 }
 
 function network::create_KEEPALIVE_PDU() {
 	var PDU = vector(2);
 	PDU[0] = KEEPALIVE_PDU;
-	PDU[1] = id;
+	PDU[1] = my_id;
 	return PDU;
 }
 
 function network::create_POSITION_PDU(position, direction, velocity) {
 	var PDU = vector(7);
 	PDU[0] = POSITION_PDU;
-	PDU[1] = id;
+	PDU[1] = my_id;
 	PDU[2] = position[0];
 	PDU[3] = position[1];
 	PDU[4] = position[2];
@@ -115,7 +122,7 @@ function network::create_SCORE_PDU(scores) {
 	var n_players = len(scores);
 	var PDU = vector(n_players);
 	PDU[0] = SCORE_PDU;
-	PDU[1] = id;
+	PDU[1] = my_id;
 	for(var i = 0; i < n_players; i++)
 		PDU[2 + i] = scores[i];
 	return PDU;
@@ -124,7 +131,7 @@ function network::create_SCORE_PDU(scores) {
 function network::create_BULLET_PDU(type, position, direction, fire_life) {
 	var PDU = vector(7);
 	PDU[0] = BULLET_PDU;
-	PDU[1] = id;
+	PDU[1] = my_id;
 	PDU[2] = type;
 	PDU[3] = position[0];
 	PDU[4] = position[1];
@@ -137,25 +144,36 @@ function network::create_BULLET_PDU(type, position, direction, fire_life) {
 function network::create_EXPLOSION_PDU(enemy) {
 	var PDU = vector(3);
 	PDU[0] = RESET_PDU;
-	PDU[1] = id;
+	PDU[1] = my_id;
 	PDU[2] = enemy;
 	return PDU;
 }
 
-function network::send(PAYLOAD){
-	NetVarSendTo(DEST_IP_ADDRESS, PORT, PAYLOAD);
+function network::send_in_game(PAYLOAD){
+	foreach(var player in player_array)
+		NetVarSendTo(player[0], PORT_GAME, PAYLOAD);
 }
 
-function network::send_init(PAYLOAD){
-	NetVarSendTo(DEST_IP_ADDRESS, PORT_INIT, PAYLOAD);
+function network::send_by_user(PAYLOAD){
+	NetVarSendTo(DEST_IP_ADDRESS, PORT_USER, PAYLOAD);
 }
 
-function network::receive() {
+function network::send_by_manager(PAYLOAD){
+	foreach(var player in player_array)
+		NetVarSendTo(player[0], PORT_MANAGER, PAYLOAD);
+}
+
+function network::receive_in_game() {
 	var address = 0;
-	return NetVarReceiveFrom(channel, &address);
+	return NetVarReceiveFrom(channel_game, &address);
 }
 
-function network::receive_init() {
+function network::receive_from_user() {
 	var address = 0;
-	return NetVarReceiveFrom(channel_init, &address);
+	return NetVarReceiveFrom(channel_user_to_manager, &address);
+}
+
+function network::receive_from_manager() {
+	var address = 0;
+	return NetVarReceiveFrom(channel_manager_to_user, &address);
 }
