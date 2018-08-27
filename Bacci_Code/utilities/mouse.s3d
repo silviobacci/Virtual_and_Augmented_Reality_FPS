@@ -19,6 +19,7 @@ class mouse_manager {
 	
 	change_to_hand();
 	change_to_arrow();
+	change_to_hourglass();
 	set_visible();
 	set_invisible();
 };
@@ -68,6 +69,14 @@ function mouse_manager::change_to_arrow() {
 	cursor_shape = VR_CUR_ARROW;
 	change_shape = true;
 }
+
+function mouse_manager::change_to_hourglass() {
+	if(cursor_shape == VR_CUR_WAIT)
+		return;
+		
+	cursor_shape = VR_CUR_WAIT;
+	change_shape = true;
+} 
 
 function mouse_manager::set_visible() {
 	if(visible)

@@ -3,7 +3,7 @@ function OnUpdate() {
 	my_keyboard.update();
 	resolution = get_resolution();
 	
-	if(my_waiting_menu.show_menu && my_waiting_menu.first_time)
+	if(my_waiting_menu.update_it)
 		my_waiting_menu.update();
 	
 	if(!my_startup_menu.show_menu && !my_waiting_menu.show_menu)

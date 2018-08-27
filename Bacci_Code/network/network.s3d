@@ -7,12 +7,11 @@
 #define	MAX_PLAYERS			2
 
 #define SOURCE_IP_ADDRESS	"0.0.0.0"
-//#define DEST_IP_ADDRESS	"192.168.1.255"	
-#define DEST_IP_ADDRESS		"172.20.10.15"
-#define PORT_GAME			50023	
-#define PORT_USER			50022	
-#define PORT_MANAGER		50021
-#define PORT_INIT			50020	
+//#define BROADCAST_ADDRESS	"172.20.10.15"
+#define BROADCAST_ADDRESS	"172.20.10.15"
+#define PORT_UDP_GAME		50023	
+#define PORT_UDP_INIT		50022	
+#define PORT_TCP_INIT		50021
 
 #define INIT_PDU_PERIOD			500
 #define POSITION_PDU_PERIOD		100
@@ -35,11 +34,9 @@ class network{
 	var status;
 	var channel_init;
 	var channel_game;
-	var channel_user_to_manager;
-	var channel_manager_to_user;
-	var user_channel;
+	var channel_tcp;
+	var socket_tcp;
 	var player_array;
-	var user_socket;
 	
 	init();
 	check_if_manager();
@@ -52,6 +49,8 @@ class network{
 	create_SCORE_PDU(scores);
 	create_BULLET_PDU(type, position, direction, fire_life);
 	create_EXPLOSION_PDU(enemy);
+	accept();
+	connect();
 	send_in_game(PDU);
 	send_init(PAYLOAD);
 	send_by_user(PDU);
@@ -59,18 +58,15 @@ class network{
 	receive_in_game();
 	receive_init();
 	receive_from_manager();
-	receive_from_user();
+	receive_from_user(socket);
 };
 
 function network::init() {
 	player_array = array(0);
 	status = NOT_CONNECTED;
-	user_channel = NetCreateChannelTCP(PORT_USER, SOURCE_IP_ADDRESS);
-	channel_init = NetCreateChannel(PORT_INIT, SOURCE_IP_ADDRESS, VR_NO_BLOCKING);
-	channel_game = NetCreateChannel(PORT_GAME, SOURCE_IP_ADDRESS, VR_NO_BLOCKING);
-	//channel_user_to_manager = NetCreateChannel(PORT_USER, SOURCE_IP_ADDRESS, VR_NO_BLOCKING);
-	channel_manager_to_user = NetCreateChannel(PORT_MANAGER, SOURCE_IP_ADDRESS, VR_NO_BLOCKING);
-	//check_if_manager();
+	channel_tcp = NetCreateChannelTCP(PORT_TCP_INIT, SOURCE_IP_ADDRESS);
+	channel_init = NetCreateChannel(PORT_UDP_INIT, SOURCE_IP_ADDRESS, VR_NO_BLOCKING);
+	channel_game = NetCreateChannel(PORT_UDP_GAME, SOURCE_IP_ADDRESS, VR_NO_BLOCKING);
 }
 
 function network::check_if_manager() {
@@ -96,7 +92,7 @@ function network::add_player_manager(socket) {
 	if(to_add[2] == -1)
 		to_add[0] = NetGetIP();
 	else
-		to_add[0] = NetVarReceiveFromTCP(to_add[2]);
+		to_add[0] = receive_from_user(to_add[2]);
 	    
 	aadd(player_array, to_add);
 	
@@ -175,22 +171,32 @@ function network::create_EXPLOSION_PDU(enemy) {
 	return PDU;
 }
 
+function network::accept(){
+	return NetAcceptTCP(channel_tcp);
+}
+
+function network::connect(){
+	socket_tcp = NetConnectTCP(manager_ip, PORT_TCP_INIT);
+	return socket_tcp;
+}
+
 function network::send_in_game(PAYLOAD){
 	foreach(var player in player_array)
-		NetVarSendTo(player[0], PORT_GAME, PAYLOAD);
+		NetVarSendTo(player[0], PORT_UDP_GAME, PAYLOAD);
 }
 
 function network::send_init(PAYLOAD){
-	NetVarSendTo(DEST_IP_ADDRESS, PORT_INIT, PAYLOAD);
+	NetVarSendTo(BROADCAST_ADDRESS, PORT_UDP_INIT, PAYLOAD);
 }
 
 function network::send_by_user(PAYLOAD){
-	NetVarSendTo(DEST_IP_ADDRESS, PORT_USER, PAYLOAD);
+	NetVarSendToTCP(socket_tcp, PAYLOAD);
 }
 
 function network::send_by_manager(PAYLOAD){
 	foreach(var player in player_array)
-		NetVarSendTo(player[0], PORT_MANAGER, PAYLOAD);
+		if(player[2] != -1)
+			NetVarSendToTCP(player[2], PAYLOAD);
 }
 
 function network::receive_in_game() {
@@ -203,12 +209,10 @@ function network::receive_init() {
 	return NetVarReceiveFrom(channel_init, &address);
 }
 
-function network::receive_from_user() {
-	var address = 0;
-	return NetVarReceiveFrom(channel_user_to_manager, &address);
+function network::receive_from_user(socket) {
+	return NetVarReceiveFromTCP(socket);
 }
 
 function network::receive_from_manager() {
-	var address = 0;
-	return NetVarReceiveFrom(channel_manager_to_user, &address);
+	return NetVarReceiveFromTCP(socket_tcp);
 }

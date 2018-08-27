@@ -1,33 +1,14 @@
 function OnReceiveManaging() {
-	var socket_id = NetAcceptTCP(my_network.user_channel);
+	var socket_id = my_network.accept();
 	if(socket_id != -1)
 		my_network.add_player_manager(socket_id);
 }
 
 function OnReceiveReady() {
-	var ready_ = NetVarReceiveFromTCP(my_network.user_socket);
-	trace(ready_);
-	my_network.status = NetVarReceiveFromTCP(my_network.user_socket);
-	var tmp = my_network.status;
-	trace(tmp);
+	my_network.receive_from_manager();
+	my_network.status = my_network.receive_from_manager();
 	my_waiting_menu.show_menu = false;
 	my_network.status = IN_GAME;
-}
-
-function OnReceiveConnecting() {
-	var received_data;
-	
-	while(true){
-		received_data = my_network.receive_from_manager();
-		
-		if(received_data == void)
-			break;
-		
-		if(received_data[2] == "READY")
-			my_network.status = READY;
-		
-		my_network.add_player(received_data);
-	}
 }
 
 function OnReceive() {

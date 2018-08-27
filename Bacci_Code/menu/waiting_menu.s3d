@@ -8,6 +8,7 @@ class waiting_menu{
 	var startup;
 	
 	var first_time;
+	var update_it;
 	
 	init(s);
 	update();
@@ -20,8 +21,6 @@ class waiting_menu{
 function waiting_menu::check_mouse_position() {
 	if(my_mouse.is_contained(gobackbox) && my_mouse.is_clicked()) {
 		startup.show_menu = true;
-		var tmp = "sono qui";
-		trace(tmp);
 		show_menu = false;
 	}
 }
@@ -30,6 +29,8 @@ function waiting_menu::update() {
 	my_network.status = CONNECTING;
 	my_network.check_if_manager();	
 	first_time = false;
+	update_it = false;
+	show_menu = true;
 }
 
 function waiting_menu::init(s) {
@@ -38,6 +39,7 @@ function waiting_menu::init(s) {
 	
 	startup = s;
 	
+	update_it = false;
 	show_menu = false;
 	first_time = true;
 }
@@ -48,4 +50,7 @@ function waiting_menu::draw() {
 	draw_text("GO BACK", gobackbox, -5.5);
 	
 	ConsoleFinish();
+	
+	if(first_time)
+		update_it = true;
 }
