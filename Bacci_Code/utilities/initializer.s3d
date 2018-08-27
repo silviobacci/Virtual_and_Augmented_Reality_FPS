@@ -29,6 +29,7 @@ function init() {
 	init_camera();
 	
 	my_map = map();
+	my_map.init(my_players.map);
 	my_player_info = player_info();
 	my_score_info = score_info();
 	my_score_info.init();

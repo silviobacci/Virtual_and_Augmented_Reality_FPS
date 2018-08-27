@@ -27,11 +27,9 @@ function OnUpdate() {
 	if(my_waiting_menu.show_menu)
 		return;
 			
-	var tmp = "aggiorno camera";
-	trace(tmp);
 	update_camera();
 		
 	my_players.update();
-	my_map.update(my_players.map, my_players.get_player_position());
+	my_map.update(my_players.get_player_position());
 	my_player_info.update(my_players.array_player[0]);
 }

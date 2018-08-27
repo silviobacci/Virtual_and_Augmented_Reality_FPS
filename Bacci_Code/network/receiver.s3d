@@ -5,7 +5,9 @@ function OnReceiveManaging() {
 }
 
 function OnReceiveReady() {
-	
+	NetVarReceiveFromTCP(my_network.user_socket);
+	my_waiting_menu.show_menu = false;
+	my_network.status = IN_GAME;
 }
 
 function OnReceiveConnecting() {

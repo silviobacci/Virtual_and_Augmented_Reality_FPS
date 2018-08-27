@@ -18,8 +18,9 @@ class map{
 	var width;
 	var height;
 	
+	init(ml);
 	draw();
-	update(ml, pp);
+	update(pp);
 	
 	draw_rect(to_draw_x, to_draw_y, height, offset_x, offeset_y);
 	draw_wall();
@@ -27,8 +28,11 @@ class map{
 	draw_ground(x, y, w, h);
 };
 
-function map::update(ml, pp) {
+function map::init(ml) {
 	matrix_level = ml;
+}
+
+function map::update(pp) {
 	players_position = pp;
 	
 	rows = len(matrix_level);
