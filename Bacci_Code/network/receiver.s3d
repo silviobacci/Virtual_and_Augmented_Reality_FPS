@@ -1,11 +1,15 @@
 function OnReceiveManaging() {
-	var socket_id = NetAcceptTCP(my_network.user_channel, VR_NO_BLOCKING);
+	var socket_id = NetAcceptTCP(my_network.user_channel);
 	if(socket_id != -1)
 		my_network.add_player_manager(socket_id);
 }
 
 function OnReceiveReady() {
-	NetVarReceiveFromTCP(my_network.user_socket);
+	var ready_ = NetVarReceiveFromTCP(my_network.user_socket);
+	trace(ready_);
+	my_network.status = NetVarReceiveFromTCP(my_network.user_socket);
+	var tmp = my_network.status;
+	trace(tmp);
 	my_waiting_menu.show_menu = false;
 	my_network.status = IN_GAME;
 }

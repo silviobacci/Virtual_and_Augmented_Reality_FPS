@@ -31,6 +31,13 @@ function OnSendReady() {
 		if(player[2] != -1)
 			NetVarSendToTCP(player[2], PDU);
 	}
+	
+	foreach(var player in my_network.player_array) {
+		var PDU = my_network.player_array;
+		trace(PDU);
+		if(player[2] != -1)
+			NetVarSendToTCP(player[2], PDU);
+	}
 
 	my_waiting_menu.show_menu = false;
 	my_network.status = IN_GAME;
@@ -39,9 +46,10 @@ function OnSendReady() {
 function OnSendConnecting() {
 	if(getTime() - timer_CONNECT_PDU > INIT_PDU_PERIOD){
 		timer_CONNECT_PDU = getTime();
-		my_network.user_socket = NetConnectTCP(my_network.manager_ip, PORT_USER, VR_NO_BLOCKING);
+		my_network.user_socket = NetConnectTCP(my_network.manager_ip, PORT_USER);
 		if(my_network.user_socket != -1) {
 			var PDU = my_network.create_USER_PDU();
+			trace(PDU);
 			NetVarSendToTCP(my_network.user_socket, PDU);
 			my_network.status = READY;
 		}

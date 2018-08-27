@@ -65,7 +65,7 @@ class network{
 function network::init() {
 	player_array = array(0);
 	status = NOT_CONNECTED;
-	user_channel = NetCreateChannelTCP(PORT_USER, SOURCE_IP_ADDRESS, VR_NO_BLOCKING);
+	user_channel = NetCreateChannelTCP(PORT_USER, SOURCE_IP_ADDRESS);
 	channel_init = NetCreateChannel(PORT_INIT, SOURCE_IP_ADDRESS, VR_NO_BLOCKING);
 	channel_game = NetCreateChannel(PORT_GAME, SOURCE_IP_ADDRESS, VR_NO_BLOCKING);
 	//channel_user_to_manager = NetCreateChannel(PORT_USER, SOURCE_IP_ADDRESS, VR_NO_BLOCKING);
