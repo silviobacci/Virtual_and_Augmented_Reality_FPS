@@ -23,9 +23,6 @@
 #include "../player/updater.s3d"
 
 #include "../menu/menu_utilities.s3d"
-#include "../menu/startup_menu.s3d"
-#include "../menu/pause_menu.s3d"
-#include "../menu/help_menu.s3d"
 
 #include "../overlay/map.s3d"
 #include "../overlay/player_info.s3d"
@@ -33,6 +30,12 @@
 #include "../overlay/gunsight.s3d"
 
 #include "../network/network.s3d"
+
+#include "../menu/startup_menu.s3d"
+#include "../menu/pause_menu.s3d"
+#include "../menu/help_menu.s3d"
+#include "../menu/waiting_menu.s3d"
+
 #include "../network/sender.s3d"
 #include "../network/receiver.s3d"
 

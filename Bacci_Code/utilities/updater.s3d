@@ -3,7 +3,10 @@ function OnUpdate() {
 	my_keyboard.update();
 	resolution = get_resolution();
 	
-	if(!my_startup_menu.show_menu)
+	if(my_waiting_menu.show_menu && my_waiting_menu.first_time)
+		my_waiting_menu.update();
+	
+	if(!my_startup_menu.show_menu && !my_waiting_menu.show_menu)
 		my_pause_menu.update();
 		
 	if(my_pause_menu.show_menu)
@@ -12,12 +15,20 @@ function OnUpdate() {
 	if(my_pause_menu.show_menu)
 		return;
 		
+	if(my_waiting_menu.show_menu)
+		my_waiting_menu.check_mouse_position();
+		
 	if(my_startup_menu.show_menu)
 		my_startup_menu.check_mouse_position();
 		
 	if(my_startup_menu.show_menu)
 		return;
+		
+	if(my_waiting_menu.show_menu)
+		return;
 			
+	var tmp = "aggiorno camera";
+	trace(tmp);
 	update_camera();
 		
 	my_players.update();

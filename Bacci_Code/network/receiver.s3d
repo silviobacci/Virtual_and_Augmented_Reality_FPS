@@ -1,15 +1,11 @@
 function OnReceiveManaging() {
-	var received_data;
-	
-	while(true){
-		received_data = my_network.receive_from_user();
+	var socket_id = NetAcceptTCP(my_network.user_channel, VR_NO_BLOCKING);
+	if(socket_id != -1)
+		my_network.add_player_manager(socket_id);
+}
 
-		if(received_data == void)
-			break;
-		
-		if(received_data != NetGetIP())
-			my_network.add_player(received_data);
-	}
+function OnReceiveReady() {
+	
 }
 
 function OnReceiveConnecting() {
@@ -17,12 +13,14 @@ function OnReceiveConnecting() {
 	
 	while(true){
 		received_data = my_network.receive_from_manager();
-
+		
 		if(received_data == void)
 			break;
-
-		if(received_data != NetGetIP())
-			my_network.add_player(received_data);
+		
+		if(received_data[2] == "READY")
+			my_network.status = READY;
+		
+		my_network.add_player(received_data);
 	}
 }
 

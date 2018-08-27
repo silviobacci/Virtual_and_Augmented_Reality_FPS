@@ -6,6 +6,11 @@ function OnDraw() {
 		return;
 	}
 	
+	if(my_waiting_menu.show_menu) {
+		my_waiting_menu.draw();
+		return;
+	}
+	
 	my_world.draw();
 	my_players.draw();
 	

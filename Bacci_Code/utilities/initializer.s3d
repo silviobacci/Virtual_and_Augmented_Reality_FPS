@@ -39,13 +39,14 @@ function init() {
 	my_score_info.update(19, 70);
 	my_score_info.update(68, 60);
 	
+	my_waiting_menu = waiting_menu();
 	my_help_menu = help_menu();
-	my_help_menu.init();
-	
 	my_startup_menu = startup_menu();
-	my_startup_menu.init(my_help_menu);
-	
 	my_pause_menu = pause_menu();
+	
+	my_help_menu.init();	
+	my_waiting_menu.init(my_startup_menu);	
+	my_startup_menu.init(my_help_menu, my_waiting_menu);
 	my_pause_menu.init(my_startup_menu, my_help_menu);
 	
 	my_gunsight = gunsight();

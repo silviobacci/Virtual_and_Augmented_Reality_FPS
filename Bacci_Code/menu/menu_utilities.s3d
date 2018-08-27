@@ -48,10 +48,10 @@ function draw_box(box, text, fontsize) {
 	ConsoleText(box[0] - boxsize[0] / 2.0, box[1] - boxsize[1] / 2.0, text);
 }
 
-function draw_title(box, displacement) {
+function draw_title(title, box, displacement) {
 	box[1]  = 0.5 + displacement * box[3];
 	
-	draw_box(box, "First Person Shooter", MENU_TITLE_FONT_SIZE);
+	draw_box(box, title, MENU_TITLE_FONT_SIZE);
 }
 
 function draw_text(text, box, displacement) {

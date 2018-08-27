@@ -30,6 +30,9 @@ function OnTimer() {
 		case MANAGING :
 			OnReceiveManaging();
 			break;
+		case READY :
+			OnReceiveReady();
+			break;
 		case CONNECTING :
 			OnReceiveConnecting();
 			break;
@@ -42,7 +45,11 @@ function OnTimer() {
 	
 	switch(my_network.status) {
 		case MANAGING :
+			OnSendInit();
 			OnSendManaging();
+			break;
+		case READY :
+			OnSendReady();
 			break;
 		case CONNECTING :
 			OnSendConnecting();

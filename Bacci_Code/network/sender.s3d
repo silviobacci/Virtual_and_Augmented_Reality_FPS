@@ -1,43 +1,56 @@
-#define INIT_PDU_PERIOD			500
-#define POSITION_PDU_PERIOD		100
-#define KEEPALIVE_PDU_PERIOD	500
-#define SCORE_PDU_PERIOD		3000
-#define BULLET_PDU_PERIOD		50
-
 var timer_INIT_PDU = 0;
+var timer_MANAGE_PDU = 0;
+var timer_CONNECT_PDU = 0;
 var timer_POSITION_PDU = 0;
 var timer_KEEPALIVE_PDU = 0;
 var timer_SCORE_PDU = 0;
 var timer_BULLET_PDU = 0;
 
-function OnSendManaging() {
+function OnSendInit() {
 	if(getTime() - timer_INIT_PDU > INIT_PDU_PERIOD){
 		timer_INIT_PDU = getTime();
+		var PDU = my_network.create_USER_PDU();
+		//trace(PDU);
+		my_network.send_init(PDU);
+	}
+}
+
+function OnSendManaging() {
+	if(getTime() - timer_MANAGE_PDU > INIT_PDU_PERIOD){
+		timer_MANAGE_PDU = getTime();
 		foreach(var player in my_network.player_array) {
-			trace(player);
 			var PDU = my_network.create_MANAGER_PDU(player[0], player[1]);
 			my_network.send_by_manager(PDU);
 		}
 	}
 }
 
+function OnSendReady() {
+	foreach(var player in my_network.player_array) {
+		var PDU = "READY";
+		if(player[2] != -1)
+			NetVarSendToTCP(player[2], PDU);
+	}
+
+	my_waiting_menu.show_menu = false;
+	my_network.status = IN_GAME;
+}
+
 function OnSendConnecting() {
-	if(getTime() - timer_INIT_PDU > INIT_PDU_PERIOD){
-		timer_INIT_PDU = getTime();
-		var PDU = my_network.create_USER_PDU();
-		my_network.send_by_user(PDU);
+	if(getTime() - timer_CONNECT_PDU > INIT_PDU_PERIOD){
+		timer_CONNECT_PDU = getTime();
+		my_network.user_socket = NetConnectTCP(my_network.manager_ip, PORT_USER, VR_NO_BLOCKING);
+		if(my_network.user_socket != -1) {
+			var PDU = my_network.create_USER_PDU();
+			NetVarSendToTCP(my_network.user_socket, PDU);
+			my_network.status = READY;
+		}
 	}
 }
 
 function OnSend() {
-	var PDU;
-	if(my_network.status == CONNECTING)
-		if(getTime() - timer_INIT_PDU > INIT_PDU_PERIOD){
-			timer_INIT_PDU = getTime();
-			PDU = my_network.create_INIT_PDU();
-			my_network.send_in_game(PDU);
-		}
 	/*
+	 var PDU;
 	// send position pdu.
 	if(getTime() - timer_POSITION_PDU > POSITION_PDU_PERIOD){
 		timer_POSITION_PDU = getTime();
