@@ -53,9 +53,9 @@ class bullet{
 	init(br, bm);
 	
 	check_if_hit(coord);
-	check_collision(matrix_level);
+	check_collision();
 	update_dynamics();
-	update(matrix_level);
+	update();
 	
 	draw();
 	
@@ -104,12 +104,12 @@ function bullet::update_dynamics(){
 	accy = - viscous * speed * sin(angle_y) / mass - g;
 }
 
-function bullet::update(matrix_level){
+function bullet::update(){
 	if(is_flying){
 		old_position = position;
 		update_dynamics();
 		
-		if(check_collision(matrix_level) || position[1] <= 0)
+		if(check_collision() || position[1] <= 0)
 			is_flying = false; 
 		else
 			obj_bullet.setposition(position);

@@ -1,20 +1,20 @@
 #define	NOT_CONNECTED		0
 #define	MANAGING			1
 #define	CONNECTING			2
-#define	READY				3
-#define	IN_GAME				4
+#define	READY_USER			3
+#define	READY_MNG			4
+#define	IN_GAME				5
 
 #define	MAX_PLAYERS			2
 
 #define SOURCE_IP_ADDRESS	"0.0.0.0"
-//#define BROADCAST_ADDRESS	"172.20.10.15"
 #define BROADCAST_ADDRESS	"172.20.10.15"
 #define PORT_UDP_GAME		50023	
 #define PORT_UDP_INIT		50022	
 #define PORT_TCP_INIT		50021
 
 #define INIT_PDU_PERIOD			500
-#define POSITION_PDU_PERIOD		100
+#define POSITION_PDU_PERIOD		50
 #define KEEPALIVE_PDU_PERIOD	500
 #define SCORE_PDU_PERIOD		3000
 #define BULLET_PDU_PERIOD		50
@@ -40,12 +40,13 @@ class network{
 	
 	init();
 	check_if_manager();
+	set_my_id();
 	add_player_manager(IP);
 	create_MANAGER_PDU(IP, ID);
 	create_USER_PDU();
 	create_RESET_PDU();
 	create_KEEPALIVE_PDU();
-	create_POSITION_PDU(position, direction, velocity);
+	create_POSITION_PDU(position, angle_direction, moving_direction, current_frame, front_speed, side_speed, front_direction, side_direction, is_falling, is_jumping, speedx, speedy, accx, accy);
 	create_SCORE_PDU(scores);
 	create_BULLET_PDU(type, position, direction, fire_life);
 	create_EXPLOSION_PDU(enemy);
@@ -78,6 +79,7 @@ function network::check_if_manager() {
 	if(manager_ip == void) {
 		status = MANAGING;
 		add_player_manager(-1);
+		set_my_id();
 		manager_ip = NetGetIP();
 	}
 	
@@ -85,10 +87,23 @@ function network::check_if_manager() {
 	trace(tmp);
 }
 
+function network::set_my_id() {
+	var index = 0;
+	foreach(var player in player_array) {
+		if(player[0] == NetGetIP()) {
+			my_id = player[1];
+			my_players.my_index = index;
+			break;
+		}
+		index++;
+	}
+}
+
 function network::add_player_manager(socket) {
-	var to_add = array(3);
+	var to_add = array(4);
 	to_add[1] = len(player_array);
 	to_add[2] = socket;
+	to_add[3] = my_players.random_pos();
 	if(to_add[2] == -1)
 		to_add[0] = NetGetIP();
 	else
@@ -99,7 +114,7 @@ function network::add_player_manager(socket) {
 	trace(to_add);
 	
 	if(len(player_array) == MAX_PLAYERS)
-		status = READY;
+		status = READY_MNG;
 }
 
 function network::create_MANAGER_PDU(IP, ID) {
@@ -128,15 +143,24 @@ function network::create_KEEPALIVE_PDU() {
 	return PDU;
 }
 
-function network::create_POSITION_PDU(position, direction, velocity) {
-	var PDU = array(7);
+function network::create_POSITION_PDU(position, angle_direction, moving_direction, current_frame, front_speed, side_speed, front_direction, side_direction, is_falling, is_jumping, speedx, speedy, accx, accy) {
+	var PDU = array(16);
 	PDU[0] = POSITION_PDU;
 	PDU[1] = my_id;
-	PDU[2] = position[0];
-	PDU[3] = position[1];
-	PDU[4] = position[2];
-	PDU[5] = direction;	
-	PDU[6] = velocity;
+	PDU[2] = position;
+	PDU[3] = angle_direction;  
+	PDU[4] = moving_direction; 
+	PDU[5] = current_frame; 
+	PDU[6] = front_speed; 
+	PDU[7] = side_speed; 
+	PDU[8] = front_direction; 
+	PDU[9] = side_direction; 
+	PDU[10] = is_falling; 
+	PDU[11] = is_jumping; 
+	PDU[12] = speedx; 
+	PDU[13] = speedy; 
+	PDU[14] = accx; 
+	PDU[15] = accy; 
 	return PDU;
 }
 
@@ -182,7 +206,8 @@ function network::connect(){
 
 function network::send_in_game(PAYLOAD){
 	foreach(var player in player_array)
-		NetVarSendTo(player[0], PORT_UDP_GAME, PAYLOAD);
+		if(player[0] != NetGetIP())
+			NetVarSendTo(player[0], PORT_UDP_GAME, PAYLOAD);
 }
 
 function network::send_init(PAYLOAD){
@@ -195,7 +220,7 @@ function network::send_by_user(PAYLOAD){
 
 function network::send_by_manager(PAYLOAD){
 	foreach(var player in player_array)
-		if(player[2] != -1)
+		if(player[0] != NetGetIP())
 			NetVarSendToTCP(player[2], PAYLOAD);
 }
 

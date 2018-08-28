@@ -27,7 +27,7 @@ function player::create_bounding_box() {
 		obj_bounding_box[i] = CVmObj(mesh_bounding_box);
 }
 
-function player::check_collision(matrix_level){
+function player::check_collision(){
 	var start = 0;
 	var end = 9;
 	var phi = angle_direction;
@@ -65,7 +65,7 @@ function player::check_collision(matrix_level){
 		var jz = int(abs(to_check[i].z - iz) * N_STEPS);
 		var ix = int(to_check[i].x);
 		var jx = int(abs(to_check[i].x - ix) * N_STEPS);
-		var height = matrix_level[iz * N_STEPS + jz][ix * N_STEPS + jx];
+		var height = my_world.matrix_level[iz * N_STEPS + jz][ix * N_STEPS + jx];
 		
 		if(height - position.y < -COLLISION_RANGE) {
 			init_jump_dynamic();

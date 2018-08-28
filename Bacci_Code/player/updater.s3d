@@ -74,7 +74,7 @@ function player::update_position(){
 		my_sound_player.play_step(position);
 }
 
-function player::update(matrix_level) {
+function player::update() {
 	var old_position = position;
 	
 	update_moving_direction();
@@ -101,12 +101,12 @@ function player::update(matrix_level) {
 	var posz = int(position.z);
 	var jx = int(abs(position.x - posx) * N_STEPS);
 	var jz = int(abs(position.z - posz) * N_STEPS);
-	wall_height = matrix_level[posz * N_STEPS + jz][posx * N_STEPS + jx];
+	wall_height = my_world.matrix_level[posz * N_STEPS + jz][posx * N_STEPS + jx];
 	
 	if(is_jumping || is_falling)
 		update_jump_dynamics();
 		
-	if(!is_falling && check_collision(matrix_level)){
+	if(!is_falling && check_collision()){
 		if(!is_falling) {
 			position = old_position;
 			front_speed = 0;
@@ -125,5 +125,52 @@ function player::update(matrix_level) {
 
 	obj_player.setposition(position);
 	
-	current_weapon.update(matrix_level);
+	current_weapon.update();
+}
+
+function player::update_enemy_info() {
+	var old_position = position;
+	
+	if(!is_jumping && !is_falling)
+		update_position();
+		
+	var posx = int(position.x);
+	var posz = int(position.z);
+	var jx = int(abs(position.x - posx) * N_STEPS);
+	var jz = int(abs(position.z - posz) * N_STEPS);
+	wall_height = my_world.matrix_level[posz * N_STEPS + jz][posx * N_STEPS + jx];
+	
+	if(is_jumping || is_falling)
+		update_jump_dynamics();
+		
+	if(!is_falling && check_collision()){
+		if(!is_falling) {
+			position = old_position;
+			front_speed = 0;
+		}
+	}
+	else {
+		if(wall_height - position.y > 0) {
+			position.y = wall_height;
+			my_sound_player.play_step(position);
+		}
+		else if(!is_jumping && wall_height - position.y < 0) {
+			position.y = wall_height;
+			my_sound_player.play_step(position);
+		}
+	}
+	
+	obj_player.setposition(position);
+	obj_player.setrotation(angle_direction, 0, 1, 0);
+}
+
+function player::update_enemy_from_PDU() {
+	var old_position = position;
+	
+	if(check_collision())
+		position = old_position;
+		
+	obj_player.setposition(position);
+	obj_player.setrotation(angle_direction, 0, 1, 0);
+	
 }

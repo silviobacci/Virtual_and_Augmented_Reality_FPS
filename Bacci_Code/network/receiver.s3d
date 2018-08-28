@@ -1,12 +1,15 @@
-function OnReceiveManaging() {
+function CheckNewUser() {
 	var socket_id = my_network.accept();
 	if(socket_id != -1)
 		my_network.add_player_manager(socket_id);
 }
 
-function OnReceiveReady() {
-	my_network.receive_from_manager();
-	my_network.status = my_network.receive_from_manager();
+function ReceiveUsersList() {
+	my_network.player_array = my_network.receive_from_manager();
+	var tmp = my_network.player_array;
+	trace(tmp);
+	my_network.set_my_id();
+	my_players.create_players(my_network.player_array);
 	my_waiting_menu.show_menu = false;
 	my_network.status = IN_GAME;
 }
@@ -20,13 +23,20 @@ function OnReceive() {
 		if(received_data == void)
 			break;
 
-		if(received_data[1] != my_network.id)
+		if(received_data[1] != my_network.my_id)
 			switch(received_data[0]) {
 				case POSITION_PDU:
+					my_players.update_player_info(received_data[1], received_data[2], received_data[3], received_data[4], received_data[5], received_data[6], received_data[7], received_data[8], received_data[9], received_data[10], received_data[11], received_data[12], received_data[13], received_data[14], received_data[15]);
 					break;
 				case BULLET_PDU:
 					break;
 				case KEEPALIVE_PDU:
+					for(var i = 0; i < len(timer_players); i++)
+						if(timer_players[i][0] == received_data[1]) {
+							var diff = getTime() - timer_players[i][1];
+							trace(diff);
+							timer_players[i][1] = getTime();	
+						}
 					break;
 				case EXPLOSION_PDU:
 					break;

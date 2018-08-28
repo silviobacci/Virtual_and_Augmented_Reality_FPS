@@ -58,7 +58,7 @@ class player{
 	create_player();
 	
 	create_bounding_box();
-	check_collision(matrix_level);
+	check_collision();
 	
 	get_position();
 	
@@ -73,7 +73,9 @@ class player{
 	update_position();
 	update_moving_direction();
 	
-	update(matrix_level);
+	update();
+	update_enemy_from_PDU();
+	update_enemy_info();
 	
 	draw();
 };

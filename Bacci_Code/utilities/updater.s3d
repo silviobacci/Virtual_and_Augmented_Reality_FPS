@@ -3,6 +3,10 @@ function OnUpdate() {
 	my_keyboard.update();
 	resolution = get_resolution();
 	
+	for(var i = 0; i < len(timer_players); i++)
+		if(getTime() - timer_players[i][1] > 5 * KEEPALIVE_PDU_PERIOD)
+			my_players.remove_player(timer_players[i][0]);
+	
 	if(my_waiting_menu.update_it)
 		my_waiting_menu.update();
 	
@@ -31,5 +35,5 @@ function OnUpdate() {
 		
 	my_players.update();
 	my_map.update(my_players.get_player_position());
-	my_player_info.update(my_players.array_player[0]);
+	my_player_info.update(my_players.array_player[my_players.my_index]);
 }

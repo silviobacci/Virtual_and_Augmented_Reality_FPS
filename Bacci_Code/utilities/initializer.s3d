@@ -22,11 +22,7 @@ function init() {
 	my_world.init();
 	
 	my_players = player_manager();
-	my_players.init(my_world.map, my_world.matrix);
-	my_players.addplayer();
-	my_players.addplayer();
-	
-	init_camera();
+	my_players.init(my_world.map, my_world.matrix_level);
 	
 	my_map = map();
 	my_map.init(my_players.map);

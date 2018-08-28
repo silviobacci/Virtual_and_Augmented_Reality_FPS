@@ -1,17 +1,24 @@
 var my_players;
 
+var timer_players = array(0);
+function init_camera();
+
 class player_manager {
 	var map;
+	var my_index;
 	var matrix_level;
 	var array_player; 
 	var obj;
 	
 	init(mp, ml);
 	draw();
+	create_players(players);
 	random_pos();
 	set_orientation(pos);
-	addplayer();
+	addplayer(id, pos);
+	remove_player(id);
 	update();
+	update_player_info(id, position, angle_direction, moving_direction, current_frame, front_speed, side_speed, front_direction, side_direction, is_falling, is_jumping, speedx, speedy, accx, accy);
 	
 	get_player_position();
 };
@@ -23,7 +30,31 @@ function player_manager::init(mp, ml){
 }
 
 function player_manager::update(){
-	array_player[0].update(matrix_level);
+	array_player[my_index].update(matrix_level);
+	foreach(var player in array_player)
+		if(player.id != my_players.my_index)
+			player.update_enemy_info();
+}
+
+function player_manager::update_player_info(id, position, angle_direction, moving_direction, current_frame, front_speed, side_speed, front_direction, side_direction, is_falling, is_jumping, speedx, speedy, accx, accy){
+	foreach(var player in array_player)
+		if(player.id == id) {
+			player.front_speed = front_speed; 
+			player.side_speed = side_speed; 
+			player.moving_direction = moving_direction; 
+			player.position = position; 
+			player.angle_direction = angle_direction; 
+			player.current_frame = current_frame; 
+			player.front_direction = front_direction; 
+			player.side_direction = side_direction; 
+			player.is_falling = is_falling; 
+			player.is_jumping = is_jumping; 
+			player.speedx = speedx; 
+			player.speedy = speedy; 
+			player.accx = accx; 
+			player.accy = accy; 
+			player.update_enemy_from_PDU();
+		}
 }
 
 function player_manager::random_pos() {
@@ -55,12 +86,35 @@ function player_manager::set_orientation(pos) {
 	return or;
 }
 
-function player_manager::addplayer(){
-		var p = player();
-		var pos = random_pos();
-		var orientation = set_orientation(pos);
-		p.init(len(array_player) + 1, pos, orientation);
-		aadd(array_player, p);
+function player_manager::addplayer(id, pos){
+	var p = player();
+	var orientation = set_orientation(pos);
+	p.init(id, pos, orientation);
+	aadd(array_player, p);
+}
+
+function player_manager::remove_player(id){
+	var index = 0;
+	foreach(var player in array_player) {
+		if(player.id == id) {
+			adel(array_player, index);
+			adel(timer_players, index);
+			my_index--;
+			break;
+		}
+		index++;
+	}
+	init_camera();
+}
+
+function player_manager::create_players(players){
+	foreach(var player in players) {
+		addplayer(player[1], player[3]);
+		if(player[0] != NetGetIP())
+			aadd(timer_players, [player[1], getTime()]);
+	}
+	trace(timer_players);
+	init_camera();
 }
 
 function player_manager::get_player_position() {

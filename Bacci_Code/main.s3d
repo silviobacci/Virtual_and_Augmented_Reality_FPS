@@ -26,29 +26,31 @@ function OnFrame() {
 function DownloadReady(RequestID) {}
 
 function OnTimer() {
+	//trace(timer_players);
+	OnUpdate();
+	//trace(timer_players);
 	switch(my_network.status) {
 		case MANAGING :
-			OnReceiveManaging();
+			CheckNewUser();
 			break;
-		case READY :
-			OnReceiveReady();
+		case READY_USER :
+			ReceiveUsersList();
 			break;
 		case IN_GAME :
 			OnReceive();
 			break;
 	}
-	
-	OnUpdate();
+	//trace(timer_players);
 	
 	switch(my_network.status) {
 		case MANAGING :
-			OnSendInit();
+			SendManagerInfo();
 			break;
-		case READY :
-			OnSendReady();
+		case READY_MNG :
+			SendUsersList();
 			break;
 		case CONNECTING :
-			OnSendConnecting();
+			SendUserInfo();
 			break;
 		case IN_GAME :
 			OnSend();

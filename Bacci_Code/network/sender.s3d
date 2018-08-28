@@ -6,7 +6,7 @@ var timer_KEEPALIVE_PDU = 0;
 var timer_SCORE_PDU = 0;
 var timer_BULLET_PDU = 0;
 
-function OnSendInit() {
+function SendManagerInfo() {
 	if(getTime() - timer_INIT_PDU > INIT_PDU_PERIOD){
 		timer_INIT_PDU = getTime();
 		var PDU = my_network.create_USER_PDU();
@@ -14,60 +14,76 @@ function OnSendInit() {
 	}
 }
 
-function OnSendReady() {
-	foreach(var player in my_network.player_array)
-		my_network.send_by_manager("READY");
-	
+function SendUsersList() {
 	foreach(var player in my_network.player_array)
 		my_network.send_by_manager(my_network.player_array);
 
+	my_players.create_players(my_network.player_array);
 	my_waiting_menu.show_menu = false;
 	my_network.status = IN_GAME;
 }
 
-function OnSendConnecting() {
+function SendUserInfo() {
 	if(getTime() - timer_CONNECT_PDU > INIT_PDU_PERIOD){
 		timer_CONNECT_PDU = getTime();
 		if(my_network.connect() != -1) {
 			var PDU = my_network.create_USER_PDU();
+			trace(PDU);
 			my_network.send_by_user(PDU);
-			my_network.status = READY;
+			my_network.status = READY_USER;
 		}
 	}
 }
 
 function OnSend() {
-	/*
 	 var PDU;
 	// send position pdu.
 	if(getTime() - timer_POSITION_PDU > POSITION_PDU_PERIOD){
 		timer_POSITION_PDU = getTime();
-		PDU = my_network.create_POSITION_PDU();
-		my_network.send(PDU);
+		var position = my_players.array_player[my_players.my_index].position;
+		var moving_direction = my_players.array_player[my_players.my_index].moving_direction;
+		var angle_direction = my_players.array_player[my_players.my_index].angle_direction;
+		var front_speed = my_players.array_player[my_players.my_index].front_speed;
+		var side_speed = my_players.array_player[my_players.my_index].side_speed;
+		var current_frame = my_players.array_player[my_players.my_index].current_frame;
+		var front_direction = my_players.array_player[my_players.my_index].front_direction;
+		var side_direction = my_players.array_player[my_players.my_index].side_direction;
+		var is_falling = my_players.array_player[my_players.my_index].is_falling;
+		var is_jumping = my_players.array_player[my_players.my_index].is_jumping;
+		var speedx = my_players.array_player[my_players.my_index].speedx;
+		var speedy = my_players.array_player[my_players.my_index].speedy;
+		var accx = my_players.array_player[my_players.my_index].accx;
+		var accy = my_players.array_player[my_players.my_index].accy;
+		PDU = my_network.create_POSITION_PDU(position, angle_direction, moving_direction, current_frame, front_speed, side_speed, front_direction, side_direction, is_falling, is_jumping, speedx, speedy, accx, accy);
+		my_network.send_in_game(PDU);
 	}
 	
+
 	// send keepalive pdu.
 	if(getTime() - timer_KEEPALIVE_PDU > KEEPALIVE_PDU_PERIOD){
 		timer_KEEPALIVE_PDU = getTime();
 		PDU = my_network.create_KEEPALIVE_PDU();
-		my_network.send(PDU);
+		my_network.send_in_game(PDU);
 	}
+	
+	/*
 	// send score pdu.
 	if(getTime() - timer_SCORE_PDU > SCORE_PDU_PERIOD){
 		timer_SCORE_PDU = getTime();
 		PDU = my_network.create_SCORE_PDU();
-		my_network.send(PDU);
+		my_network.send_in_game(PDU);
 	}
 	
 	// send bullet pdu (also if fire_life == 0)
 	if(getTime() - timer_BULLET_PDU > BULLET_PDU_PERIOD){
 		timer_BULLET_PDU = getTime();
 		PDU = my_network.create_BULLET_PDU();
-		my_network.send(PDU);
+		my_network.send_in_game(PDU);
 	}
-	*/
 	
 	// TODO: send reset pdu on click of button.
 	
 	// TODO: send bullet explosion pdu when it exploses.
+	* 
+	*/
 }
