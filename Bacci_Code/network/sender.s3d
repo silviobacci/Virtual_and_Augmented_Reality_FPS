@@ -96,11 +96,8 @@ function OnSend() {
 			if(bullet[3] > 0) {
 				PDU = my_network.create_HIT_PDU(bullet[0], bullet[1], bullet[2]);
 				my_network.send_in_game(PDU);
+				bullet[3]--;
 			}
 		}
 	}
-	
-	// TODO: send reset pdu on click of button.
-	
-	// TODO: send bullet explosion pdu when it exploses.
 }

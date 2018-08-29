@@ -29,12 +29,6 @@ function init() {
 	my_player_info = player_info();
 	my_score_info = score_info();
 	my_score_info.init();
-	my_score_info.update(32, 50);
-	my_score_info.update(33, 10);
-	my_score_info.update(17, 90);
-	my_score_info.update(28, 80);
-	my_score_info.update(19, 70);
-	my_score_info.update(68, 60);
 	
 	my_waiting_menu = waiting_menu();
 	my_help_menu = help_menu();

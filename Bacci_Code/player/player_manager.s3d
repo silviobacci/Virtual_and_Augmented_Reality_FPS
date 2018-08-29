@@ -17,6 +17,7 @@ class player_manager {
 	set_orientation(pos);
 	addplayer(id, pos);
 	remove_player(id);
+	respawn_player(id);
 	update();
 	update_player_info(id, position, angle_direction, moving_direction, current_frame, front_speed, side_speed, front_direction, side_direction, is_falling, is_jumping, speedx, speedy, accx, accy);
 	
@@ -62,6 +63,8 @@ function player_manager::random_pos() {
 	var x;
 	var rows = len(map) - 1;
 	var columns = len(map[0]) - 1;
+	trace(rows);
+	trace(columns);
 	do {
 		z = rand(rows);
 		x = rand(columns);
@@ -106,9 +109,22 @@ function player_manager::remove_player(id){
 	}
 }
 
+function player_manager::respawn_player(id) {
+	var pos = my_players.random_pos();
+	var o = my_players.set_orientation(pos);
+	
+	foreach(var player in array_player) {
+		if(player.id == id) {
+			player.init(id, pos, o);
+			break;
+		}
+	}
+}
+
 function player_manager::create_players(players){
 	foreach(var player in players) {
 		addplayer(player[1], player[3]);
+		my_score_info.add_score(player[1], 0);
 		if(player[0] != NetGetIP())
 			aadd(timer_players, [player[1], getTime()]);
 	}

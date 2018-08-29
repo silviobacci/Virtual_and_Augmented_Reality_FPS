@@ -22,7 +22,7 @@ class player_info{
 	update(p);
 	
 	draw_info_box();
-	draw_player_title();
+	draw_player_id();
 	draw_player_position();
 	draw_gun_selected();
 	draw_bullets_left();
@@ -58,9 +58,9 @@ function player_info::get_inside_text(displacement) {
 	return tmp_box;
 }
 
-function  player_info::draw_player_title() {
+function  player_info::draw_player_id() {
 	var tmp_box = get_inside_text(8);
-	draw_box(tmp_box, "PLAYER INFORMATIONS", INFO_FONT_SIZE);
+	draw_box(tmp_box, "PLAYER ID: " + str(my_network.my_id), INFO_FONT_SIZE);
 }
 
 function  player_info::draw_player_position() {
@@ -81,7 +81,7 @@ function  player_info::draw_bullets_left() {
 
 function  player_info::draw_life_points() {
 	var tmp_box = get_inside_text(-8);
-	draw_box(tmp_box, "LIFE: " + str(0), INFO_FONT_SIZE);
+	draw_box(tmp_box, "LIFE: " + str(my_players.array_player[my_players.my_index].life_points), INFO_FONT_SIZE);
 }
 	
 function  player_info::draw_info_box() {
@@ -95,7 +95,7 @@ function  player_info::draw_info_box() {
 function player_info::draw() {
 	box = [box_x, box_y, INFO_BOX_WIDTH, INFO_BOX_WIDTH * resolution];
 	draw_info_box();
-	draw_player_title();
+	draw_player_id();
 	draw_player_position();
 	draw_gun_selected();
 	draw_bullets_left();

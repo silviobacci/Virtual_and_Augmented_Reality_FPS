@@ -157,7 +157,7 @@ function bullet::update_enemy_bullet_info() {
 		update_dynamics();
 		
 		is_hit = check_player_collision();
-		if(check_wall_collision() || is_hit || position[1] <= 0)
+		if(check_wall_collision() || is_hit != NOSHOT || position[1] <= 0)
 			is_flying = false;
 		else
 			obj_bullet.setposition(position);

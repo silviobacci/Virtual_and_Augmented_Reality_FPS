@@ -1,4 +1,5 @@
 var enemy_bullets = array(0);
+var hit_pdu_received = array(0);
 
 function CheckNewUser() {
 	var socket_id = my_network.accept();
@@ -42,6 +43,13 @@ function OnReceive() {
 							already_present = true;
 							//bullet[0].update_bullet_info(received_data);
 						}
+						
+					foreach(var bullet in bullet_player_hit) {
+						if(bullet[0] == received_data[1] && bullet[1] == received_data[2]) {
+							already_present = true;
+							//bullet[0].update_bullet_info(received_data);
+						}
+					}
 					if(!already_present) {
 						var b = bullet();
 						b.update_bullet_info(received_data);
@@ -52,6 +60,14 @@ function OnReceive() {
 					}
 					break;
 				case HIT_PDU:
+					already_present = false;
+					foreach(var pdu in hit_pdu_received)
+						if(pdu[0] == received_data[2] && pdu[1] == received_data[3])
+							already_present = true;
+					if(!already_present) {
+						aadd(hit_pdu_received, [received_data[2], received_data[3]]);
+						my_score_info.update(received_data[2], received_data[4]);
+					}
 					break;
 			}
 	}

@@ -10,6 +10,10 @@
 #include "../weapon/bullet.s3d"
 #include "../weapon/weapon.s3d"
 
+#include "../menu/menu_utilities.s3d"
+
+#include "../overlay/score_info.s3d"
+
 #include "../player/player.s3d"
 #include "../player/player_manager.s3d"
 
@@ -22,14 +26,11 @@
 #include "../player/shooter.s3d"
 #include "../player/updater.s3d"
 
-#include "../menu/menu_utilities.s3d"
+#include "../network/network.s3d"
 
 #include "../overlay/map.s3d"
 #include "../overlay/player_info.s3d"
-#include "../overlay/score_info.s3d"
 #include "../overlay/gunsight.s3d"
-
-#include "../network/network.s3d"
 
 #include "../menu/startup_menu.s3d"
 #include "../menu/pause_menu.s3d"

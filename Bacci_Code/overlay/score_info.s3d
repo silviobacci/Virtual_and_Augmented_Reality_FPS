@@ -13,7 +13,6 @@
 var my_score_info;
 
 class score_info{
-	var players;
 	var scores;
 	var box;
 	var box_x;
@@ -35,58 +34,31 @@ class score_info{
 };
 
 function score_info::init() {
-	players = array(0);
 	scores = array(0);
 }
 
 function score_info::add_score(player_id, score) {
-	var index = -1;
-	var n_players = len(players);
-	var new_scores = array(n_players + 1);
-	var new_players = array(n_players + 1);
-	
-	for(var i = len(scores) - 1; i >= 0; i--)
-		if(scores[i] > score) {
-			index = i;
-			break;
+	for(var i = 0; i < len(scores); i++) {
+		if(scores[i][0] == player_id) {
+			return;
 		}
-		
-	index += 1;
-	
-	for(var i = len(new_scores) - 1; i >= 0; i--)
-		if(i > index) {
-			new_scores[i] = scores[i - 1];
-			new_players[i] = players[i - 1];	
-		}	
-		else if(i < index) {
-			new_scores[i] = scores[i];
-			new_players[i] = players[i];	
-		}
-		else {
-			new_scores[i] = score;
-			new_players[i] = player_id;
-		}	
-	
-	scores = new_scores;
-	players = new_players;		
+	}
+	aadd(scores, [player_id, score]);	
 }
 
 function score_info::update(player_id, score) {
-	for(var i = 0; i < len(players); i++)
-		if(players[i] == player_id) {
-			adel(players, i);
-			adel(scores, i);
+	for(var i = 0; i < len(scores); i++)
+		if(scores[i][0] == player_id) {
+			scores[i][1] += score + 1;
 			break;
 		}
-		
-	add_score(player_id, score);
 }
 
 function score_info::get_inside() {
 	var tmp_box = array(4);
 	tmp_box[0] = box[0] + box[2] * 0.05; 
 	tmp_box[1] = box[1] - box[3] * 0.05; 
-	tmp_box[2] = box[2] * 0.9; 
+	tmp_box[2] = box[2] * 0.9;
 	tmp_box[3] = box[3] * 0.9;
 	
 	return tmp_box;
@@ -117,11 +89,11 @@ function  score_info::draw_score_title() {
 function  score_info::draw_score() {
 	var tmp_box;
 	
-	var min = len(players) < MAX_VISIBLE_SCORES ? len(players) : MAX_VISIBLE_SCORES;
+	var min = len(scores) < MAX_VISIBLE_SCORES ? len(scores) : MAX_VISIBLE_SCORES;
 	
 	for(var i = 0; i < min; i++) {
 		tmp_box = get_inside_text(4 - 4 * i);
-		draw_box(tmp_box, str(i + 1) + ") PLAYER " + str(players[i]) + ": " + str(scores[i]), SCORE_FONT_SIZE);
+		draw_box(tmp_box, str(i + 1) + ") PLAYER " + str(scores[i][0]) + ": " + str(scores[i][1]), SCORE_FONT_SIZE);
 	}
 }
 
