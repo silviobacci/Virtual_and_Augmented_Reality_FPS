@@ -33,6 +33,7 @@
 // scala sinistra: 	o p q r s t
 
 var my_world;
+var my_gadget;
 
 class world{
 	var mesh_sky;
@@ -108,6 +109,8 @@ function world::find_wall_height(height) {
 		case "n":
 		case "t":
 			return 6;
+		case "z":
+			return 1;
 		default:
 			return val(height);
 	}	
@@ -183,6 +186,9 @@ function world::create_map() {
 						for(var k = 0; k < N_STEPS; k++)
 							for(var v = 0; v < N_STEPS; v++)
 								matrix_level[i * N_STEPS + k][j * N_STEPS + v] = map[i][j];
+						break;
+					case "z":
+						my_gadget.add_therapy_zone([i, map[i][j] - 1, j]);
 						break;
 				}
 			else

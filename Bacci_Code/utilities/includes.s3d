@@ -17,6 +17,8 @@
 #include "../player/player.s3d"
 #include "../player/player_manager.s3d"
 
+#include "../world/gadget.s3d"
+
 #include "../weapon/collision_checker.s3d"
 #include "../player/collision_checker.s3d"
 

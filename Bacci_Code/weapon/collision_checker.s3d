@@ -38,5 +38,5 @@ function bullet::check_wall_collision(){
 }
 
 function bullet::check_player_collision(){
-	return check_if_hit(my_players.array_player[my_players.my_index].position);
+	return check_if_hit(my_players.get_me().position);
 }

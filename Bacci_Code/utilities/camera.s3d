@@ -19,9 +19,9 @@ var my_camera;
 
 function init_camera() {
 	my_camera = CameraGetCurrent();
-	my_camera.SetPosition(my_players.array_player[my_players.my_index].position);
+	my_camera.SetPosition(my_players.get_me().position);
 	my_camera.SetRotation (0, 1, 1, 1);
-	my_camera.RotateGlobal(180 - my_players.array_player[my_players.my_index].angle_direction, 0, 1, 0);
+	my_camera.RotateGlobal(180 - my_players.get_me().angle_direction, 0, 1, 0);
 	vertical_rotation = 0.0;
 }
 
@@ -48,26 +48,26 @@ function CameraMoveMouse() {
 
 	my_camera.RotateGlobal(delta_x, 0, 1, 0);
 	my_camera.RotateLocal (delta_y, 1, 0, 0);
-	my_players.array_player[my_players.my_index].angle_direction = (my_players.array_player[my_players.my_index].angle_direction - delta_x) % 360;
-	if(my_players.array_player[my_players.my_index].angle_direction < 0)
-		my_players.array_player[my_players.my_index].angle_direction = 360 + my_players.array_player[my_players.my_index].angle_direction;
+	my_players.get_me().angle_direction = (my_players.get_me().angle_direction - delta_x) % 360;
+	if(my_players.get_me().angle_direction < 0)
+		my_players.get_me().angle_direction = 360 + my_players.get_me().angle_direction;
 }
 
 function ComputeView(backside_offset){
 	var theta = 0;
-	var phi = my_players.array_player[my_players.my_index].angle_direction * GRAD_TO_RAD;
+	var phi = my_players.get_me().angle_direction * GRAD_TO_RAD;
 	
 	var thetat = theta * RAD_TO_GRAD;
-	var phit = my_players.array_player[my_players.my_index].angle_direction;
+	var phit = my_players.get_me().angle_direction;
 	
 	var cam_offset = RHO * [sin(theta)*sin(phi), cos(theta), -sin(theta)*cos(phi)];
 
-	my_players.array_player[my_players.my_index].obj_player.setRotation(phit, 0, 1, 0);
-	my_camera.setPosition(my_players.array_player[my_players.my_index].position + cam_offset + backside_offset);
+	my_players.get_me().obj_player.setRotation(phit, 0, 1, 0);
+	my_camera.setPosition(my_players.get_me().position + cam_offset + backside_offset);
 }
 
 function GunsightView() {
-	var backside_offset = [my_players.array_player[my_players.my_index].moving_direction.x *2, 0, my_players.array_player[my_players.my_index].moving_direction.z*2];
+	var backside_offset = [my_players.get_me().moving_direction.x *2, 0, my_players.get_me().moving_direction.z*2];
 	ComputeView(backside_offset);
 	CameraMoveMouse();
 }
@@ -79,14 +79,14 @@ function FirstPersonView() {
 }
 
 function ThirdPerdonView() {
-	var backside_offset = [-my_players.array_player[my_players.my_index].moving_direction.x * 3, 0.5, -my_players.array_player[my_players.my_index].moving_direction.z * 3];
+	var backside_offset = [-my_players.get_me().moving_direction.x * 3, 0.5, -my_players.get_me().moving_direction.z * 3];
 	ComputeView(backside_offset);
 	CameraMoveMouse();
 }
 
 function FreeCameraView() {
 	my_camera.SetPosition([30.0, WORLD_SUN_HEIGHT, 30.0]);
-	my_camera.SetTarget(my_players.array_player[my_players.my_index].position);
+	my_camera.SetTarget(my_players.get_me().position);
 	my_camera.Free();
 	CameraMoveMouse_MBL_LC();
 }

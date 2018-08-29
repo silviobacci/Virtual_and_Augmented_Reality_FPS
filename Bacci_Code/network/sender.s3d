@@ -39,57 +39,28 @@ function SendUserInfo() {
 
 function OnSend() {
 	 var PDU;
-	// send position pdu.
+
 	if(getTime() - timer_POSITION_PDU > POSITION_PDU_PERIOD){
 		timer_POSITION_PDU = getTime();
-		var position = my_players.array_player[my_players.my_index].position;
-		var moving_direction = my_players.array_player[my_players.my_index].moving_direction;
-		var angle_direction = my_players.array_player[my_players.my_index].angle_direction;
-		var front_speed = my_players.array_player[my_players.my_index].front_speed;
-		var side_speed = my_players.array_player[my_players.my_index].side_speed;
-		var current_frame = my_players.array_player[my_players.my_index].current_frame;
-		var front_direction = my_players.array_player[my_players.my_index].front_direction;
-		var side_direction = my_players.array_player[my_players.my_index].side_direction;
-		var is_falling = my_players.array_player[my_players.my_index].is_falling;
-		var is_jumping = my_players.array_player[my_players.my_index].is_jumping;
-		var speedx = my_players.array_player[my_players.my_index].speedx;
-		var speedy = my_players.array_player[my_players.my_index].speedy;
-		var accx = my_players.array_player[my_players.my_index].accx;
-		var accy = my_players.array_player[my_players.my_index].accy;
-		PDU = my_network.create_POSITION_PDU(position, angle_direction, moving_direction, current_frame, front_speed, side_speed, front_direction, side_direction, is_falling, is_jumping, speedx, speedy, accx, accy);
+		PDU = my_network.create_POSITION_PDU(my_players.get_me());
 		my_network.send_in_game(PDU);
 	}
 	
-
-	// send keepalive pdu.
 	if(getTime() - timer_KEEPALIVE_PDU > KEEPALIVE_PDU_PERIOD){
 		timer_KEEPALIVE_PDU = getTime();
 		PDU = my_network.create_KEEPALIVE_PDU();
 		my_network.send_in_game(PDU);
 	}
 	
-	// send bullet pdu (also if fire_life == 0)
 	if(getTime() - timer_BULLET_PDU > BULLET_PDU_PERIOD){
 		timer_BULLET_PDU = getTime();
-		var shooted_bullets = my_players.array_player[my_players.my_index].get_shooted_bullets();
+		var shooted_bullets = my_players.get_me().get_shooted_bullets();
 		foreach(var bullet in shooted_bullets) {
-			var id = bullet[0].id;
-			var type = bullet[1];
-			var position = bullet[0].position;
-			var speedx = bullet[0].speedx;
-			var speedy = bullet[0].speedy;
-			var accx = bullet[0].accx;
-			var accy = bullet[0].accy;
-			var angle_x = bullet[0].angle_x;
-			var angle_y = bullet[0].angle_y;
-			var is_flying = bullet[0].is_flying;
-			PDU = my_network.create_BULLET_PDU(id, type, position, speedx, speedy, accx, accy, angle_x, angle_y, is_flying);
+			PDU = my_network.create_BULLET_PDU(bullet[0], bullet[1]);
 			my_network.send_in_game(PDU);
 		}
 	}
 
-	
-	// send score pdu.
 	if(getTime() - timer_HIT_PDU > HIT_PDU_PERIOD){
 		timer_HIT_PDU = getTime();
 		foreach(var bullet in bullet_player_hit) {

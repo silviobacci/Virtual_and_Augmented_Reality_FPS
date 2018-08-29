@@ -1,0 +1,98 @@
+#define ZONE_RAY	1
+
+class gadget{
+	var therapy_zone;
+	var ammunition_zone;
+	
+	var is_in_therapy_zone;
+	var is_in_ammunition_zone;
+	
+	init();
+	update();
+	draw();
+	
+	create_therapy_zone(position);
+	create_ammunition_zone(position);
+	
+	add_therapy_zone(position);
+	add_ammunition_zone(position);
+};
+
+function gadget::create_therapy_zone(position) {
+	var mesh_therapy_zone = CVmNewMesh(VRP_BOX);
+	mesh_therapy_zone.scale(WORLD_DEFAULT_DIM, WORLD_WALL_HEIGHT, WORLD_DEFAULT_DIM);
+	
+	var material_therapy_zone = CVmMaterial();
+	material_therapy_zone.diffuse = WORLD_WALL_COLOR; 
+	material_therapy_zone.ChangeTextureParams(VR_V_TILING, WORLD_WALL_HEIGHT);
+	
+	var texture_therapy_zone = CVmTexture(WORLD_WALL_IMAGE);
+	
+	material_therapy_zone.SetTexture(texture_therapy_zone);
+	mesh_therapy_zone.ForceMaterial(material_therapy_zone);
+	
+	var zone = CVmObj(mesh_therapy_zone);
+	zone.SetPosition(position);
+	
+	return zone;
+}
+
+function gadget::create_ammunition_zone(position) {
+	var mesh_ammunition_zone = CVmNewMesh(VRP_BOX);
+	mesh_ammunition_zone.scale(WORLD_DEFAULT_DIM, WORLD_WALL_HEIGHT, WORLD_DEFAULT_DIM);
+	
+	var zone = CVmObj(mesh_ammunition_zone);
+	zone.SetPosition(position);
+	
+	return zone;
+}
+
+function gadget::init(){
+	therapy_zone = array(0);
+	ammunition_zone = array(0);
+	is_in_therapy_zone = false;
+	is_in_ammunition_zone = false;
+}
+
+function gadget::add_therapy_zone(position) {
+	trace(position);
+	foreach(var zone in therapy_zone)
+		if(abs(zone - position) == 0)
+			return;
+	var to_add = array(0);
+	aadd(to_add, position);
+	aadd(to_add, create_therapy_zone(position));
+	aadd(therapy_zone, to_add);
+}
+
+function gadget::add_ammunition_zone(position) {
+	foreach(var zone in ammunition_zone)
+		if(abs(zone - position) == 0)
+			return;
+	var to_add = array(0);
+	aadd(to_add, position);
+	aadd(to_add, create_ammunition_zone(position));
+	aadd(therapy_zone, to_add);
+}
+
+function gadget::update() {
+	foreach(var zone in therapy_zone)
+		if(abs(zone[0] - my_players.get_me().position) < ZONE_RAY) {
+			is_in_therapy_zone = true;
+			break;
+		}
+		
+	foreach(var zone in ammunition_zone)
+		if(abs(zone[0] - my_players.get_me().position) < ZONE_RAY) {
+			is_in_ammunition_zone = true;
+			break;
+		}
+}
+
+function gadget::draw() {
+	foreach(var zone in therapy_zone)
+		zone[1].draw();
+		
+	foreach(var zone in ammunition_zone)
+		zone[1].draw();
+}

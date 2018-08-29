@@ -45,11 +45,14 @@ class network{
 	create_USER_PDU();
 	create_RESET_PDU();
 	create_KEEPALIVE_PDU();
-	create_POSITION_PDU(position, angle_direction, moving_direction, current_frame, front_speed, side_speed, front_direction, side_direction, is_falling, is_jumping, speedx, speedy, accx, accy);
+	create_POSITION_PDU(player);
 	create_HIT_PDU(enemy_id, bullet_id, type);
-	create_BULLET_PDU(id, type, position, speedx, speedy, accx, accy, angle_x, angle_y, is_flying);
+	create_BULLET_PDU(bullet, type);
 	accept();
 	connect();
+	close_manager();
+	close_user();
+	close();
 	send_in_game(PDU);
 	send_init(PAYLOAD);
 	send_by_user(PDU);
@@ -117,7 +120,7 @@ function network::create_MANAGER_PDU(IP, ID) {
 	var PDU = array(3);
 	PDU[0] = IP;
 	PDU[1] = ID;
-	PDU[1] = status;
+	PDU[2] = status;
 	return PDU;
 }
 
@@ -139,24 +142,41 @@ function network::create_KEEPALIVE_PDU() {
 	return PDU;
 }
 
-function network::create_POSITION_PDU(position, angle_direction, moving_direction, current_frame, front_speed, side_speed, front_direction, side_direction, is_falling, is_jumping, speedx, speedy, accx, accy) {
+function network::create_POSITION_PDU(player) {
 	var PDU = array(16);
 	PDU[0] = POSITION_PDU;
 	PDU[1] = my_id;
-	PDU[2] = position;
-	PDU[3] = angle_direction;  
-	PDU[4] = moving_direction; 
-	PDU[5] = current_frame; 
-	PDU[6] = front_speed; 
-	PDU[7] = side_speed; 
-	PDU[8] = front_direction; 
-	PDU[9] = side_direction; 
-	PDU[10] = is_falling; 
-	PDU[11] = is_jumping; 
-	PDU[12] = speedx; 
-	PDU[13] = speedy; 
-	PDU[14] = accx; 
-	PDU[15] = accy; 
+	PDU[2] = player.position;
+	PDU[3] = player.angle_direction;  
+	PDU[4] = player.moving_direction; 
+	PDU[5] = player.current_frame; 
+	PDU[6] = player.front_speed; 
+	PDU[7] = player.side_speed; 
+	PDU[8] = player.front_direction; 
+	PDU[9] = player.side_direction; 
+	PDU[10] = player.is_falling; 
+	PDU[11] = player.is_jumping; 
+	PDU[12] = player.speedx; 
+	PDU[13] = player.speedy; 
+	PDU[14] = player.accx; 
+	PDU[15] = player.accy; 
+	return PDU;
+}
+
+function network::create_BULLET_PDU(bullet, type) {
+	var PDU = array(12);
+	PDU[0] = BULLET_PDU;
+	PDU[1] = my_id;
+	PDU[2] = bullet.id;
+	PDU[3] = type;
+	PDU[4] = bullet.position;
+	PDU[5] = bullet.speedx;  
+	PDU[6] = bullet.speedy;  
+	PDU[7] = bullet.accx;  
+	PDU[8] = bullet.accy;  
+	PDU[9] = bullet.angle_x;  
+	PDU[10] = bullet.angle_y; 
+	PDU[11] = bullet.is_flying;  
 	return PDU;
 }
 
@@ -170,24 +190,6 @@ function network::create_HIT_PDU(enemy_id, bullet_id, type) {
 	return PDU;
 }
 
-function network::create_BULLET_PDU(id, type, position, speedx, speedy, accx, accy, angle_x, angle_y, is_flying) {
-	var PDU = array(12);
-	PDU[0] = BULLET_PDU;
-	PDU[1] = my_id;
-	PDU[2] = id;
-	PDU[3] = type;
-	PDU[4] = position;
-	PDU[5] = speedx;  
-	PDU[6] = speedy;  
-	PDU[7] = accx;  
-	PDU[8] = accy;  
-	PDU[9] = angle_x;  
-	PDU[10] = angle_y; 
-	PDU[11] = is_flying;  
-	  
-	return PDU;
-}
-
 function network::accept(){
 	return NetAcceptTCP(channel_tcp);
 }
@@ -195,6 +197,23 @@ function network::accept(){
 function network::connect(){
 	socket_tcp = NetConnectTCP(manager_ip, PORT_TCP_INIT);
 	return socket_tcp;
+}
+
+function network::close_manager() {
+	foreach(var player in player_array)
+		if(player[0] != NetGetIP())
+			NetClose(player[2]);
+}
+
+function network::close_user() {
+	NetClose(socket_tcp);
+}
+
+function network::close() {
+	if(status == MANAGING || status == READY_MNG)
+		close_manager();
+	else
+		close_user();
 }
 
 function network::send_in_game(PAYLOAD){

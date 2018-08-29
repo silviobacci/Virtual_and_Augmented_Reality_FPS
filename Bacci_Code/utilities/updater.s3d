@@ -35,7 +35,8 @@ function OnUpdate() {
 		
 	my_players.update();
 	my_map.update(my_players.get_player_position());
-	my_player_info.update(my_players.array_player[my_players.my_index]);
+	my_player_info.update(my_players.get_me());
+	my_gadget.update();
 	
 	var index = 0;
 	foreach(var bullet in enemy_bullets) {
@@ -44,7 +45,7 @@ function OnUpdate() {
 			adel(enemy_bullets, index);
 			aadd(bullet_player_hit, [bullet[1], bullet[0].id, type, N_HIT_PDU]);
 			my_score_info.update(bullet[1], type);
-			my_players.array_player[my_players.my_index].life_points -= type + 1;
+			my_players.get_me().life_points -= type + 1;
 			my_players.respawn_player(my_network.my_id);
 		}
 		index++;

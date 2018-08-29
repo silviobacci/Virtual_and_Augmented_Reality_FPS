@@ -19,9 +19,10 @@ class player_manager {
 	remove_player(id);
 	respawn_player(id);
 	update();
-	update_player_info(id, position, angle_direction, moving_direction, current_frame, front_speed, side_speed, front_direction, side_direction, is_falling, is_jumping, speedx, speedy, accx, accy);
+	update_player_from_pdu(pdu);
 	
 	get_player_position();
+	get_me();
 };
 
 function player_manager::init(mp, ml){
@@ -37,23 +38,23 @@ function player_manager::update(){
 			player.update_enemy_info();
 }
 
-function player_manager::update_player_info(id, position, angle_direction, moving_direction, current_frame, front_speed, side_speed, front_direction, side_direction, is_falling, is_jumping, speedx, speedy, accx, accy){
+function player_manager::update_player_from_pdu(pdu){
 	foreach(var player in array_player)
-		if(player.id == id) {
-			player.front_speed = front_speed; 
-			player.side_speed = side_speed; 
-			player.moving_direction = moving_direction; 
-			player.position = position; 
-			player.angle_direction = angle_direction; 
-			player.current_frame = current_frame; 
-			player.front_direction = front_direction; 
-			player.side_direction = side_direction; 
-			player.is_falling = is_falling; 
-			player.is_jumping = is_jumping; 
-			player.speedx = speedx; 
-			player.speedy = speedy; 
-			player.accx = accx; 
-			player.accy = accy; 
+		if(player.id == pdu[1]) {
+			player.position = 			pdu[2]; 
+			player.angle_direction = 	pdu[3]; 
+			player.moving_direction = 	pdu[4];
+			player.current_frame = 		pdu[5];  
+			player.front_speed = 		pdu[6]; 
+			player.side_speed = 		pdu[7]; 
+			player.front_direction = 	pdu[8]; 
+			player.side_direction = 	pdu[9]; 
+			player.is_falling = 		pdu[10]; 
+			player.is_jumping = 		pdu[11]; 
+			player.speedx = 			pdu[12]; 
+			player.speedy = 			pdu[13]; 
+			player.accx = 				pdu[14]; 
+			player.accy = 				pdu[15]; 
 			player.update_enemy_from_PDU();
 		}
 }
@@ -141,6 +142,10 @@ function player_manager::get_player_position() {
 	}
 	
 	return positions;
+}
+
+function player_manager::get_me() {
+	return array_player[my_index];
 }
 
 function player_manager::draw(){

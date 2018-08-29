@@ -26,11 +26,18 @@ function waiting_menu::check_mouse_position() {
 }
 
 function waiting_menu::update() {
-	my_network.status = CONNECTING;
-	my_network.check_if_manager();	
+	my_network.status = IN_GAME;
+	my_players.addplayer(0, [30, 0, 30]);
+	my_players.my_index = 0;
+	my_network.my_id = 0;
+	init_camera();
+	show_menu = false;
+	
+	//my_network.status = CONNECTING;
+	//my_network.check_if_manager();
+	//show_menu = true;
 	first_time = false;
 	update_it = false;
-	show_menu = true;
 }
 
 function waiting_menu::init(s) {

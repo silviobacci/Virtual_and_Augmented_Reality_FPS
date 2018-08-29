@@ -18,6 +18,9 @@ function init() {
 	my_network = network();
 	my_network.init();
 	
+	my_gadget = gadget();
+	my_gadget.init();
+	
 	my_world = world();
 	my_world.init();
 	

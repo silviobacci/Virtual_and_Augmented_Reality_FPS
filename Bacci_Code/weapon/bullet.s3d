@@ -64,7 +64,7 @@ class bullet{
 
 	create_bullet();
 	init(br, bm, i);
-	update_bullet_info(PDU);
+	update_bullet_from_pdu(PDU);
 	
 	check_if_hit(player);
 	check_wall_collision();
@@ -104,7 +104,7 @@ function bullet::init(br, bm, i){
 	create_bullet();
 }
 
-function bullet::update_bullet_info(PDU) {
+function bullet::update_bullet_from_pdu(PDU) {
 	if(PDU[3] == RAILGUN_BULLET)
 		init(RAILGUN_BULLET_RADIUS, RAILGUN_BULLET_MASS, PDU[2]);
 	else
