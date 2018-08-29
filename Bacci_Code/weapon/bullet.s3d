@@ -1,10 +1,13 @@
+#define RAILGUN_BULLET			0
+#define ROCKETL_BULLET			1
+
 #define RAILGUN_N_BULLETS 		25
 #define RAILGUN_AMMUNITIONS		20
 #define RAILGUN_NAME			"railgun"
 #define RAILGUN_MESH			"railgun.aam"
 #define RAILGUN_BULLET_MASS		0.008
 #define RAILGUN_BULLET_RADIUS 	0.003
-#define RAILGUN_SHOOT_FORCE 	500
+#define RAILGUN_SHOOT_FORCE 	400
 
 #define ROCKETL_N_BULLETS 		25
 #define ROCKETL_AMMUNITIONS		20
@@ -12,7 +15,7 @@
 #define ROCKETL_MESH			"rocketl.aam"
 #define ROCKETL_BULLET_MASS		0.008
 #define ROCKETL_BULLET_RADIUS 	0.003
-#define ROCKETL_SHOOT_FORCE 	500
+#define ROCKETL_SHOOT_FORCE 	400
 
 #define GUN_POSITION_X			0
 #define GUN_POSITION_Y			1
@@ -21,7 +24,15 @@
 #define g 						9.81
 #define n				 		0.0000186
 
+#define N_BULLET_PDU	 		100
+#define N_HIT_PDU		 		100
+
+#define NOSHOT			-1
+#define BODYSHOT		0
+#define HEADSHOT		1
+
 class bullet{
+	var id;
 	var mesh_bullet;
 	var obj_bullet;
 	
@@ -48,14 +59,19 @@ class bullet{
 	
 	var obj;
 	var mesh;
+	
+	var fire_life;
 
 	create_bullet();
-	init(br, bm);
+	init(br, bm, i);
+	update_bullet_info(PDU);
 	
-	check_if_hit(coord);
-	check_collision();
+	check_if_hit(player);
+	check_wall_collision();
+	check_player_collision();
 	update_dynamics();
 	update();
+	update_enemy_bullet_info();
 	
 	draw();
 	
@@ -69,7 +85,7 @@ function bullet::create_bullet() {
 	obj_bullet = CVmObj(mesh_bullet);
 }
 
-function bullet::init(br, bm){
+function bullet::init(br, bm, i){
 	obj = array(0);
 	mesh = CVmNewMesh(VRP_BOX);
 	mesh.scale(2);
@@ -80,10 +96,28 @@ function bullet::init(br, bm){
 	
 	delta_t = TIME_STEP_UPDATE;
 	
+	id = i;
 	is_flying = false;
 	elapsed_time = 0.0;
+	fire_life = N_BULLET_PDU;
 	
 	create_bullet();
+}
+
+function bullet::update_bullet_info(PDU) {
+	if(PDU[3] == RAILGUN_BULLET)
+		init(RAILGUN_BULLET_RADIUS, RAILGUN_BULLET_MASS, PDU[2]);
+	else
+		init(ROCKETL_BULLET_RADIUS, ROCKETL_BULLET_MASS, PDU[2]);
+	
+	position = PDU[4];
+	speedx = PDU[5];
+	speedy = PDU[6];
+	accx = PDU[7];
+	accy = PDU[8];
+	angle_x = PDU[9];
+	angle_y = PDU[10];
+	is_flying = PDU[11];
 }
 
 function bullet::update_dynamics(){
@@ -109,16 +143,31 @@ function bullet::update(){
 		old_position = position;
 		update_dynamics();
 		
-		if(check_collision() || position[1] <= 0)
-			is_flying = false; 
+		if(check_wall_collision() || position[1] <= 0)
+			is_flying = false;
 		else
 			obj_bullet.setposition(position);
 	}
 }
 
+function bullet::update_enemy_bullet_info() {
+	var is_hit = NOSHOT;
+	if(is_flying){
+		old_position = position;
+		update_dynamics();
+		
+		is_hit = check_player_collision();
+		if(check_wall_collision() || is_hit || position[1] <= 0)
+			is_flying = false;
+		else
+			obj_bullet.setposition(position);
+	}
+	return is_hit;
+}
+
 function bullet::shoot(p, a, d, sf){
-	var gun_position = [GUN_POSITION_X, GUN_POSITION_Y, -GUN_POSITION_Z];
-	gun_position = VectorRotate(a, 0, 1, 0, gun_position);
+	//var gun_position = [GUN_POSITION_X, GUN_POSITION_Y, -GUN_POSITION_Z];
+	//gun_position = VectorRotate(a, 0, 1, 0, gun_position);
 	dx = 0.0;
 	dy = 0.0;
 	speedx = 0.0;

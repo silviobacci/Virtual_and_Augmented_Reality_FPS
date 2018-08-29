@@ -8,3 +8,25 @@ function player::change_weapon(new_weapon){
 function player::shoot(){
 	current_weapon.shoot(position, angle_direction, CameraGetCurrent().GetDirection());
 }
+
+function player::get_shooted_bullets(){
+	var shooted_bullets = array(0);
+	foreach(var bullet in my_railgun.shooted_bullets)
+		if(bullet.is_flying) {
+			var to_add = array(0);
+			aadd(to_add, bullet);
+			aadd(to_add, RAILGUN_BULLET);
+			aadd(shooted_bullets, to_add);	
+		}
+
+	
+	foreach(var bullet in my_rocketl.shooted_bullets)
+		if(bullet.is_flying) {
+			var to_add = array(0);
+			aadd(to_add, bullet);
+			aadd(to_add, ROCKETL_BULLET);
+			aadd(shooted_bullets, to_add);	
+		}
+		
+	return shooted_bullets;
+}

@@ -3,8 +3,10 @@ var timer_MANAGE_PDU = 0;
 var timer_CONNECT_PDU = 0;
 var timer_POSITION_PDU = 0;
 var timer_KEEPALIVE_PDU = 0;
-var timer_SCORE_PDU = 0;
+var timer_HIT_PDU = 0;
 var timer_BULLET_PDU = 0;
+
+var bullet_player_hit = array(0);
 
 function SendManagerInfo() {
 	if(getTime() - timer_INIT_PDU > INIT_PDU_PERIOD){
@@ -19,6 +21,7 @@ function SendUsersList() {
 		my_network.send_by_manager(my_network.player_array);
 
 	my_players.create_players(my_network.player_array);
+	my_mouse.set_invisible();
 	my_waiting_menu.show_menu = false;
 	my_network.status = IN_GAME;
 }
@@ -28,7 +31,6 @@ function SendUserInfo() {
 		timer_CONNECT_PDU = getTime();
 		if(my_network.connect() != -1) {
 			var PDU = my_network.create_USER_PDU();
-			trace(PDU);
 			my_network.send_by_user(PDU);
 			my_network.status = READY_USER;
 		}
@@ -66,24 +68,39 @@ function OnSend() {
 		my_network.send_in_game(PDU);
 	}
 	
-	/*
-	// send score pdu.
-	if(getTime() - timer_SCORE_PDU > SCORE_PDU_PERIOD){
-		timer_SCORE_PDU = getTime();
-		PDU = my_network.create_SCORE_PDU();
-		my_network.send_in_game(PDU);
-	}
-	
 	// send bullet pdu (also if fire_life == 0)
 	if(getTime() - timer_BULLET_PDU > BULLET_PDU_PERIOD){
 		timer_BULLET_PDU = getTime();
-		PDU = my_network.create_BULLET_PDU();
-		my_network.send_in_game(PDU);
+		var shooted_bullets = my_players.array_player[my_players.my_index].get_shooted_bullets();
+		foreach(var bullet in shooted_bullets) {
+			var id = bullet[0].id;
+			var type = bullet[1];
+			var position = bullet[0].position;
+			var speedx = bullet[0].speedx;
+			var speedy = bullet[0].speedy;
+			var accx = bullet[0].accx;
+			var accy = bullet[0].accy;
+			var angle_x = bullet[0].angle_x;
+			var angle_y = bullet[0].angle_y;
+			var is_flying = bullet[0].is_flying;
+			PDU = my_network.create_BULLET_PDU(id, type, position, speedx, speedy, accx, accy, angle_x, angle_y, is_flying);
+			my_network.send_in_game(PDU);
+		}
+	}
+
+	
+	// send score pdu.
+	if(getTime() - timer_HIT_PDU > HIT_PDU_PERIOD){
+		timer_HIT_PDU = getTime();
+		foreach(var bullet in bullet_player_hit) {
+			if(bullet[3] > 0) {
+				PDU = my_network.create_HIT_PDU(bullet[0], bullet[1], bullet[2]);
+				my_network.send_in_game(PDU);
+			}
+		}
 	}
 	
 	// TODO: send reset pdu on click of button.
 	
 	// TODO: send bullet explosion pdu when it exploses.
-	* 
-	*/
 }

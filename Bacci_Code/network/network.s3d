@@ -16,15 +16,14 @@
 #define INIT_PDU_PERIOD			500
 #define POSITION_PDU_PERIOD		50
 #define KEEPALIVE_PDU_PERIOD	500
-#define SCORE_PDU_PERIOD		3000
-#define BULLET_PDU_PERIOD		50
+#define HIT_PDU_PERIOD			3000
+#define BULLET_PDU_PERIOD		25
 
 #define POSITION_PDU 	1
 #define BULLET_PDU		2
 #define	KEEPALIVE_PDU	3
-#define	EXPLOSION_PDU	4
-#define	SCORE_PDU		5
-#define	RESET_PDU		6
+#define	HIT_PDU			4
+#define	RESET_PDU		5
 
 var my_network;
 
@@ -47,9 +46,8 @@ class network{
 	create_RESET_PDU();
 	create_KEEPALIVE_PDU();
 	create_POSITION_PDU(position, angle_direction, moving_direction, current_frame, front_speed, side_speed, front_direction, side_direction, is_falling, is_jumping, speedx, speedy, accx, accy);
-	create_SCORE_PDU(scores);
-	create_BULLET_PDU(type, position, direction, fire_life);
-	create_EXPLOSION_PDU(enemy);
+	create_HIT_PDU(enemy_id, bullet_id, type);
+	create_BULLET_PDU(id, type, position, speedx, speedy, accx, accy, angle_x, angle_y, is_flying);
 	accept();
 	connect();
 	send_in_game(PDU);
@@ -111,8 +109,6 @@ function network::add_player_manager(socket) {
 	    
 	aadd(player_array, to_add);
 	
-	trace(to_add);
-	
 	if(len(player_array) == MAX_PLAYERS)
 		status = READY_MNG;
 }
@@ -164,34 +160,31 @@ function network::create_POSITION_PDU(position, angle_direction, moving_directio
 	return PDU;
 }
 
-function network::create_SCORE_PDU(scores) {
-	var n_players = len(scores);
-	var PDU = array(n_players);
-	PDU[0] = SCORE_PDU;
+function network::create_HIT_PDU(enemy_id, bullet_id, type) {
+	var PDU = array(5);
+	PDU[0] = HIT_PDU;
 	PDU[1] = my_id;
-	for(var i = 0; i < n_players; i++)
-		PDU[2 + i] = scores[i];
+	PDU[2] = enemy_id;
+	PDU[3] = bullet_id;
+	PDU[4] = type;
 	return PDU;
 }
 
-function network::create_BULLET_PDU(type, position, direction, fire_life) {
-	var PDU = array(7);
+function network::create_BULLET_PDU(id, type, position, speedx, speedy, accx, accy, angle_x, angle_y, is_flying) {
+	var PDU = array(12);
 	PDU[0] = BULLET_PDU;
 	PDU[1] = my_id;
-	PDU[2] = type;
-	PDU[3] = position[0];
-	PDU[4] = position[1];
-	PDU[5] = position[2];
-	PDU[6] = fire_life;
-	PDU[7] = direction;	
-	return PDU;
-}
-
-function network::create_EXPLOSION_PDU(enemy) {
-	var PDU = array(3);
-	PDU[0] = RESET_PDU;
-	PDU[1] = my_id;
-	PDU[2] = enemy;
+	PDU[2] = id;
+	PDU[3] = type;
+	PDU[4] = position;
+	PDU[5] = speedx;  
+	PDU[6] = speedy;  
+	PDU[7] = accx;  
+	PDU[8] = accy;  
+	PDU[9] = angle_x;  
+	PDU[10] = angle_y; 
+	PDU[11] = is_flying;  
+	  
 	return PDU;
 }
 

@@ -49,7 +49,7 @@ function weapon::add_bullets(to_add){
 	bullets_left = ammunitions;
 	for(var i = 0; i < len(bullets); i++){
 		var b = bullet();
-		b.init(BULLET_RADIUS, BULLET_MASS);
+		b.init(BULLET_RADIUS, BULLET_MASS, i);
 		bullets[i] = b;
 	}
 }
@@ -76,8 +76,14 @@ function weapon::shoot(player_position, player_direction, shooting_direction){
 }
 
 function weapon::update() {
+	var index = 0;
 	foreach (var bullet in shooted_bullets)
-		bullet.update();
+		if(!bullet.is_flying)
+			adel(shooted_bullets, index);
+		else {
+			bullet.update();
+			index++;
+		}
 }
 
 function weapon::draw() {

@@ -104,7 +104,6 @@ function player_manager::remove_player(id){
 		}
 		index++;
 	}
-	init_camera();
 }
 
 function player_manager::create_players(players){
@@ -113,7 +112,6 @@ function player_manager::create_players(players){
 		if(player[0] != NetGetIP())
 			aadd(timer_players, [player[1], getTime()]);
 	}
-	trace(timer_players);
 	init_camera();
 }
 

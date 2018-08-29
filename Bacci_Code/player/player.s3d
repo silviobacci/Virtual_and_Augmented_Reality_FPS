@@ -64,6 +64,7 @@ class player{
 	
 	change_weapon(new_weapon);
 	shoot();
+	get_shooted_bullets();
 	
 	reset_jump_dynamics();
 	init_jump_dynamic();

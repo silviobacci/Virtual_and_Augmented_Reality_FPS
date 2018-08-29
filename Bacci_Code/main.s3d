@@ -26,9 +26,9 @@ function OnFrame() {
 function DownloadReady(RequestID) {}
 
 function OnTimer() {
-	//trace(timer_players);
+
 	OnUpdate();
-	//trace(timer_players);
+
 	switch(my_network.status) {
 		case MANAGING :
 			CheckNewUser();
@@ -40,7 +40,6 @@ function OnTimer() {
 			OnReceive();
 			break;
 	}
-	//trace(timer_players);
 	
 	switch(my_network.status) {
 		case MANAGING :

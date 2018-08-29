@@ -36,4 +36,10 @@ function OnUpdate() {
 	my_players.update();
 	my_map.update(my_players.get_player_position());
 	my_player_info.update(my_players.array_player[my_players.my_index]);
+	
+	foreach(var bullet in enemy_bullets) {
+		var type = bullet[0].update_enemy_bullet_info();
+		if(type != NOSHOT)
+			aadd(bullet_player_hit, [bullet[1], bullet[0].id, type, N_HIT_PDU]);
+	}
 }

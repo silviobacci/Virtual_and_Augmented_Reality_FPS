@@ -1,3 +1,5 @@
+var enemy_bullets = array(0);
+
 function CheckNewUser() {
 	var socket_id = my_network.accept();
 	if(socket_id != -1)
@@ -6,16 +8,16 @@ function CheckNewUser() {
 
 function ReceiveUsersList() {
 	my_network.player_array = my_network.receive_from_manager();
-	var tmp = my_network.player_array;
-	trace(tmp);
 	my_network.set_my_id();
 	my_players.create_players(my_network.player_array);
 	my_waiting_menu.show_menu = false;
+	my_mouse.set_invisible();
 	my_network.status = IN_GAME;
 }
 
 function OnReceive() {
 	var received_data;
+	var already_present;
 	
 	while(true){
 		received_data = my_network.receive_in_game();
@@ -25,24 +27,31 @@ function OnReceive() {
 
 		if(received_data[1] != my_network.my_id)
 			switch(received_data[0]) {
+				case KEEPALIVE_PDU:
+					for(var i = 0; i < len(timer_players); i++)
+						if(timer_players[i][0] == received_data[1])
+							timer_players[i][1] = getTime();	
+					break;
 				case POSITION_PDU:
 					my_players.update_player_info(received_data[1], received_data[2], received_data[3], received_data[4], received_data[5], received_data[6], received_data[7], received_data[8], received_data[9], received_data[10], received_data[11], received_data[12], received_data[13], received_data[14], received_data[15]);
 					break;
 				case BULLET_PDU:
-					break;
-				case KEEPALIVE_PDU:
-					for(var i = 0; i < len(timer_players); i++)
-						if(timer_players[i][0] == received_data[1]) {
-							var diff = getTime() - timer_players[i][1];
-							trace(diff);
-							timer_players[i][1] = getTime();	
+					already_present = false;
+					foreach(var bullet in enemy_bullets)
+						if(bullet[1] == received_data[1] && bullet[0].id == received_data[2]) {
+							already_present = true;
+							//bullet[0].update_bullet_info(received_data);
 						}
+					if(!already_present) {
+						var b = bullet();
+						b.update_bullet_info(received_data);
+						var to_add = array(0);
+						aadd(to_add, b);
+						aadd(to_add, received_data[1]);
+						aadd(enemy_bullets, to_add);
+					}
 					break;
-				case EXPLOSION_PDU:
-					break;
-				case SCORE_PDU:
-					break;
-				case RESET_PDU:
+				case HIT_PDU:
 					break;
 			}
 	}
