@@ -3,6 +3,11 @@ function OnUpdate() {
 	my_keyboard.update();
 	resolution = get_resolution();
 	
+	if(my_network.status == END_GAME) {
+		my_end_menu.check_mouse_position();
+		return;	
+	}
+	
 	for(var i = 0; i < len(timer_players); i++)
 		if(getTime() - timer_players[i][1] > 5 * KEEPALIVE_PDU_PERIOD)
 			my_players.remove_player(timer_players[i][0]);
@@ -44,11 +49,11 @@ function OnUpdate() {
 		if(type != NOSHOT) {
 			adel(enemy_bullets, index);
 			aadd(bullet_player_hit, [bullet[1], bullet[0].id, type, N_HIT_PDU]);
-			my_score_info.update(bullet[1], type);
+			my_score_info.update(bullet[1], type, my_players.get_me().id);
 			my_players.get_me().life_points -= type + 1;
 			var respawn = getTime();
 			trace(respawn);
-			if(my_players.get_me().life_points == 0)
+			if(my_players.get_me().life_points <= 0)
 				//my_players.respawn_player(my_network.my_id);
 				my_players.out_of_map();
 		}

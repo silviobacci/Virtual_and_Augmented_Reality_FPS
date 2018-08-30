@@ -2,12 +2,17 @@ var my_end_menu;
 
 class end_menu{
 	var deadbox;
+	var playbox;
+	var exitbox;
+	
+	var wait;
+	var startup;
 	
 	var show_menu;
 	
 	var winner;
 	
-	init();
+	init(s, w);
 	update();
 	draw();
 	
@@ -15,17 +20,41 @@ class end_menu{
 	check_mouse_position();
 };
 
-function end_menu::init() {
-	deadbox = create_box(0.5, 0.5, 0.1, 0.05);
+function end_menu::init(s, w) {
+	var box = create_box(0.5, 0.5, 0.1, 0.05);
+	deadbox = copy_box(box);
+	playbox = copy_box(box);
+	exitbox = copy_box(box);
 	show_menu = false;
+	startup = s;
+	wait = w;
+}
+
+function end_menu::check_mouse_position() {
+	if(my_mouse.is_contained(playbox)) {
+		if(my_mouse.is_clicked()) {
+			show_menu = false;	
+			wait.show_menu = true;
+		}
+		return;
+	}
+
+	if(my_mouse.is_contained(exitbox)) {
+		if(my_mouse.is_clicked())
+			exit_game(this, startup);
+		return;
+	}
 }
 
 function end_menu::draw() {
 	draw_background([0, 1, 1, 1]);
-	if(show_menu)
-		draw_text("WINNER", deadbox, 0);	
+	if(winner)
+		draw_text("WINNER", deadbox, 2);	
 	else
-		draw_text("LOSER", deadbox, 0);	
+		draw_text("LOSER", deadbox, 2);	
+		
+	draw_text("REMATCH", playbox, -6);	
+	draw_text("QUIT", exitbox, -9);	
 	
 	ConsoleFinish();
 }

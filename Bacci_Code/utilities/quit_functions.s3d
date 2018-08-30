@@ -1,3 +1,13 @@
+#define	NOT_CONNECTED		0
+#define	MANAGING			1
+#define	CONNECTING			2
+#define	READY_USER			3
+#define	READY_MNG			4
+#define	IN_GAME				5
+#define END_GAME			6
+
+var my_network;
+
 function quit_game() {
 	window.Fullscreen(false);
 	window.Quit();
@@ -6,4 +16,5 @@ function quit_game() {
 function exit_game(pause, startup) {
 	pause.show_menu = false;
 	startup.show_menu = true;
+	my_network.status = NOT_CONNECTED;
 }

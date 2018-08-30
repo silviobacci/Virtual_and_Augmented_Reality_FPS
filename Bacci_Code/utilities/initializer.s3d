@@ -40,12 +40,12 @@ function init() {
 	my_pause_menu = pause_menu();
 	my_death_menu = death_menu();
 	
-	my_end_menu.init();
 	my_death_menu.init();
 	my_help_menu.init();	
 	my_waiting_menu.init(my_startup_menu);	
 	my_startup_menu.init(my_help_menu, my_waiting_menu);
 	my_pause_menu.init(my_startup_menu, my_help_menu);
+	my_end_menu.init(my_startup_menu, my_waiting_menu);
 	
 	my_gunsight = gunsight();
 	my_gunsight.init();

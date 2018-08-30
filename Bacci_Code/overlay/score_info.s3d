@@ -9,7 +9,7 @@
 #define SCORE_TEXT_COLOR		[255, 255, 255] / 255.0
 
 #define MAX_VISIBLE_SCORES		4
-#define WINNER_SCORE			10
+#define WINNER_SCORE			3
 
 var my_score_info;
 
@@ -51,7 +51,7 @@ function score_info::update(player_id, score, my_id) {
 	for(var i = 0; i < len(scores); i++)
 		if(scores[i][0] == player_id) {
 			scores[i][1] += score + 1;
-			if(scores[i][1] == WINNER_SCORE) {
+			if(scores[i][1] >= WINNER_SCORE) {
 				if(player_id == my_id)
 					my_end_menu.winner = true;
 				else
@@ -106,8 +106,15 @@ function  score_info::draw_score() {
 }
 
 function score_info::draw() {
-	box_x = 1 - SCORE_START_POINT_X - SCORE_BOX_WIDTH;
-	box_y = 1 - SCORE_START_POINT_X * resolution;
+	if(!my_end_menu.show_menu) {
+		box_x = 1 - SCORE_START_POINT_X - SCORE_BOX_WIDTH;
+		box_y = 1 - SCORE_START_POINT_X * resolution;
+	}
+	else {
+		box_x = 0.5 - SCORE_BOX_WIDTH / 2;
+		box_y = 0.5 + SCORE_BOX_WIDTH * resolution / 2;
+	}
+	
 	box = [box_x, box_y, SCORE_BOX_WIDTH, SCORE_BOX_WIDTH * resolution];
 	draw_score_box();
 	draw_score_title();

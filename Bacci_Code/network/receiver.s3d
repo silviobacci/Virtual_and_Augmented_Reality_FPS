@@ -9,16 +9,21 @@ function CheckNewUser() {
 
 function ReceiveUsersList() {
 	my_network.player_array = my_network.receive_from_manager();
+	var arr = my_network.player_array;
+	trace(arr);
 	my_network.set_my_id();
 	my_players.create_players(my_network.player_array);
 	my_waiting_menu.show_menu = false;
+	my_waiting_menu.first_time = true;
 	my_mouse.set_invisible();
 	my_network.status = IN_GAME;
+	my_network.close();
 }
 
 function OnReceive() {
 	var received_data;
 	var already_present;
+	var index;
 	
 	while(true){
 		received_data = my_network.receive_in_game();
@@ -44,6 +49,9 @@ function OnReceive() {
 					foreach(var bullet in bullet_player_hit)
 						if(bullet[0] == received_data[1] && bullet[1] == received_data[2])
 							already_present = true;
+					foreach(var bullet in hit_pdu_received)
+						if(bullet[2] == received_data[1] && bullet[3] == received_data[2])
+							already_present = true;
 					if(!already_present) {
 						var b = bullet();
 						b.update_bullet_from_pdu(received_data);
@@ -55,9 +63,17 @@ function OnReceive() {
 					break;
 				case HIT_PDU:
 					already_present = false;
+					
 					foreach(var pdu in hit_pdu_received)
-						if(pdu[0] == received_data[2] && pdu[1] == received_data[3])
+						if(pdu[0] == received_data[2] && pdu[1] == received_data[3]) {
+							index = 0;
+							foreach(var bullet in enemy_bullets) {
+								if(bullet[1] == pdu[0] && bullet[0].id == pdu[1])
+									adel(enemy_bullets, index);
+								index++;
+							}
 							already_present = true;
+						}
 					if(!already_present) {
 						aadd(hit_pdu_received, [received_data[2], received_data[3]]);
 						my_score_info.update(received_data[2], received_data[4], my_players.get_me().id);

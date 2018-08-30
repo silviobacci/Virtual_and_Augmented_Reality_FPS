@@ -17,6 +17,7 @@ class player_manager {
 	init(mp, ml);
 	draw();
 	create_players(players);
+	set_my_index();
 	random_pos();
 	set_orientation(pos);
 	addplayer(id, pos);
@@ -79,7 +80,6 @@ function player_manager::random_pos() {
 	do {
 		z = rand(rows);
 		x = rand(columns);
-		trace(z);
 	}while(map[z][x] > 0);
 	
 	return [x, 0, z];
@@ -113,8 +113,16 @@ function player_manager::remove_player(id){
 	foreach(var player in array_player) {
 		if(player.id == id) {
 			adel(array_player, index);
+			set_my_index();
+			break;
+		}
+		index++;
+	}
+	
+	index = 0;
+	foreach(var timer in timer_players) {
+		if(timer[0] == id) {
 			adel(timer_players, index);
-			my_index--;
 			break;
 		}
 		index++;
@@ -134,6 +142,17 @@ function player_manager::out_of_map() {
 	timer_respawn = getTime();
 }
 
+function player_manager::set_my_index(){
+	var index = 0;
+	foreach(var player in array_player) {
+		if(player.id == my_network.my_id) {
+			my_index = index;
+			break;
+		}
+		index++;	
+	}
+}
+
 function player_manager::create_players(players){
 	foreach(var player in players) {
 		addplayer(player[1], player[3]);
@@ -141,6 +160,7 @@ function player_manager::create_players(players){
 		if(player[0] != NetGetIP())
 			aadd(timer_players, [player[1], getTime()]);
 	}
+	set_my_index();
 	init_camera();
 }
 

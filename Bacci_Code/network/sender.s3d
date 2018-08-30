@@ -20,10 +20,14 @@ function SendUsersList() {
 	foreach(var player in my_network.player_array)
 		my_network.send_by_manager(my_network.player_array);
 
+	var arr = my_network.player_array;
+	trace(arr);
 	my_players.create_players(my_network.player_array);
 	my_mouse.set_invisible();
 	my_waiting_menu.show_menu = false;
+	my_waiting_menu.first_time = true;
 	my_network.status = IN_GAME;
+	my_network.close();
 }
 
 function SendUserInfo() {

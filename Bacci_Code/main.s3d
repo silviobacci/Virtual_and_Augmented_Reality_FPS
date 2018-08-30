@@ -26,7 +26,11 @@ function OnFrame() {
 function DownloadReady(RequestID) {}
 
 function OnTimer() {
-
+	if(my_end_menu.show_menu) {
+		my_network.status = END_GAME;
+		my_mouse.set_visible();
+	}
+		
 	OnUpdate();
 
 	switch(my_network.status) {
@@ -51,6 +55,7 @@ function OnTimer() {
 		case CONNECTING :
 			SendUserInfo();
 			break;
+		case END_GAME :
 		case IN_GAME :
 			OnSend();
 			break;

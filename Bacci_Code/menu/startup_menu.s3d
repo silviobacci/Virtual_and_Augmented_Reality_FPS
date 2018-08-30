@@ -45,16 +45,8 @@ function startup_menu::check_mouse_position() {
 		if(my_mouse.is_clicked()) {
 			show_menu = false;	
 			wait.show_menu = true;
-			//my_mouse.set_invisible();
 		}
 		return;
-		/*
-		show_menu = false;
-		if(my_mouse.is_clicked())
-			wait.show_menu = true;
-		return;
-		* 
-		*/
 	}
 
 	if(my_mouse.is_contained(helpbox)) {

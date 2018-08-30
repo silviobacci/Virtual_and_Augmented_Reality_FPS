@@ -1,10 +1,3 @@
-#define	NOT_CONNECTED		0
-#define	MANAGING			1
-#define	CONNECTING			2
-#define	READY_USER			3
-#define	READY_MNG			4
-#define	IN_GAME				5
-
 #define	MAX_PLAYERS			2
 
 #define SOURCE_IP_ADDRESS	"0.0.0.0"
@@ -24,8 +17,6 @@
 #define	KEEPALIVE_PDU	3
 #define	HIT_PDU			4
 #define	RESET_PDU		5
-
-var my_network;
 
 class network{
 	var manager_ip;

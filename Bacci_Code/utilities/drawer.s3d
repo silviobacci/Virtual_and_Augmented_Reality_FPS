@@ -1,6 +1,12 @@
 function OnDraw() {
 	my_mouse.draw();
 	
+	if(my_end_menu.show_menu) {
+		my_end_menu.draw();
+		my_score_info.draw();
+		return;
+	}
+	
 	if(my_startup_menu.show_menu) {
 		my_startup_menu.draw();
 		return;
@@ -17,11 +23,6 @@ function OnDraw() {
 	
 	foreach(var bullet in enemy_bullets)
 		bullet[0].draw();
-		
-	if(my_end_menu.show_menu) {
-		my_end_menu.draw();
-		return;
-	}
 		
 	if(my_death_menu.show_menu) {
 		my_death_menu.draw();
