@@ -89,8 +89,6 @@ function gadget::create_ammunition_zone(position) {
 function gadget::init(){
 	therapy_zone = array(0);
 	ammunition_zone = array(0);
-	is_in_therapy_zone = false;
-	is_in_ammunition_zone = false;
 }
 
 function gadget::add_therapy_zone(position) {
@@ -100,6 +98,7 @@ function gadget::add_therapy_zone(position) {
 	var to_add = array(0);
 	aadd(to_add, position);
 	aadd(to_add, create_therapy_zone(position));
+	aadd(to_add, false);
 	aadd(therapy_zone, to_add);
 }
 
@@ -110,39 +109,43 @@ function gadget::add_ammunition_zone(position) {
 	var to_add = array(0);
 	aadd(to_add, position);
 	aadd(to_add, create_ammunition_zone(position));
-	aadd(therapy_zone, to_add);
+	aadd(to_add, false);
+	aadd(ammunition_zone, to_add);
 }
 
 function gadget::update() {
-	if(is_in_therapy_zone && getTime() - timer_therapy_zone > THERAPY_ZONE_PERIOD) {
-		timer_therapy_zone = getTime();
-		if(my_players.get_me().life_points != STARTING_LP)
-			my_players.get_me().life_points++;
-	}
-	
-	if(is_in_ammunition_zone && getTime() - timer_ammunition_zone > AMMUNITION_ZONE_PERIOD) {
-		timer_ammunition_zone = getTime();
-		my_players.get_me().current_weapon.add_bullets(5);
-	}
-	
 	foreach(var zone in therapy_zone) {
+		if(zone[2] && getTime() - timer_therapy_zone > THERAPY_ZONE_PERIOD) {
+			timer_therapy_zone = getTime();
+			if(my_players.get_me().life_points != STARTING_LP)
+				my_players.get_me().life_points++;
+		}
 		var distance = sqrt((zone[0].x - my_players.get_me().position.x)^2 + (zone[0].z - my_players.get_me().position.z)^2);
 		if(abs(distance) < ZONE_RAY) {
-			if(!is_in_therapy_zone)
+			if(!zone[2])
 				timer_therapy_zone = getTime();
-			is_in_therapy_zone = true;
+			zone[2] = true;
 			break;
 		}
+		else
+			zone[2] = false;
 	}
 	
 	foreach(var zone in ammunition_zone) {
+		if(zone[2] && getTime() - timer_ammunition_zone > AMMUNITION_ZONE_PERIOD) {
+			timer_ammunition_zone = getTime();
+			trace(zone);
+			my_players.get_me().current_weapon.add_bullets(25);
+		}
 		var distance = sqrt((zone[0].x - my_players.get_me().position.x)^2 + (zone[0].z - my_players.get_me().position.z)^2);
 		if(abs(distance) < ZONE_RAY) {
-			if(!is_in_ammunition_zone)
+			if(!zone[2])
 				timer_ammunition_zone = getTime();
-			is_in_ammunition_zone = true;
+			zone[2] = true;
 			break;
 		}
+		else
+			zone[2] = false;
 	}
 }
 
@@ -152,6 +155,8 @@ function gadget::draw() {
 		zone[1][1].draw();
 	}
 		
-	foreach(var zone in ammunition_zone)
-		zone[1].draw();
+	foreach(var zone in ammunition_zone){
+		zone[1][0].draw();
+		zone[1][1].draw();
+	}
 }

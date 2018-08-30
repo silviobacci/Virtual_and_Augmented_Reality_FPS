@@ -60,7 +60,7 @@ function OnReceive() {
 							already_present = true;
 					if(!already_present) {
 						aadd(hit_pdu_received, [received_data[2], received_data[3]]);
-						my_score_info.update(received_data[2], received_data[4]);
+						my_score_info.update(received_data[2], received_data[4], my_players.get_me().id);
 					}
 					break;
 			}

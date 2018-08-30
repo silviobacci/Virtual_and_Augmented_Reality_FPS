@@ -11,6 +11,8 @@
 #include "../weapon/weapon.s3d"
 
 #include "../menu/menu_utilities.s3d"
+#include "../menu/death_menu.s3d"
+#include "../menu/end_menu.s3d"
 
 #include "../overlay/score_info.s3d"
 

@@ -11,7 +11,7 @@
 #define R						3
 #define L						4
 
-#define	WORLD_MAP_FILENAME		"level.txt"
+#define	WORLD_MAP_FILENAME		"map.txt"
 
 #define	WORLD_DEFAULT_DIM		1
 
@@ -76,6 +76,9 @@ class world{
 
 function world::find_wall_height(height) {
 	switch(height) {
+		case "x":
+		case "z":
+			return 0;
 		case "1":
 		case "a":
 		case "g":
@@ -109,8 +112,6 @@ function world::find_wall_height(height) {
 		case "n":
 		case "t":
 			return 6;
-		case "z":
-			return 1;
 		default:
 			return val(height);
 	}	
@@ -187,14 +188,20 @@ function world::create_map() {
 							for(var v = 0; v < N_STEPS; v++)
 								matrix_level[i * N_STEPS + k][j * N_STEPS + v] = map[i][j];
 						break;
+				}
+			else {
+				switch(array_matrix[i][j]) {
 					case "z":
 						my_gadget.add_therapy_zone([i, map[i][j] - 1, j]);
 						break;
+					case "x":
+						my_gadget.add_ammunition_zone([i, map[i][j] - 1, j]);
+						break;
 				}
-			else
 				for(var k = 0; k < N_STEPS; k++)
-					for(var v = 0; v < N_STEPS; v++) 
-						matrix_level[i * N_STEPS + k][j * N_STEPS + v] = map[i][j];
+							for(var v = 0; v < N_STEPS; v++) 
+								matrix_level[i * N_STEPS + k][j * N_STEPS + v] = map[i][j];
+			}
 		}
 	}
 }

@@ -1,3 +1,5 @@
+#define RESPAWN_PERIOD		2000
+
 var my_players;
 
 var timer_players = array(0);
@@ -9,6 +11,8 @@ class player_manager {
 	var matrix_level;
 	var array_player; 
 	var obj;
+	var timer_respawn;
+	var respawning;
 	
 	init(mp, ml);
 	draw();
@@ -20,6 +24,7 @@ class player_manager {
 	respawn_player(id);
 	update();
 	update_player_from_pdu(pdu);
+	out_of_map();
 	
 	get_player_position();
 	get_me();
@@ -29,10 +34,17 @@ function player_manager::init(mp, ml){
 	map = mp;
 	matrix_level = ml;
 	array_player = array(0);
+	respawning = false;
 }
 
 function player_manager::update(){
-	array_player[my_index].update(matrix_level);
+	if(respawning && getTime() - timer_respawn > RESPAWN_PERIOD) {
+		respawning = false;
+		respawn_player(get_me().id);
+		my_death_menu.show_menu = false;
+	}
+	
+	get_me().update(matrix_level);
 	foreach(var player in array_player)
 		if(player.id != my_players.my_index)
 			player.update_enemy_info();
@@ -64,11 +76,10 @@ function player_manager::random_pos() {
 	var x;
 	var rows = len(map) - 1;
 	var columns = len(map[0]) - 1;
-	trace(rows);
-	trace(columns);
 	do {
 		z = rand(rows);
 		x = rand(columns);
+		trace(z);
 	}while(map[z][x] > 0);
 	
 	return [x, 0, z];
@@ -113,13 +124,14 @@ function player_manager::remove_player(id){
 function player_manager::respawn_player(id) {
 	var pos = my_players.random_pos();
 	var o = my_players.set_orientation(pos);
-	
-	foreach(var player in array_player) {
-		if(player.id == id) {
-			player.init(id, pos, o);
-			break;
-		}
-	}
+	get_me().init(id, pos, o);
+}
+
+function player_manager::out_of_map() {
+	my_death_menu.show_menu = true;
+	get_me().position = [0, -5, 0];
+	respawning = true;
+	timer_respawn = getTime();
 }
 
 function player_manager::create_players(players){

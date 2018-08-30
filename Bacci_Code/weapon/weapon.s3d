@@ -1,3 +1,5 @@
+var total_shooted_bullets = 0;
+
 class weapon {
 	var name;
 	var mesh_gun;
@@ -11,6 +13,7 @@ class weapon {
 	var shooted_bullets;
 	var fx_shoot;
 	
+	var max_bullets;
 	var n_bullets;
 	var bullets_left;
 	
@@ -36,22 +39,43 @@ function weapon::init(nm, nb, am, sf, br, bm){
 	name = nm;
 	ammunitions = am;
 	bullets_left = 0;
-	n_bullets = nb - am;
+	max_bullets = nb - am;
+	n_bullets = 0;
 	shoot_force = sf;
 	bullet_radius = br;
 	bullet_mass = bm;
 	shooted_bullets = array(0);
-	add_bullets();
+	bullets = array(0);
+	add_bullets(nb);
 }
 
 function weapon::add_bullets(to_add){
-	bullets = array(n_bullets + ammunitions);
-	bullets_left = ammunitions;
-	for(var i = 0; i < len(bullets); i++){
+	n_bullets += to_add;
+	if(n_bullets > max_bullets) {
+		bullets_left += n_bullets - max_bullets;
+		if(bullets_left > ammunitions) {
+			to_add -= bullets_left - ammunitions;
+			bullets_left = ammunitions;
+		}
+		n_bullets = max_bullets;
+	}
+	//trace(n_bullets);
+	//trace(bullets_left);
+	recharge();
+	
+	//trace(to_add);
+	var start = total_shooted_bullets + len(bullets);
+	//trace(start);
+	
+	var len_bullets = len(bullets);
+	for(var i = total_shooted_bullets + len_bullets; i < total_shooted_bullets + len_bullets + to_add; i++){
 		var b = bullet();
 		b.init(BULLET_RADIUS, BULLET_MASS, i);
-		bullets[i] = b;
+		aadd(bullets, b);
 	}
+	
+	var quanti = len(bullets);
+	//trace(quanti);
 }
 
 function weapon::recharge(){
@@ -67,6 +91,8 @@ function weapon::shoot(player_position, player_direction, shooting_direction){
 	if(bullets_left == 0)
 		return;
 		
+	total_shooted_bullets++;
+	var id = bullets[0].id;
 	aadd(shooted_bullets, bullets[0]);
 	bullets[0].shoot(player_position, player_direction, shooting_direction, shoot_force);
 	bullets_left--;

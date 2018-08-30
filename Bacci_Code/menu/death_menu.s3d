@@ -1,0 +1,26 @@
+var my_death_menu;
+
+class death_menu{
+	var deadbox;
+	
+	var show_menu;
+	
+	init();
+	update();
+	draw();
+	
+	// utility functions
+	check_mouse_position();
+};
+
+function death_menu::init() {
+	deadbox = create_box(0.5, 0.5, 0.1, 0.05);
+	show_menu = false;
+}
+
+function death_menu::draw() {
+	draw_background([0, 1, 1, 1]);
+	draw_text("DEADMAN", deadbox, 0);	
+	
+	ConsoleFinish();
+}

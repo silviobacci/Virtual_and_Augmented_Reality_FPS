@@ -9,6 +9,7 @@
 #define SCORE_TEXT_COLOR		[255, 255, 255] / 255.0
 
 #define MAX_VISIBLE_SCORES		4
+#define WINNER_SCORE			10
 
 var my_score_info;
 
@@ -23,7 +24,7 @@ class score_info{
 	init();
 	
 	add_score(player_id, score);
-	update(player_id, score);
+	update(player_id, score, my_id);
 	
 	get_inside();
 	get_inside_text(displacement);
@@ -46,10 +47,17 @@ function score_info::add_score(player_id, score) {
 	aadd(scores, [player_id, score]);	
 }
 
-function score_info::update(player_id, score) {
+function score_info::update(player_id, score, my_id) {
 	for(var i = 0; i < len(scores); i++)
 		if(scores[i][0] == player_id) {
 			scores[i][1] += score + 1;
+			if(scores[i][1] == WINNER_SCORE) {
+				if(player_id == my_id)
+					my_end_menu.winner = true;
+				else
+					my_end_menu.winner = false;
+				my_end_menu.show_menu = true; 
+			}
 			break;
 		}
 }

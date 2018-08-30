@@ -10,6 +10,9 @@ function bullet::check_if_hit(player) {
 	
 	if(distance > PLAYER_DIM)
 		return NOSHOT;
+		
+	var colpito = getTime();
+	trace(colpito);
 	
 	if(position.y > player.y + PLAYER_HEAD)
 		return HEADSHOT;
@@ -25,9 +28,13 @@ function bullet::check_wall_collision(){
 	var jx = int(abs(position.x - ix) * N_STEPS);
 	var z = iz * N_STEPS + jz;
 	var x = ix * N_STEPS + jx;
+	
 	if(z >= 0 && z < len(my_world.matrix_level) && x >= 0 && x < len(my_world.matrix_level))
 		y = my_world.matrix_level[z][x];
-	
+	if(y == void) {
+		trace(z);
+		trace(x);
+	}
 	if(y > position.y){
 		//var wall = "wall hit";
 		//trace(wall); 
@@ -39,4 +46,11 @@ function bullet::check_wall_collision(){
 
 function bullet::check_player_collision(){
 	return check_if_hit(my_players.get_me().position);
+}
+
+function bullet::check_enemy_collision(){
+	foreach(var player in my_players.array_player)
+		if(player.id != my_players.get_me().id && check_if_hit(player.position) != NOSHOT) 
+			return true;
+	return false;
 }

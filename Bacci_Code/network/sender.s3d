@@ -63,12 +63,16 @@ function OnSend() {
 
 	if(getTime() - timer_HIT_PDU > HIT_PDU_PERIOD){
 		timer_HIT_PDU = getTime();
+		var index = 0;
 		foreach(var bullet in bullet_player_hit) {
 			if(bullet[3] > 0) {
 				PDU = my_network.create_HIT_PDU(bullet[0], bullet[1], bullet[2]);
 				my_network.send_in_game(PDU);
 				bullet[3]--;
 			}
+			else 
+				adel(bullet_player_hit, index);
+			index++;
 		}
 	}
 }

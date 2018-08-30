@@ -33,11 +33,15 @@ function init() {
 	my_score_info = score_info();
 	my_score_info.init();
 	
+	my_end_menu = end_menu();
 	my_waiting_menu = waiting_menu();
 	my_help_menu = help_menu();
 	my_startup_menu = startup_menu();
 	my_pause_menu = pause_menu();
+	my_death_menu = death_menu();
 	
+	my_end_menu.init();
+	my_death_menu.init();
 	my_help_menu.init();	
 	my_waiting_menu.init(my_startup_menu);	
 	my_startup_menu.init(my_help_menu, my_waiting_menu);
