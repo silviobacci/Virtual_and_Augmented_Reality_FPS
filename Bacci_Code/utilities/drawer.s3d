@@ -12,7 +12,7 @@ function OnDraw() {
 	}
 	
 	my_world.draw();
-	my_gadget.update();
+	my_gadget.draw();
 	my_players.draw();
 	
 	foreach(var bullet in enemy_bullets)

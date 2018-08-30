@@ -1,16 +1,16 @@
 #define RAILGUN_BULLET			0
 #define ROCKETL_BULLET			1
 
-#define RAILGUN_N_BULLETS 		25
-#define RAILGUN_AMMUNITIONS		20
+#define RAILGUN_N_BULLETS 		100
+#define RAILGUN_AMMUNITIONS		25
 #define RAILGUN_NAME			"railgun"
 #define RAILGUN_MESH			"railgun.aam"
 #define RAILGUN_BULLET_MASS		0.008
 #define RAILGUN_BULLET_RADIUS 	0.003
 #define RAILGUN_SHOOT_FORCE 	400
 
-#define ROCKETL_N_BULLETS 		25
-#define ROCKETL_AMMUNITIONS		20
+#define ROCKETL_N_BULLETS 		100
+#define ROCKETL_AMMUNITIONS		25
 #define ROCKETL_NAME			"rocketl"
 #define ROCKETL_MESH			"rocketl.aam"
 #define ROCKETL_BULLET_MASS		0.008

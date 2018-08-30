@@ -8,7 +8,7 @@
 #define FRONT				1
 #define REAR				2
 
-#define STARTING_LP			2
+#define STARTING_LP			3
 
 class player{
 	//Player-related 
@@ -108,7 +108,7 @@ function player::create_player(){
 function player::init(i, p, o){
 	id = 				i;
 	position = 			p;
-	life_points =		STARTING_LP;
+	life_points =		STARTING_LP - 2;
 	current_frame = 	0;
 	side_speed =		0.0;
 	front_speed =		0.0;

@@ -77,13 +77,13 @@ function weapon::shoot(player_position, player_direction, shooting_direction){
 
 function weapon::update() {
 	var index = 0;
-	foreach (var bullet in shooted_bullets)
+	foreach (var bullet in shooted_bullets) {
 		if(!bullet.is_flying)
 			adel(shooted_bullets, index);
-		else {
+		else
 			bullet.update();
-			index++;
-		}
+		index++;
+	}
 }
 
 function weapon::draw() {
