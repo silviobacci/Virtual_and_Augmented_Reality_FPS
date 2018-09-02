@@ -1,4 +1,5 @@
 #define INFO_BOX_WIDTH			0.15
+#define INFO_LP_HEIGHT			0.005
 
 #define INFO_START_POINT_X		0.01
 
@@ -18,6 +19,10 @@ class player_info{
 	var box_h;
 	var box;
 	
+	var lp_x;
+	var lp_y;
+	var lp;
+	
 	draw();
 	update(p);
 	
@@ -27,6 +32,7 @@ class player_info{
 	draw_gun_selected();
 	draw_bullets_left();
 	draw_life_points();	
+	draw_lp_bar();
 	
 	get_inside();
 	get_inside_text(displacement);
@@ -37,6 +43,8 @@ function player_info::update(p) {
 	
 	box_x = INFO_START_POINT_X;	
 	box_y = (INFO_START_POINT_X + INFO_BOX_WIDTH) * resolution;
+	lp_x = INFO_START_POINT_X + INFO_BOX_WIDTH + INFO_START_POINT_X;	
+	lp_y = (INFO_START_POINT_X) * resolution + INFO_LP_HEIGHT;
 }
 
 function player_info::get_inside() {
@@ -92,13 +100,23 @@ function  player_info::draw_info_box() {
 	ConsoleFilledRect(tmp_box[0], tmp_box[1], tmp_box[2], tmp_box[3]);
 }
 
+function  player_info::draw_lp_bar() {
+	ConsoleColor(INFO_COLOR);
+	ConsoleFilledRect(lp[0], lp[1], lp[2], lp[3]);
+	ConsoleColor(INFO_BOX_COLOR);
+	var tmp_box = get_inside();
+	ConsoleFilledRect(tmp_box[0], tmp_box[1], tmp_box[2], tmp_box[3]);
+}
+
 function player_info::draw() {
 	box = [box_x, box_y, INFO_BOX_WIDTH, INFO_BOX_WIDTH * resolution];
+	lp = [lp_x, lp_y, INFO_LP_HEIGHT, INFO_LP_HEIGHT];
 	draw_info_box();
 	draw_player_id();
 	draw_player_position();
 	draw_gun_selected();
 	draw_bullets_left();
 	draw_life_points();	
+	draw_lp_bar();
 	ConsoleFinish();
 }

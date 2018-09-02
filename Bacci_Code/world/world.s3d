@@ -27,11 +27,6 @@
 #define	WORLD_WALL_COLOR		[255, 255, 255] / 255.0
 #define	WORLD_WALL_IMAGE		"bricks.png"
 
-// scala su: 		1 2 4 5 7 8
-// scale giù: 		a b c d e f
-// scala destra: 	g h i l m n
-// scala sinistra: 	o p q r s t
-
 var my_world;
 var my_gadget;
 
@@ -192,10 +187,10 @@ function world::create_map() {
 			else {
 				switch(array_matrix[i][j]) {
 					case "z":
-						my_gadget.add_therapy_zone([i, map[i][j] - 1, j]);
+						my_gadget.add_therapy_zone([j, map[i][j] - 1, i]);
 						break;
 					case "x":
-						my_gadget.add_ammunition_zone([i, map[i][j] - 1, j]);
+						my_gadget.add_ammunition_zone([j, map[i][j] - 1, i]);
 						break;
 				}
 				for(var k = 0; k < N_STEPS; k++)
