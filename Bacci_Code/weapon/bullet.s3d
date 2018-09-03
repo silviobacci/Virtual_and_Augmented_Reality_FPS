@@ -17,9 +17,9 @@
 #define ROCKETL_BULLET_RADIUS 	0.003
 #define ROCKETL_SHOOT_FORCE 	100
 
-#define GUN_POSITION_X			0
+#define GUN_POSITION_X			0.2
 #define GUN_POSITION_Y			1
-#define GUN_POSITION_Z			0.2
+#define GUN_POSITION_Z			0
 
 #define g 						9.81
 #define n				 		0.0000186
@@ -38,6 +38,8 @@ class bullet{
 	
 	var angle_x;
 	var angle_y;
+	var angle_x_offset;
+	var angle_y_offset;
 	var position;
 	var old_position;
 	var dir;
@@ -131,9 +133,9 @@ function bullet::update_dynamics(){
 	
 	angle_y = atan(dy/dx);
 	
-	position.x += dx * cos(angle_x);
+	position.x += dx * cos(angle_x + angle_x_offset);
 	position.y += dy;
-	position.z += dx * sin(angle_x);
+	position.z += dx * sin(angle_x + angle_x_offset);
 	
 	accx = - viscous * speed * cos(angle_y) / mass;
 	accy = - viscous * speed * sin(angle_y) / mass - g;
@@ -167,21 +169,27 @@ function bullet::update_enemy_bullet_info() {
 }
 
 function bullet::shoot(p, a, d, sf){
-	//var gun_position = [GUN_POSITION_X, GUN_POSITION_Y, -GUN_POSITION_Z];
-	//gun_position = VectorRotate(a, 0, 1, 0, gun_position);
+	var gun_position = [-GUN_POSITION_X, GUN_POSITION_Y, GUN_POSITION_Z];
+	gun_position = VectorRotate(a, 0, 1, 0, gun_position);
 	dx = 0.0;
 	dy = 0.0;
 	speedx = 0.0;
 	speedy = 0.0;
-	angle_x = atan2pi(d.z, d.x);
+	angle_y_offset = 0;
 	angle_y = asin(d.y);
-	//angle_y += atan(cos(angle_y) / (sin(angle_y) + 1 / (CameraGetCurrent().GetPosition().y - GUN_POSITION_Y)));
-	//angle_x += atan(cos(angle_y) / GUN_POSITION_Z);
+	//angle_y_offset = atan(cos(angle_y) / (sin(angle_y) + 1 / (CameraGetCurrent().GetPosition().y - GUN_POSITION_Y)));
+	angle_y += angle_y_offset;
+	//angle_x_offset = -(PI/2 - atan2pi(cos(angle_y), GUN_POSITION_X));
+	var tmp_angle_x_offset = angle_x_offset * RAD_TO_GRAD;
+	trace(tmp_angle_x_offset);
+	angle_x = atan2pi(d.z, d.x) + angle_x_offset;
+	var tmp_angle_x = angle_x * RAD_TO_GRAD;
+	trace(tmp_angle_x);
 	accx = sf * cos(angle_y) / mass;
 	accy = sf * sin(angle_y) / mass - g;
 	
-	//position = p + gun_position;
-	position = CameraGetCurrent().GetPosition();
+	position = p + gun_position;
+	//position = CameraGetCurrent().GetPosition();
 	dir = d;
 	is_flying = true;
 }

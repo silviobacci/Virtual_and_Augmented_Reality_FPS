@@ -8,7 +8,12 @@ function player::update_moving_direction() {
 }
 
 function player::update_speed() {
-	if(my_keyboard.is_pressed(VK_W)){
+	run = 1;
+	
+	if(my_keyboard.is_pressed(VK_LMENU)){
+		run = 2;
+	}
+	else if(my_keyboard.is_pressed(VK_W)){
 		temp_direction = FRONT;
 		front_direction = moving_direction;
 		if(front_speed < PLAYER_SPEED)
@@ -59,15 +64,15 @@ function player::update_position(){
 	if(front_speed == 0 && side_speed == 0)
 		return;
 		
-	position += [front_speed * front_direction[0], 0, front_speed * front_direction[2]];
-	position += [side_speed * side_direction[0], 0, side_speed * side_direction[2]];
+	position += [run * front_speed * front_direction[0], 0, run * front_speed * front_direction[2]];
+	position += [run * side_speed * side_direction[0], 0, run * side_speed * side_direction[2]];
 			
 	if(is_side_walking)
 		return;
 		
 	if(front_speed > 0)
-		current_frame = (current_frame + SWAT_FRAME_STEP *(0.4 + front_speed)) % SWAT_TOTAL_FRAMES;
-	else if((current_frame = (current_frame - SWAT_FRAME_STEP *(0.4 + front_speed)) % SWAT_TOTAL_FRAMES) <= 0)
+		current_frame = (current_frame + SWAT_FRAME_STEP *(0.4 + run * front_speed)) % SWAT_TOTAL_FRAMES;
+	else if((current_frame = (current_frame - SWAT_FRAME_STEP *(0.4 + run * front_speed)) % SWAT_TOTAL_FRAMES) <= 0)
 		current_frame += SWAT_TOTAL_FRAMES;
 		
 	if(abs(current_frame - SWAT_ONE_STEP) < 0.5 || abs(current_frame - SWAT_TOTAL_FRAMES) < 0.5)

@@ -28,6 +28,7 @@ class player{
 	var id;
 	var front_speed;
 	var side_speed;
+	var run;
 	var front_direction;
 	var side_direction;
 	
@@ -91,6 +92,12 @@ function player::create_player(){
 	mesh_player_upper = CVmNewMesh("swat_upper.aam"); 
 	mesh_player_upper.scale(sf1);
 	
+	glEnable(GL_BLEND);	
+	var material = CVmMaterial();
+	material.transparency = 0.0;
+	mesh_player_lower.ForceMaterial(material);
+	mesh_player_upper.ForceMaterial(material);
+	
 	my_railgun.create_weapon(RAILGUN_MESH, sf1);
 	my_rocketl.create_weapon(ROCKETL_MESH, sf1);
 	
@@ -110,6 +117,7 @@ function player::init(i, p, o){
 	position = 			p;
 	life_points =		STARTING_LP;
 	current_frame = 	0;
+	run = 				1;
 	side_speed =		0.0;
 	front_speed =		0.0;
 	angle_direction = 	o;
@@ -139,7 +147,7 @@ function player::get_position(){
 
 function player::draw(){
 	//foreach(var o in obj_bounding_box)	
-		//o.draw();										
+		//o.draw();									
 	obj_player.draw(VR_FRAMENUMBER, SWAT_START_WALK + current_frame);
 	current_weapon.draw();
 }

@@ -65,7 +65,7 @@ function network::init() {
 function network::check_if_manager() {
 	var timer = getTime();
 	
-	while(getTime() - timer < 5 * INIT_PDU_PERIOD && manager_ip == void)
+	while(getTime() - timer < INIT_PDU_PERIOD && manager_ip == void)
 		manager_ip = receive_init();
 
 	if(manager_ip == void) {

@@ -78,7 +78,7 @@ function FirstPersonView() {
 	CameraMoveMouse();
 }
 
-function ThirdPerdonView() {
+function ThirdPersonView() {
 	var backside_offset = [-my_players.get_me().moving_direction.x * 3, 0.5, -my_players.get_me().moving_direction.z * 3];
 	ComputeView(backside_offset);
 	CameraMoveMouse();
@@ -121,7 +121,7 @@ function update_camera() {
     		FirstPersonView();
     		break;
     	case THIRD_PERSON_VIEW:
-    		ThirdPerdonView();
+    		ThirdPersonView();
     		break;
     	case GUNSIGHT_VIEW:
     		GunsightView();
