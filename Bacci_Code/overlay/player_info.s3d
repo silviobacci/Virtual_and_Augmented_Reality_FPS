@@ -47,7 +47,7 @@ function player_info::update(p) {
 	box_x = INFO_START_POINT_X;	
 	box_y = (INFO_START_POINT_X + INFO_BOX_WIDTH) * resolution;
 	lp_x = INFO_START_POINT_X + INFO_BOX_WIDTH + INFO_START_POINT_X;	
-	lp_y = (INFO_START_POINT_X) * resolution + INFO_LP_HEIGHT;
+	lp_y = INFO_START_POINT_X * resolution + INFO_LP_HEIGHT;
 }
 
 function player_info::get_inside() {
@@ -116,9 +116,6 @@ function  player_info::draw_lp_bar() {
 	lp = [lp_x, lp_y, my_lp * (1 - lp_x - INFO_START_POINT_X) / 100, INFO_LP_HEIGHT];
 	
 	ConsoleFilledRect(lp[0], lp[1], lp[2], lp[3]);
-	ConsoleColor(INFO_BOX_COLOR);
-	var tmp_box = get_inside();
-	ConsoleFilledRect(tmp_box[0], tmp_box[1], tmp_box[2], tmp_box[3]);
 }
 
 function player_info::draw() {

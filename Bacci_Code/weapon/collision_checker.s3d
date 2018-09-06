@@ -11,16 +11,13 @@ function bullet::check_if_hit(player) {
 	
 	if(distance > PLAYER_DIM)
 		return NOSHOT;
-		
-	var colpito = getTime();
-	trace(colpito);
 	
 	if(position.y > player.y + PLAYER_HEAD)
 		return HEADSHOT;
 	else if(position.y > player.y + PLAYER_BODY)
-		return FOOTSHOT;
-	else
 		return BODYSHOT;
+	else
+		return FOOTSHOT;
 }
 
 function bullet::check_wall_collision(){

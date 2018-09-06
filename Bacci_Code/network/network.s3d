@@ -1,7 +1,7 @@
-#define	MAX_PLAYERS			1
+#define	MAX_PLAYERS			2
 
 #define SOURCE_IP_ADDRESS	"0.0.0.0"
-#define BROADCAST_ADDRESS	"172.20.10.15"
+#define BROADCAST_ADDRESS	"192.168.1.255"
 #define PORT_UDP_GAME		50023	
 #define PORT_UDP_INIT		50022	
 #define PORT_TCP_INIT		50021
@@ -125,10 +125,8 @@ function network::create_SCORE_PDU(scores) {
 	PDU[0] = SCORE_PDU;
 	PDU[1] = my_id;
 	var index = 2;
-	foreach(var score in scores) {
-		PDU[index] = score;
-		index++;
-	}
+	foreach(var score in scores)
+		PDU[index++] = score;
 	return PDU;
 }
 

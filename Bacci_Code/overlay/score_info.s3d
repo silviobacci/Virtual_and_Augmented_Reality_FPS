@@ -83,7 +83,7 @@ function score_info::update(player_id, score, my_id) {
 function score_info::update_from_pdu(new_scores, my_id) {
 	for(var i = 0; i < len(scores); i++)
 		for(var j = 2; j < len(new_scores); j++)
-			if(new_scores[i][0] == scores[j][0] && new_scores[j][1] > scores[i][1]) {
+			if(new_scores[j][0] == scores[i][0] && new_scores[j][1] > scores[i][1]) {
 				scores[i][1] = new_scores[j][i];
 				check_if_win(scores[i][0], scores[i][1], my_id);
 			}
