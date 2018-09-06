@@ -34,12 +34,12 @@ function gunsight::init() {
 function gunsight::draw_simple_gunsight(position_x, position_y, width, height) {
 	ConsoleColor(GUNSIGHT_COLOR);
 	ConsoleFilledRect(position_x, 				position_y, 				width, height);
-	ConsoleFilledRect(position_x + width, 		position_y, 				width, height);
-	ConsoleFilledRect(position_x - width, 		position_y, 				width, height);
+	//ConsoleFilledRect(position_x + width, 		position_y, 				width, height);
+	//ConsoleFilledRect(position_x - width, 		position_y, 				width, height);
 	ConsoleFilledRect(position_x + 2 * width, 	position_y, 				width, height);
 	ConsoleFilledRect(position_x - 2 * width, 	position_y, 				width, height);
-	ConsoleFilledRect(position_x, 				position_y + height,		width, height);
-	ConsoleFilledRect(position_x, 				position_y - height, 		width, height);
+	//ConsoleFilledRect(position_x, 				position_y + height,		width, height);
+	//ConsoleFilledRect(position_x, 				position_y - height, 		width, height);
 	ConsoleFilledRect(position_x, 				position_y + 2 * height,	width, height);
 	ConsoleFilledRect(position_x, 				position_y - 2 * height, 	width, height);
 }

@@ -1,4 +1,4 @@
-#define	MAX_PLAYERS			2
+#define	MAX_PLAYERS			1
 
 #define SOURCE_IP_ADDRESS	"0.0.0.0"
 #define BROADCAST_ADDRESS	"192.168.1.255"
