@@ -1,4 +1,4 @@
-function OnDraw() {
+function GraphicLoop() {
 	my_mouse.draw();
 	
 	if(my_end_menu.show_menu) {

@@ -11,12 +11,13 @@
 #define KEEPALIVE_PDU_PERIOD	500
 #define HIT_PDU_PERIOD			10
 #define BULLET_PDU_PERIOD		25
+#define SCORE_PDU_PERIOD		800
 
 #define POSITION_PDU 	1
 #define BULLET_PDU		2
 #define	KEEPALIVE_PDU	3
 #define	HIT_PDU			4
-#define	RESET_PDU		5
+#define	SCORE_PDU		5
 
 class network{
 	var manager_ip;
@@ -34,7 +35,7 @@ class network{
 	add_player_manager(IP);
 	create_MANAGER_PDU(IP, ID);
 	create_USER_PDU();
-	create_RESET_PDU();
+	create_SCORE_PDU(scores);
 	create_KEEPALIVE_PDU();
 	create_POSITION_PDU(player);
 	create_HIT_PDU(enemy_id, bullet_id, type);
@@ -119,10 +120,15 @@ function network::create_USER_PDU() {
 	return NetGetIP();
 }
 
-function network::create_RESET_PDU() {
-	var PDU = array(2);
-	PDU[0] = RESET_PDU;
+function network::create_SCORE_PDU(scores) {
+	var PDU = array(2 + len(scores));
+	PDU[0] = SCORE_PDU;
 	PDU[1] = my_id;
+	var index = 2;
+	foreach(var score in scores) {
+		PDU[index] = score;
+		index++;
+	}
 	return PDU;
 }
 

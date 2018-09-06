@@ -1,4 +1,4 @@
-function OnUpdate() {
+function PhysicalLoop() {
 	my_mouse.update();
 	my_keyboard.update();
 	resolution = get_resolution();
@@ -50,11 +50,8 @@ function OnUpdate() {
 			adel(enemy_bullets, index);
 			aadd(bullet_player_hit, [bullet[1], bullet[0].id, type, N_HIT_PDU]);
 			my_score_info.update(bullet[1], type, my_players.get_me().id);
-			my_players.get_me().life_points -= type + 1;
-			var respawn = getTime();
-			trace(respawn);
+			my_players.get_me().life_points -= type * bullet[0].weapon_type;
 			if(my_players.get_me().life_points <= 0)
-				//my_players.respawn_player(my_network.my_id);
 				my_players.out_of_map();
 		}
 		index++;

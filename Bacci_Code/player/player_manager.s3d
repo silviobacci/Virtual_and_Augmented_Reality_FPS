@@ -10,7 +10,6 @@ class player_manager {
 	var my_index;
 	var matrix_level;
 	var array_player; 
-	var obj;
 	var timer_respawn;
 	var respawning;
 	
@@ -87,10 +86,6 @@ function player_manager::random_pos() {
 
 function player_manager::set_orientation(pos) {
 	var center = [len(map) / 2, 0, len(map[0]) / 2];
-	var mesh = CVmNewMesh(VRP_BOX);
-	mesh.scale(1);
-	obj = CVmObj(mesh);
-	obj.setposition(center);
 	var x = center.x - pos.x;
 	var z = center.z - pos.z;
 	var or = atan(x / z) * RAD_TO_GRAD;
@@ -183,5 +178,4 @@ function player_manager::get_me() {
 function player_manager::draw(){
 	foreach (var player in array_player)
 		player.draw();
-	obj.draw();
 }

@@ -45,6 +45,7 @@
 #include "../network/receiver.s3d"
 
 #include "../utilities/initializer.s3d"
-#include "../utilities/updater.s3d"
-#include "../utilities/drawer.s3d"
+#include "../loops/physics.s3d"
+#include "../loops/graphics.s3d"
+#include "../loops/networking.s3d"
 

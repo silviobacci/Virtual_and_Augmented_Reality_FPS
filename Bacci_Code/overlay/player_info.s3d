@@ -104,7 +104,7 @@ function  player_info::draw_info_box() {
 }
 
 function  player_info::draw_lp_bar() {
-	var my_lp = 50 * my_players.array_player[my_players.my_index].life_points;
+	var my_lp = my_players.array_player[my_players.my_index].life_points;
 	
 	if(my_lp > 75)
 		ConsoleColor(LP_GREEN_COLOR);

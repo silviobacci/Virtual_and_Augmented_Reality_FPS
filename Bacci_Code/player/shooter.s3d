@@ -3,6 +3,10 @@ function player::change_weapon(new_weapon){
 		obj_player_upper.RemoveChild(current_weapon.obj_gun);
 	current_weapon = new_weapon;
 	obj_player_upper.AddChild(current_weapon.obj_gun);
+	if(new_weapon == my_rocketl)
+		duplicate = 1;
+	else
+		duplicate = 0;
 }
 
 function player::shoot(){

@@ -18,13 +18,6 @@ function player::create_bounding_box() {
 	bounding_box[6] = [bb1[0],		0, 	bb2[2]];
 	bounding_box[7] = [bb1[0],		0, 	0];
 	bounding_box[8] = [bb1[0], 		0, 	bb2[5]];
-	
-	mesh_bounding_box = CVmNewMesh(VRP_BOX);
-	mesh_bounding_box.scale(0.1);
-	obj_bounding_box = array(end);
-	
-	for (var i = start; i < end; i++)
-		obj_bounding_box[i] = CVmObj(mesh_bounding_box);
 }
 
 function player::check_collision(){
@@ -33,12 +26,8 @@ function player::check_collision(){
 	var phi = angle_direction;
 	var to_check = array(end);
 	
-	for (var i = start; i < end; i++){
+	for (var i = start; i < end; i++)
 		to_check[i] = position + VectorRotate(phi, 0, 1, 0, bounding_box[i], false);
-		obj_bounding_box[i].SetPosition(to_check[i]);
-		obj_bounding_box[i].SetPivotPoint(position);
-		obj_bounding_box[i].hide();
-	}
 	
 	switch(temp_direction) {
 		case FRONT:
@@ -60,7 +49,6 @@ function player::check_collision(){
 	}
 	
 	for (var i = start; i <= end; i++){
-		obj_bounding_box[i].unhide();
 		var iz = int(to_check[i].z);
 		var jz = int(abs(to_check[i].z - iz) * N_STEPS);
 		var ix = int(to_check[i].x);

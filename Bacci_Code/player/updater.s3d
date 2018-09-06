@@ -1,19 +1,20 @@
-#define PLAYER_SPEED 		0.02
+#define PLAYER_SPEED 		0.1
 #define PLAYER_SPEED_STEP 	0.001
 #define PLAYER_SPEED_SIDE 	0.01
 #define PLAYER_ANGLE_STEP 	0.01
+#define SPEED_RATIO			1
 
 function player::update_moving_direction() {
 	moving_direction = [CameraGetCurrent().GetDirection().x, 0, CameraGetCurrent().GetDirection().z];
 }
 
 function player::update_speed() {
-	run = 1;
-	
-	if(my_keyboard.is_pressed(VK_LMENU)){
+	if(my_keyboard.is_pressed(VK_LMENU))
 		run = 2;
-	}
-	else if(my_keyboard.is_pressed(VK_W)){
+	else
+		run = 1;
+	
+	if(my_keyboard.is_pressed(VK_W)){
 		temp_direction = FRONT;
 		front_direction = moving_direction;
 		if(front_speed < PLAYER_SPEED)
@@ -71,8 +72,8 @@ function player::update_position(){
 		return;
 		
 	if(front_speed > 0)
-		current_frame = (current_frame + SWAT_FRAME_STEP *(0.4 + run * front_speed)) % SWAT_TOTAL_FRAMES;
-	else if((current_frame = (current_frame - SWAT_FRAME_STEP *(0.4 + run * front_speed)) % SWAT_TOTAL_FRAMES) <= 0)
+		current_frame = (current_frame + SWAT_FRAME_STEP *(SPEED_RATIO + run * front_speed)) % SWAT_TOTAL_FRAMES;
+	else if((current_frame = (current_frame - SWAT_FRAME_STEP *(SPEED_RATIO + run * front_speed)) % SWAT_TOTAL_FRAMES) <= 0)
 		current_frame += SWAT_TOTAL_FRAMES;
 		
 	if(abs(current_frame - SWAT_ONE_STEP) < 0.5 || abs(current_frame - SWAT_TOTAL_FRAMES) < 0.5)

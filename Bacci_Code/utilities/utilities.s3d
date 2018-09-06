@@ -1,3 +1,30 @@
+#define FIRST_PERSON_VIEW			0
+#define THIRD_PERSON_VIEW			1
+#define FREE_CAMERA_VIEW			2
+#define GUNSIGHT_VIEW				3
+#define N_VIEWS						2
+
+#define	NOT_CONNECTED				0
+#define	MANAGING					1
+#define	CONNECTING					2
+#define	READY_USER					3
+#define	READY_MNG					4
+#define	IN_GAME						5
+#define END_GAME					6
+
+#define	FRAME_RATE					60
+#define TIME_STEP_UPDATE 			0.001
+#define NETWORK_LOOP_PERIOD			2	
+#define PHYSICAL_LOOP_PERIOD		10
+
+var timer_network_loop = 0;
+var timer_physical_loop = 0;
+var delta_t;
+
+var current_view = FIRST_PERSON_VIEW;
+
+var my_network;
+
 function atan2pi(x, y){
 	var phi = atan2(x, y);
 

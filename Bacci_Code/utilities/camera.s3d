@@ -4,15 +4,8 @@
 #define OFFEST_HEIGHT				0 //31
 #define RHO					 		1.2
 
-#define FIRST_PERSON_VIEW			0
-#define THIRD_PERSON_VIEW			1
-#define FREE_CAMERA_VIEW			2
-#define GUNSIGHT_VIEW				3
-#define N_VIEWS						2
-
 #define ROTATION_SENSITIVITY		0.05
 
-var current_view = FIRST_PERSON_VIEW;
 var previous_view = FIRST_PERSON_VIEW;
 var vertical_rotation = 0.0;
 var my_camera;

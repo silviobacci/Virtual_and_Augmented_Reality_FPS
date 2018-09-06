@@ -18,7 +18,7 @@ function OnInit(params) {
 function OnFrame() {
 	SceneBegin();
    	
-   	OnDraw();
+   	GraphicLoop();
 
 	SceneEnd();
 }
@@ -26,39 +26,16 @@ function OnFrame() {
 function DownloadReady(RequestID) {}
 
 function OnTimer() {
-	if(my_end_menu.show_menu) {
-		my_network.status = END_GAME;
-		my_mouse.set_visible();
-	}
-		
-	OnUpdate();
-
-	switch(my_network.status) {
-		case MANAGING :
-			CheckNewUser();
-			break;
-		case READY_USER :
-			ReceiveUsersList();
-			break;
-		case IN_GAME :
-			OnReceive();
-			break;
+	var current_time = getTime();
+	if(current_time - timer_physical_loop >= PHYSICAL_LOOP_PERIOD){
+		delta_t = ToFloat(current_time - timer_physical_loop) / ToFloat(1000);
+		timer_physical_loop = getTime();
+		PhysicalLoop();
 	}
 	
-	switch(my_network.status) {
-		case MANAGING :
-			SendManagerInfo();
-			break;
-		case READY_MNG :
-			SendUsersList();
-			break;
-		case CONNECTING :
-			SendUserInfo();
-			break;
-		case END_GAME :
-		case IN_GAME :
-			OnSend();
-			break;
+	if(current_time - timer_network_loop > NETWORK_LOOP_PERIOD){
+		timer_network_loop = getTime();
+		NetworkLoop();
 	}
 }
 

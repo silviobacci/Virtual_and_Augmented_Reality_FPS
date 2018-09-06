@@ -11,6 +11,7 @@
 #define VK_R 					"r"
 
 var my_keyboard;
+var duplicate = 0;
 
 class keyboard_manager {
 	var key_pressed;
@@ -87,7 +88,12 @@ function keyboard_manager::check_if_pressed(index) {
 	if(is_free(index))
 		return true;
 	
-	if(getTime() - old_times[index] < TIME_DELAY_KEYBOARD)
+	var wait_for = TIME_DELAY_KEYBOARD;
+	
+	if(index == 0)
+		wait_for += 2 * duplicate * TIME_DELAY_KEYBOARD;
+	
+	if(getTime() - old_times[index] < wait_for)
 		return false;
 		
 	old_times[index] = getTime();

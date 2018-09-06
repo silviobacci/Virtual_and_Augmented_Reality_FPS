@@ -1,7 +1,7 @@
 #define PLAYER_RADIUS		30
 #define PLAYER_MASS			80
 #define VISCOUS_PLAYER 		6* PI* n * PLAYER_RADIUS  / PLAYER_MASS
-#define JUMP_FORCE 			30000
+#define JUMP_FORCE 			10000
 #define JUMP_ANGLE 			0
 
 function player::reset_jump_dynamics(){

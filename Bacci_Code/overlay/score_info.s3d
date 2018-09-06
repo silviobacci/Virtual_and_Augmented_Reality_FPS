@@ -9,7 +9,7 @@
 #define SCORE_TEXT_COLOR		[255, 255, 255] / 255.0
 
 #define MAX_VISIBLE_SCORES		4
-#define WINNER_SCORE			3
+#define WINNER_SCORE			1000
 
 var my_score_info;
 
@@ -24,8 +24,11 @@ class score_info{
 	init();
 	
 	add_score(player_id, score);
+	check_if_win(player_id, score, my_id);
 	update(player_id, score, my_id);
+	update_from_pdu(scores, my_id);
 	
+	sort_scores();
 	get_inside();
 	get_inside_text(displacement);
 	draw_score_box();
@@ -38,28 +41,53 @@ function score_info::init() {
 	scores = array(0);
 }
 
+function score_info::sort_scores() {
+	for (var i = len(scores) - 1; i > 0; i--)
+		for (var j = 0; j < i; j++)
+			if (scores[j][1] > scores[j + 1][1]) {
+				var temp = scores[j + 1];
+				scores[j + 1] = scores[j];
+				scores[j] = temp;
+			}
+}
+
 function score_info::add_score(player_id, score) {
 	for(var i = 0; i < len(scores); i++) {
 		if(scores[i][0] == player_id) {
 			return;
 		}
 	}
-	aadd(scores, [player_id, score]);	
+	aadd(scores, [player_id, score]);
+	sort_scores();
+}
+
+function score_info::check_if_win(player_id, score, my_id) {
+	if(score >= WINNER_SCORE) {
+		if(player_id == my_id)
+			my_end_menu.winner = true;
+		else
+			my_end_menu.winner = false;
+		my_end_menu.show_menu = true; 
+	}
 }
 
 function score_info::update(player_id, score, my_id) {
 	for(var i = 0; i < len(scores); i++)
 		if(scores[i][0] == player_id) {
-			scores[i][1] += score + 1;
-			if(scores[i][1] >= WINNER_SCORE) {
-				if(player_id == my_id)
-					my_end_menu.winner = true;
-				else
-					my_end_menu.winner = false;
-				my_end_menu.show_menu = true; 
-			}
-			break;
+			scores[i][1] += score;
+			check_if_win(scores[i][0], scores[i][1], my_id);
 		}
+	sort_scores();
+}
+
+function score_info::update_from_pdu(new_scores, my_id) {
+	for(var i = 0; i < len(scores); i++)
+		for(var j = 2; j < len(new_scores); j++)
+			if(new_scores[i][0] == scores[j][0] && new_scores[j][1] > scores[i][1]) {
+				scores[i][1] = new_scores[j][i];
+				check_if_win(scores[i][0], scores[i][1], my_id);
+			}
+	sort_scores();
 }
 
 function score_info::get_inside() {

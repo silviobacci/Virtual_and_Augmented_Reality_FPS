@@ -2,6 +2,7 @@ var total_shooted_bullets = 0;
 
 class weapon {
 	var name;
+	var bullet_type;
 	var mesh_gun;
 	var obj_gun;
 	
@@ -37,6 +38,10 @@ function weapon::create_weapon(mesh, scaling_factor) {
 
 function weapon::init(nm, nb, am, sf, br, bm){
 	name = nm;
+	if(name == RAILGUN_NAME)
+		bullet_type = RAILGUN_BULLET;
+	else
+		bullet_type = ROCKETL_BULLET;
 	ammunitions = am;
 	bullets_left = 0;
 	max_bullets = nb - am;
@@ -59,23 +64,15 @@ function weapon::add_bullets(to_add){
 		}
 		n_bullets = max_bullets;
 	}
-	//trace(n_bullets);
-	//trace(bullets_left);
+
 	recharge();
-	
-	//trace(to_add);
-	var start = total_shooted_bullets + len(bullets);
-	//trace(start);
 	
 	var len_bullets = len(bullets);
 	for(var i = total_shooted_bullets + len_bullets; i < total_shooted_bullets + len_bullets + to_add; i++){
 		var b = bullet();
-		b.init(BULLET_RADIUS, BULLET_MASS, i);
+		b.init(i, bullet_type);
 		aadd(bullets, b);
 	}
-	
-	var quanti = len(bullets);
-	//trace(quanti);
 }
 
 function weapon::recharge(){

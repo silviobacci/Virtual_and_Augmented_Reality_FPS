@@ -79,6 +79,9 @@ function OnReceive() {
 						my_score_info.update(received_data[2], received_data[4], my_players.get_me().id);
 					}
 					break;
+				case SCORE_PDU:
+					my_score_info.update_from_pdu(received_data, my_players.get_me().id);
+					break;
 			}
 	}
 }

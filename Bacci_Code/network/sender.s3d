@@ -5,6 +5,7 @@ var timer_POSITION_PDU = 0;
 var timer_KEEPALIVE_PDU = 0;
 var timer_HIT_PDU = 0;
 var timer_BULLET_PDU = 0;
+var timer_SCORE_PDU = 0;
 
 var bullet_player_hit = array(0);
 
@@ -78,5 +79,11 @@ function OnSend() {
 				adel(bullet_player_hit, index);
 			index++;
 		}
+	}
+	
+	if(getTime() - timer_SCORE_PDU > SCORE_PDU_PERIOD){
+		timer_SCORE_PDU = getTime();
+		PDU = my_network.create_SCORE_PDU(my_score_info.scores);
+		my_network.send_in_game(PDU);
 	}
 }

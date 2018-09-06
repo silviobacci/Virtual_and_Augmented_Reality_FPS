@@ -1,0 +1,34 @@
+function NetworkLoop() {
+	if(my_end_menu.show_menu) {
+		my_network.status = END_GAME;
+		my_mouse.set_visible();
+	}
+		
+	switch(my_network.status) {
+		case MANAGING :
+			CheckNewUser();
+			break;
+		case READY_USER :
+			ReceiveUsersList();
+			break;
+		case IN_GAME :
+			OnReceive();
+			break;
+	}
+	
+	switch(my_network.status) {
+		case MANAGING :
+			SendManagerInfo();
+			break;
+		case READY_MNG :
+			SendUsersList();
+			break;
+		case CONNECTING :
+			SendUserInfo();
+			break;
+		case END_GAME :
+		case IN_GAME :
+			OnSend();
+			break;
+	}
+}

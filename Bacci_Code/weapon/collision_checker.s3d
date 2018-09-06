@@ -1,6 +1,7 @@
 #define PLAYER_DIM		0.5
 #define PLAYER_HEIGHT	1.6
 #define PLAYER_HEAD		1.3
+#define PLAYER_BODY		0.7
 
 function bullet::check_if_hit(player) {
 	if(position.y < player.y || position.y > player.y + PLAYER_HEIGHT)
@@ -16,6 +17,8 @@ function bullet::check_if_hit(player) {
 	
 	if(position.y > player.y + PLAYER_HEAD)
 		return HEADSHOT;
+	else if(position.y > player.y + PLAYER_BODY)
+		return FOOTSHOT;
 	else
 		return BODYSHOT;
 }

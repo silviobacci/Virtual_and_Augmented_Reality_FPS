@@ -1,5 +1,5 @@
-#define RAILGUN_BULLET			0
-#define ROCKETL_BULLET			1
+#define RAILGUN_BULLET			1
+#define ROCKETL_BULLET			2
 
 #define RAILGUN_N_BULLETS 		100
 #define RAILGUN_AMMUNITIONS		25
@@ -7,7 +7,7 @@
 #define RAILGUN_MESH			"railgun.aam"
 #define RAILGUN_BULLET_MASS		0.008
 #define RAILGUN_BULLET_RADIUS 	0.003
-#define RAILGUN_SHOOT_FORCE 	100
+#define RAILGUN_SHOOT_FORCE 	200
 
 #define ROCKETL_N_BULLETS 		100
 #define ROCKETL_AMMUNITIONS		25
@@ -15,7 +15,7 @@
 #define ROCKETL_MESH			"rocketl.aam"
 #define ROCKETL_BULLET_MASS		0.008
 #define ROCKETL_BULLET_RADIUS 	0.003
-#define ROCKETL_SHOOT_FORCE 	100
+#define ROCKETL_SHOOT_FORCE 	200
 
 #define GUN_POSITION_X			0.2
 #define GUN_POSITION_Y			1
@@ -27,9 +27,10 @@
 #define N_BULLET_PDU	 		100
 #define N_HIT_PDU		 		100
 
-#define NOSHOT			-1
-#define BODYSHOT		0
-#define HEADSHOT		1
+#define NOSHOT			0
+#define FOOTSHOT		10
+#define BODYSHOT		25
+#define HEADSHOT		50
 
 class bullet{
 	var id;
@@ -45,8 +46,6 @@ class bullet{
 	var dir;
 
 	var is_flying;
-	var elapsed_time;
-	var delta_t;
 	
 	var mass;
 	var radius;
@@ -63,9 +62,10 @@ class bullet{
 	var mesh;
 	
 	var fire_life;
+	var weapon_type;
 
 	create_bullet();
-	init(br, bm, i);
+	init(i, wt);
 	update_bullet_from_pdu(PDU);
 	
 	check_if_hit(player);
@@ -79,6 +79,7 @@ class bullet{
 	draw();
 	
 	shoot(p, a, d, sf);
+	compute_new_dir(d, a);
 };
 
 function bullet::create_bullet() {
@@ -88,31 +89,32 @@ function bullet::create_bullet() {
 	obj_bullet = CVmObj(mesh_bullet);
 }
 
-function bullet::init(br, bm, i){
+function bullet::init(i, wt){
+	id = i;
+	weapon_type = wt;
+	if(weapon_type == RAILGUN_BULLET) {
+		radius = RAILGUN_BULLET_RADIUS;
+		mass = RAILGUN_BULLET_MASS;
+	}
+	else {
+		radius = ROCKETL_BULLET_RADIUS;
+		mass = ROCKETL_BULLET_MASS;
+	}
+	
+	viscous = 6* PI* n * radius / mass;
+	
 	obj = array(0);
 	mesh = CVmNewMesh(VRP_BOX);
 	mesh.scale(2);
-	
-	radius = br;
-	mass = bm;
-	viscous = 6* PI* n * radius / mass;
-	
-	delta_t = TIME_STEP_UPDATE;
-	
-	id = i;
+
 	is_flying = false;
-	elapsed_time = 0.0;
 	fire_life = N_BULLET_PDU;
 	
 	create_bullet();
 }
 
 function bullet::update_bullet_from_pdu(PDU) {
-	if(PDU[3] == RAILGUN_BULLET)
-		init(RAILGUN_BULLET_RADIUS, RAILGUN_BULLET_MASS, PDU[2]);
-	else
-		init(ROCKETL_BULLET_RADIUS, ROCKETL_BULLET_MASS, PDU[2]);
-	
+	init(PDU[2], PDU[3]);
 	position = PDU[4];
 	speedx = PDU[5];
 	speedy = PDU[6];
@@ -133,9 +135,10 @@ function bullet::update_dynamics(){
 	
 	angle_y = atan(dy/dx);
 	
-	position.x += dx * cos(angle_x + angle_x_offset);
+	position.x += dx * cos(angle_x);
 	position.y += dy;
-	position.z += dx * sin(angle_x + angle_x_offset);
+	position.z += dx * sin(angle_x);
+	trace(position);
 	
 	accx = - viscous * speed * cos(angle_y) / mass;
 	accy = - viscous * speed * sin(angle_y) / mass - g;
@@ -168,6 +171,25 @@ function bullet::update_enemy_bullet_info() {
 	return is_hit;
 }
 
+function bullet::compute_new_dir(d, a) {
+	var gun_position;
+	switch(current_view) {
+    	case FIRST_PERSON_VIEW:
+    		gun_position = [0.005, 0.005, 0];
+    		break;
+    	case THIRD_PERSON_VIEW:
+    		gun_position = [0.004, 0.015, 0];
+    		break;
+    	case GUNSIGHT_VIEW:
+    		gun_position = [0.004, 0.005, 0];
+    		break;
+    }
+	gun_position = VectorRotate(a, 0, 1, 0, gun_position);
+	var new_dir = d + gun_position;
+	new_dir = [new_dir.x / modulus(new_dir), new_dir.y / modulus(new_dir), new_dir.z / modulus(new_dir)];
+	return new_dir;
+}
+
 function bullet::shoot(p, a, d, sf){
 	var gun_position = [-GUN_POSITION_X, GUN_POSITION_Y, GUN_POSITION_Z];
 	gun_position = VectorRotate(a, 0, 1, 0, gun_position);
@@ -175,21 +197,13 @@ function bullet::shoot(p, a, d, sf){
 	dy = 0.0;
 	speedx = 0.0;
 	speedy = 0.0;
-	angle_y_offset = 0;
+	d = compute_new_dir(d, a);
 	angle_y = asin(d.y);
-	//angle_y_offset = atan(cos(angle_y) / (sin(angle_y) + 1 / (CameraGetCurrent().GetPosition().y - GUN_POSITION_Y)));
-	angle_y += angle_y_offset;
-	//angle_x_offset = -(PI/2 - atan2pi(cos(angle_y), GUN_POSITION_X));
-	var tmp_angle_x_offset = angle_x_offset * RAD_TO_GRAD;
-	trace(tmp_angle_x_offset);
-	angle_x = atan2pi(d.z, d.x) + angle_x_offset;
-	var tmp_angle_x = angle_x * RAD_TO_GRAD;
-	trace(tmp_angle_x);
+	angle_x = atan2pi(d.z, d.x);
 	accx = sf * cos(angle_y) / mass;
 	accy = sf * sin(angle_y) / mass - g;
 	
 	position = p + gun_position;
-	//position = CameraGetCurrent().GetPosition();
 	dir = d;
 	is_flying = true;
 }

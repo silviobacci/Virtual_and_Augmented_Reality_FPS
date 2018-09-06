@@ -1,6 +1,3 @@
-#define	FRAME_RATE			60
-#define TIME_STEP_UPDATE 	0.005
-
 var window;
 var window_w;
 var window_h;

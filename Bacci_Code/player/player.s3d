@@ -8,7 +8,7 @@
 #define FRONT				1
 #define REAR				2
 
-#define STARTING_LP			2
+#define STARTING_LP			100
 
 class player{
 	//Player-related 
@@ -37,8 +37,6 @@ class player{
 	var fx_step;
 	
 	var bounding_box;
-	var mesh_bounding_box;
-	var obj_bounding_box;
 	
 	//jump related 
 	var is_jumping;
@@ -49,7 +47,6 @@ class player{
 	var speedx;
 	var speedy; 
 	var angle;
-	var delta_t;
 	var fx_jump;
 	
 	//Player-associated
@@ -92,12 +89,6 @@ function player::create_player(){
 	mesh_player_upper = CVmNewMesh("swat_upper.aam"); 
 	mesh_player_upper.scale(sf1);
 	
-	glEnable(GL_BLEND);	
-	var material = CVmMaterial();
-	material.transparency = 0.0;
-	mesh_player_lower.ForceMaterial(material);
-	mesh_player_upper.ForceMaterial(material);
-	
 	my_railgun.create_weapon(RAILGUN_MESH, sf1);
 	my_rocketl.create_weapon(ROCKETL_MESH, sf1);
 	
@@ -125,7 +116,6 @@ function player::init(i, p, o){
 	is_falling =		false;
 	is_jumping = 		false;
 	is_side_walking =	false;
-	delta_t = 			TIME_STEP_UPDATE;
 	front_direction = 	moving_direction;
 	side_direction = 	moving_direction;
 	temp_direction = 	FRONT;
@@ -145,9 +135,7 @@ function player::get_position(){
 	return obj_player.GetPosition();
 }
 
-function player::draw(){
-	//foreach(var o in obj_bounding_box)	
-		//o.draw();									
+function player::draw(){	
 	obj_player.draw(VR_FRAMENUMBER, SWAT_START_WALK + current_frame);
 	current_weapon.draw();
 }
