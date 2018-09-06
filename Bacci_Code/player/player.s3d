@@ -55,6 +55,8 @@ class player{
 	var current_weapon;
 	var life_points;
 	
+	var hidden;
+	
 	init(i, p, o);
 	create_player();
 	
@@ -116,6 +118,7 @@ function player::init(i, p, o){
 	is_falling =		false;
 	is_jumping = 		false;
 	is_side_walking =	false;
+	hidden =			false;
 	front_direction = 	moving_direction;
 	side_direction = 	moving_direction;
 	temp_direction = 	FRONT;
@@ -136,6 +139,9 @@ function player::get_position(){
 }
 
 function player::draw(){	
+	if(hidden)
+		return;
+		
 	obj_player.draw(VR_FRAMENUMBER, SWAT_START_WALK + current_frame);
 	current_weapon.draw();
 }

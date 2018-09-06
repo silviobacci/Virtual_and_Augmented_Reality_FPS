@@ -9,8 +9,10 @@ function PhysicalLoop() {
 	}
 	
 	for(var i = 0; i < len(timer_players); i++)
-		if(getTime() - timer_players[i][1] > 5 * KEEPALIVE_PDU_PERIOD)
-			my_players.remove_player(timer_players[i][0]);
+		if(getTime() - timer_players[i][1] > 5 * KEEPALIVE_PDU_PERIOD) {
+			my_players.remove_player(timer_players[i][0]); 
+			trace(my_mouse);
+		}
 	
 	if(my_waiting_menu.update_it)
 		my_waiting_menu.update();

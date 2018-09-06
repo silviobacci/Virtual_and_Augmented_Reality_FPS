@@ -27,15 +27,16 @@ function DownloadReady(RequestID) {}
 
 function OnTimer() {
 	var current_time = getTime();
-	if(current_time - timer_physical_loop >= PHYSICAL_LOOP_PERIOD){
-		delta_t = ToFloat(current_time - timer_physical_loop) / ToFloat(1000);
-		timer_physical_loop = getTime();
-		PhysicalLoop();
-	}
 	
 	if(current_time - timer_network_loop > NETWORK_LOOP_PERIOD){
 		timer_network_loop = getTime();
 		NetworkLoop();
+	}
+	
+	if(current_time - timer_physical_loop >= PHYSICAL_LOOP_PERIOD){
+		delta_t = ToFloat(current_time - timer_physical_loop) / ToFloat(1000);
+		timer_physical_loop = getTime();
+		PhysicalLoop();
 	}
 }
 

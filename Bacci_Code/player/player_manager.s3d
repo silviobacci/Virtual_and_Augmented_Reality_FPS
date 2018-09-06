@@ -53,6 +53,7 @@ function player_manager::update(){
 function player_manager::update_player_from_pdu(pdu){
 	foreach(var player in array_player)
 		if(player.id == pdu[1]) {
+			player.hidden = 			false;
 			player.position = 			pdu[2]; 
 			player.angle_direction = 	pdu[3]; 
 			player.moving_direction = 	pdu[4];
@@ -104,24 +105,9 @@ function player_manager::addplayer(id, pos){
 }
 
 function player_manager::remove_player(id){
-	var index = 0;
-	foreach(var player in array_player) {
-		if(player.id == id) {
-			adel(array_player, index);
-			set_my_index();
-			break;
-		}
-		index++;
-	}
-	
-	index = 0;
-	foreach(var timer in timer_players) {
-		if(timer[0] == id) {
-			adel(timer_players, index);
-			break;
-		}
-		index++;
-	}
+	foreach(var player in array_player)
+		if(player.id == id)
+			player.hidden = true;
 }
 
 function player_manager::respawn_player(id) {
