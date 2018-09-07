@@ -6,6 +6,9 @@ function init() {
 	window.Fullscreen(true);
 	resolution = get_resolution();
 	
+	event_networking_id = event();
+	event_physics_id = event();
+	
 	my_keyboard = keyboard_manager();
 	my_keyboard.init();
 	

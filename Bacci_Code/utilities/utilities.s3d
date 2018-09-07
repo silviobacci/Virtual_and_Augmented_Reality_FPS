@@ -13,12 +13,16 @@
 #define END_GAME					6
 
 #define	FRAME_RATE					60
-#define TIME_STEP_UPDATE 			0.001
+#define TIME_STEP_UPDATE 			0.0001
 #define NETWORK_LOOP_PERIOD			2	
 #define PHYSICAL_LOOP_PERIOD		10
 
+var event_networking_id;
+var event_physics_id;
+
 var timer_network_loop = 0;
 var timer_physical_loop = 0;
+var previous_time = 0;
 var delta_t;
 
 var current_view = FIRST_PERSON_VIEW;

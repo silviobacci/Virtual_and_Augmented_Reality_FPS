@@ -10,7 +10,7 @@ var my_map;
 
 class map{
 	var matrix_level;
-	var players_position;
+	var players;
 	var rows;
 	var columns;
 	var map_position_x;
@@ -32,8 +32,8 @@ function map::init(ml) {
 	matrix_level = ml;
 }
 
-function map::update(pp) {
-	players_position = pp;
+function map::update(p) {
+	players = p;
 	
 	rows = len(matrix_level);
 	columns = len(matrix_level[0]);
@@ -66,8 +66,9 @@ function map::draw_wall() {
 function map::draw_player() {
 	ConsoleColor(PLAYER_COLOR);
 	
-	for(var i = 0; i < len(players_position); i++)
-		draw_rect(players_position[i][0] - MAP_UNIT_SIZE / 2.0, players_position[i][2] + MAP_UNIT_SIZE / 2.0, height, 0.5 * MAP_UNIT_SIZE, 1.5 * MAP_UNIT_SIZE);
+	foreach(var player in players)
+		if(!player.hidden)
+			draw_rect(player.position.x - MAP_UNIT_SIZE / 2.0, player.position.z + MAP_UNIT_SIZE / 2.0, height, 0.5 * MAP_UNIT_SIZE, 1.5 * MAP_UNIT_SIZE);
 }
 
 function map::draw_ground(x, y, w, h) {
@@ -77,7 +78,7 @@ function map::draw_ground(x, y, w, h) {
 
 function map::draw() {
 	draw_ground(map_position_x, map_position_y, width, height);
-	draw_wall(matrix_level, rows, columns, height);
-	draw_player(players_position, height);		
+	draw_wall();
+	draw_player();		
 	ConsoleFinish();
 }

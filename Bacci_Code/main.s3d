@@ -28,19 +28,28 @@ function DownloadReady(RequestID) {}
 function OnTimer() {
 	var current_time = getTime();
 	
-	if(current_time - timer_network_loop > NETWORK_LOOP_PERIOD){
-		timer_network_loop = getTime();
-		NetworkLoop();
+	if(current_time - timer_network_loop >= NETWORK_LOOP_PERIOD){
+		timer_network_loop = current_time;
+		EventPost(event_networking_id);
 	}
 	
 	if(current_time - timer_physical_loop >= PHYSICAL_LOOP_PERIOD){
-		delta_t = ToFloat(current_time - timer_physical_loop) / ToFloat(1000);
-		timer_physical_loop = getTime();
-		PhysicalLoop();
+		timer_physical_loop = current_time;
+		EventPost(event_physics_id, ToFloat(current_time - timer_physical_loop) / ToFloat(1000));
 	}
 }
 
-function OnEvent(eventID, wparam, lparam) {}
+function OnEvent(eventID, param) {
+	if(event_networking_id == void || event_physics_id == void)
+		return;
+		
+	if(eventID == event_networking_id)
+		NetworkLoop();
+	else if(eventID == event_physics_id) {
+		delta_t = param;
+		PhysicalLoop();	
+	}
+}
 
 function OnError() {}
 

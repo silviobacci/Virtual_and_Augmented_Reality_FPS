@@ -41,7 +41,7 @@ function PhysicalLoop() {
 	update_camera();
 		
 	my_players.update();
-	my_map.update(my_players.get_player_position());
+	my_map.update(my_players.array_player);
 	my_player_info.update(my_players.get_me());
 	my_gadget.update();
 	

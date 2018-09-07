@@ -44,7 +44,7 @@ function score_info::init() {
 function score_info::sort_scores() {
 	for (var i = len(scores) - 1; i > 0; i--)
 		for (var j = 0; j < i; j++)
-			if (scores[j][1] > scores[j + 1][1]) {
+			if (scores[j][1] < scores[j + 1][1]) {
 				var temp = scores[j + 1];
 				scores[j + 1] = scores[j];
 				scores[j] = temp;
