@@ -1,4 +1,4 @@
-#define PLAYER_SPEED 		0.1
+#define PLAYER_SPEED 		0.05
 #define PLAYER_SPEED_STEP 	0.001
 #define PLAYER_SPEED_SIDE 	0.01
 #define PLAYER_ANGLE_STEP 	0.01
