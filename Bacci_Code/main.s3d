@@ -34,8 +34,9 @@ function OnTimer() {
 	}
 	
 	if(current_time - timer_physical_loop >= PHYSICAL_LOOP_PERIOD){
+		delta_t = ToFloat(current_time - timer_physical_loop) / ToFloat(1000);
 		timer_physical_loop = current_time;
-		EventPost(event_physics_id, ToFloat(current_time - timer_physical_loop) / ToFloat(1000));
+		EventPost(event_physics_id);
 	}
 }
 
@@ -45,10 +46,8 @@ function OnEvent(eventID, param) {
 		
 	if(eventID == event_networking_id)
 		NetworkLoop();
-	else if(eventID == event_physics_id) {
-		delta_t = param;
+	else if(eventID == event_physics_id)
 		PhysicalLoop();	
-	}
 }
 
 function OnError() {}

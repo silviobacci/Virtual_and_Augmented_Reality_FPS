@@ -9,8 +9,6 @@ function CheckNewUser() {
 
 function ReceiveUsersList() {
 	my_network.player_array = my_network.receive_from_manager();
-	var arr = my_network.player_array;
-	trace(arr);
 	my_network.set_my_id();
 	my_players.create_players(my_network.player_array);
 	my_waiting_menu.show_menu = false;
