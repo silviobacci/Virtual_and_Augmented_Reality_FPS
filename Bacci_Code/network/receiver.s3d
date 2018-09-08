@@ -57,11 +57,14 @@ function OnReceive() {
 						aadd(to_add, b);
 						aadd(to_add, received_data[1]);
 						aadd(enemy_bullets, to_add);
+						if(b.type == RAILGUN_BULLET)
+							my_sound_player.play_railgun(my_players.get_player_by_id(received_data[1]).position);
+						else
+							my_sound_player.play_rocketl(my_players.get_player_by_id(received_data[1]).position);
 					}
 					break;
 				case HIT_PDU:
 					already_present = false;
-					
 					foreach(var pdu in hit_pdu_received)
 						if(pdu[0] == received_data[2] && pdu[1] == received_data[3]) {
 							index = 0;

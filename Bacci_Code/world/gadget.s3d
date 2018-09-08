@@ -93,7 +93,7 @@ function gadget::init(){
 
 function gadget::add_therapy_zone(position) {
 	foreach(var zone in therapy_zone)
-		if(abs(zone - position) == 0)
+		if(zone[0] == position)
 			return;
 	var to_add = array(0);
 	aadd(to_add, position);
@@ -104,7 +104,7 @@ function gadget::add_therapy_zone(position) {
 
 function gadget::add_ammunition_zone(position) {
 	foreach(var zone in ammunition_zone)
-		if(abs(zone - position) == 0)
+		if(zone[0] == position)
 			return;
 	var to_add = array(0);
 	aadd(to_add, position);
@@ -117,6 +117,7 @@ function gadget::update() {
 	foreach(var zone in therapy_zone) {
 		if(zone[2] && getTime() - timer_therapy_zone > THERAPY_ZONE_PERIOD) {
 			timer_therapy_zone = getTime();
+			my_sound_player.play_gadget(zone[0]);
 			if(my_players.get_me().life_points != STARTING_LP)
 				my_players.get_me().life_points++;
 		}
@@ -134,6 +135,7 @@ function gadget::update() {
 	foreach(var zone in ammunition_zone) {
 		if(zone[2] && getTime() - timer_ammunition_zone > AMMUNITION_ZONE_PERIOD) {
 			timer_ammunition_zone = getTime();
+			my_sound_player.play_gadget(zone[0]);
 			my_players.get_me().current_weapon.add_bullets(25);
 		}
 		var distance = sqrt((zone[0].x - my_players.get_me().position.x)^2 + (zone[0].z - my_players.get_me().position.z)^2);

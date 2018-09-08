@@ -28,6 +28,7 @@ class player_manager {
 	
 	get_player_position();
 	get_me();
+	get_player_by_id(id);
 };
 
 function player_manager::init(mp, ml){
@@ -62,7 +63,9 @@ function player_manager::update_player_from_pdu(pdu){
 			player.side_speed = 		pdu[7]; 
 			player.front_direction = 	pdu[8]; 
 			player.side_direction = 	pdu[9]; 
-			player.is_falling = 		pdu[10]; 
+			if(player.is_falling == false && pdu[10] == true) my_sound_player.play_jump(player.position);
+			player.is_falling = 	pdu[10]; 
+			if(player.is_jumping == false && pdu[11] == true) my_sound_player.play_jump(player.position);
 			player.is_jumping = 		pdu[11]; 
 			player.speedx = 			pdu[12]; 
 			player.speedy = 			pdu[13]; 
@@ -159,6 +162,13 @@ function player_manager::get_player_position() {
 
 function player_manager::get_me() {
 	return array_player[my_index];
+}
+
+function player_manager::get_player_by_id(id) {
+	foreach(var player in array_player)
+		if(player.id == id)
+			return player;
+	return void;
 }
 
 function player_manager::draw(){

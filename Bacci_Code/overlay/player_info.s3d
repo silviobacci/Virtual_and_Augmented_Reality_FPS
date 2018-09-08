@@ -92,7 +92,7 @@ function  player_info::draw_bullets_left() {
 
 function  player_info::draw_life_points() {
 	var tmp_box = get_inside_text(-8);
-	draw_box(tmp_box, "LIFE: " + str(my_players.array_player[my_players.my_index].life_points), INFO_FONT_SIZE);
+	draw_box(tmp_box, "LIFE: " + str(my_players.array_player[my_players.my_index].life_points) + "%", INFO_FONT_SIZE);
 }
 	
 function  player_info::draw_info_box() {

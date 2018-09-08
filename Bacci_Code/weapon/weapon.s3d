@@ -95,7 +95,10 @@ function weapon::shoot(player_position, player_direction, shooting_direction){
 	bullets_left--;
 	adel(bullets, 0);
 	
-	my_sound_player.play_shoot(player_position);
+	if(name == RAILGUN_NAME)
+		my_sound_player.play_railgun(player_position);
+	else
+		my_sound_player.play_rocketl(player_position);
 }
 
 function weapon::update() {

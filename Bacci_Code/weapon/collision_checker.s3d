@@ -6,11 +6,19 @@
 function bullet::check_if_hit(player) {
 	if(position.y < player.y || position.y > player.y + PLAYER_HEIGHT)
 		return NOSHOT;
-		
-	var distance = sqrt((player.x - position.x)^2 + (player.z - position.z)^2);
 	
-	if(distance > PLAYER_DIM)
+	var hit = false;
+	for(var i = -1; i < 4; i++) {
+		var to_check = position + i * PLAYER_DIM * [cos(angle_y) * cos(angle_x), sin(angle_y), cos(angle_y) * sin(angle_x)];
+		var distance = sqrt((player.x - to_check.x)^2 + (player.z - to_check.z)^2);	
+		if(distance > PLAYER_DIM)
+			hit = true;
+	}
+	
+	if(!hit)
 		return NOSHOT;
+		
+	my_sound_player.play_hit(player);
 	
 	if(position.y > player.y + PLAYER_HEAD)
 		return HEADSHOT;

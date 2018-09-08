@@ -68,6 +68,7 @@ function score_info::check_if_win(player_id, score, my_id) {
 		else
 			my_end_menu.winner = false;
 		my_end_menu.show_menu = true; 
+		my_sound_player.play_end();
 	}
 }
 

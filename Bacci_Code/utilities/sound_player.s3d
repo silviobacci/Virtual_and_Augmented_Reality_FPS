@@ -1,13 +1,20 @@
 #define TIME_DELAY_SOUND	200
 
-#define N_SOUNDS			6
+#define N_SOUNDS			11
 
 #define STARTUP_SOUND		"startup.wav"
+#define GADGET_SOUND		"gadget.wav"
+#define END_SOUND			"end.wav"
+
 #define STEP_SOUND			"step.wav"
+#define STEPFOOT_SOUND		"stepfoot.wav"
 #define JUMP_SOUND			"jump.wav"
-#define JAM_SOUND			"jam.wav"
-#define HIT_SOUND			"jam.wav"
-#define SHOOT_SOUND			"shoot.wav"
+#define HIT_SOUND			"hit.wav"
+
+#define CHANGE_SOUND		"change.wav"
+#define RECHARGE_SOUND		"recharge.wav"
+#define RAILGUN_SOUND		"railgun.wav"
+#define ROCKETL_SOUND		"rocketl.wav"
 
 var my_sound_player;
 
@@ -19,12 +26,20 @@ class sound_player {
 	index_to_sound(index);
 	play_sound_simple(index);
 	play_sound(index, position);
+	
 	play_startup();
+	play_gadget(position);
+	play_end();
+	
 	play_step(position);
+	play_stepfoot(position);
 	play_jump(position);
-	play_jam(position);
 	play_hit(position);
-	play_shoot(position);
+	
+	play_change(position);
+	play_recharge(position);
+	play_railgun(position);
+	play_rocketl(position);
 };
 
 function sound_player::index_to_sound(index) {
@@ -32,15 +47,25 @@ function sound_player::index_to_sound(index) {
 		case 0:
 			return STARTUP_SOUND;
 		case 1:
-			return STEP_SOUND;
+			return GADGET_SOUND;
 		case 2:
-			return JUMP_SOUND;
+			return END_SOUND;
 		case 3:
-			return JAM_SOUND;
+			return STEP_SOUND;
 		case 4:
-			return HIT_SOUND;
+			return STEPFOOT_SOUND;
 		case 5:
-			return SHOOT_SOUND;
+			return JUMP_SOUND;
+		case 6:
+			return HIT_SOUND;
+		case 7:
+			return CHANGE_SOUND;
+		case 8:
+			return RECHARGE_SOUND;
+		case 9:
+			return RAILGUN_SOUND;
+		case 10:
+			return ROCKETL_SOUND;
 	}
 }
 
@@ -60,8 +85,8 @@ function sound_player::play_sound_simple(index) {
 
 function sound_player::play_sound(index, position) {
 	if(getTime() - old_time[index] < TIME_DELAY_SOUND)
-		return false;
-		
+		return;
+
 	old_time[index] = getTime();
 		
 	fx_sound[index].setposition(position);
@@ -74,22 +99,42 @@ function sound_player::play_startup() {
 	play_sound_simple(0);
 }
 
+function sound_player::play_gadget(position) {
+	play_sound_simple(1, position);
+}
+
+function sound_player::play_end() {
+	play_sound_simple(2);
+}
+
 function sound_player::play_step(position) {
-	play_sound(1, position);
-}
-
-function sound_player::play_jump(position) {
-	play_sound(2, position);
-}
-
-function sound_player::play_jam(position) {
 	play_sound(3, position);
 }
 
-function sound_player::play_hit(position) {
+function sound_player::play_stepfoot(position) {
 	play_sound(4, position);
 }
 
-function sound_player::play_shoot(position) {
+function sound_player::play_jump(position) {
 	play_sound(5, position);
+}
+
+function sound_player::play_hit(position) {
+	play_sound(6, position);
+}
+
+function sound_player::play_change(position) {
+	play_sound(7, position);
+}
+
+function sound_player::play_recharge(position) {
+	play_sound(8, position);
+}
+
+function sound_player::play_railgun(position) {
+	play_sound(9, position);
+}
+
+function sound_player::play_rocketl(position) {
+	play_sound(10, position);
 }

@@ -93,9 +93,12 @@ function player::update() {
 			change_weapon(my_rocketl);	
 		else
 			change_weapon(my_railgun);
+		my_sound_player.play_change(position);
 	}
-	else if(my_keyboard.is_pressed(VK_R))
+	else if(my_keyboard.is_pressed(VK_R)) {
+		my_sound_player.play_recharge(position);
 		current_weapon.recharge();
+	}
 		
 	if(my_keyboard.is_pressed(VK_SPACE) && !is_jumping)
 		init_jump_dynamic();
