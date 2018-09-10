@@ -11,9 +11,13 @@ Internet_of_Things_SWFM/
 ├──Baldecchi_Code
 └──Final_Version
 
+=======
 Bacci_Code -> Source code developed by Silvio Bacci
+=======
 Baldecchi_Code -> Source code developed by Andrea Baldecch
+=======
 Final_Version -> Source code of the final release of the game obtained merging the source codes contained in the previous folders.
+=======
 ```
 
 ## Authors
