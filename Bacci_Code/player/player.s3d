@@ -85,10 +85,10 @@ class player{
 };
 
 function player::create_player(){
-	mesh_player_lower = CVmNewMesh("swat_lower.aam");
+	mesh_player_lower = CVmNewMesh("swat/swat_lower.aam");
 	var sf1 = mesh_player_lower.Normalize(1);
 	
-	mesh_player_upper = CVmNewMesh("swat_upper.aam"); 
+	mesh_player_upper = CVmNewMesh("swat/swat_upper.aam"); 
 	mesh_player_upper.scale(sf1);
 	
 	my_railgun.create_weapon(RAILGUN_MESH, sf1);

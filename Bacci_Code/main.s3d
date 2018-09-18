@@ -1,6 +1,6 @@
 #include <Script3d.h>
 #include <Camera.s3d.h>
-#include "utilities/includes.s3d"
+#include "utilities/includer.s3d"
 
 SET SCENE_FOV  = 60;
 SET SCENE_NEAR = 0.5;
@@ -18,7 +18,7 @@ function OnInit(params) {
 function OnFrame() {
 	SceneBegin();
    	
-   	GraphicLoop();
+   	if(!to_update) GraphicLoop();
 
 	SceneEnd();
 }
@@ -40,7 +40,7 @@ function OnTimer() {
 	}
 }
 
-function OnEvent(eventID, param) {
+function OnEvent(eventID) {
 	if(event_networking_id == void || event_physics_id == void)
 		return;
 		

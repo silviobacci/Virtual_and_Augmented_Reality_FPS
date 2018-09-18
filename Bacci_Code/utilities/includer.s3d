@@ -1,9 +1,7 @@
 #include "../utilities/utilities.s3d"
-#include "../utilities/resolution.s3d"
 #include "../utilities/sound_player.s3d"
 #include "../utilities/keyboard.s3d"
 #include "../utilities/mouse.s3d"
-#include "../utilities/quit_functions.s3d"
 
 #include "../world/world.s3d"
 

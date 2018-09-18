@@ -22,7 +22,7 @@ class map{
 	draw();
 	update(pp);
 	
-	draw_rect(to_draw_x, to_draw_y, height, offset_x, offeset_y);
+	draw_rect(to_draw_x, to_draw_y, offset_x, offeset_y);
 	draw_wall();
 	draw_player();
 	draw_ground(x, y, w, h);
@@ -45,7 +45,7 @@ function map::update(p) {
 	map_position_y = 1 - MAP_START_POINT_X * resolution;
 }
 
-function map::draw_rect(to_draw_x, to_draw_y, height, offset_x, offeset_y) {
+function map::draw_rect(to_draw_x, to_draw_y, offset_x, offeset_y) {
 	var w = MAP_UNIT_SIZE;
 	var h = MAP_UNIT_SIZE * resolution;
 	var x = map_position_x + w * to_draw_x - offset_x;
@@ -59,7 +59,7 @@ function map::draw_wall() {
 		for(var j = 0; j < len(matrix_level[i]); j++)
 			if(matrix_level[i][j] > 0) {
 				ConsoleColor(WALL_COLOR / matrix_level[i][j]);
-				draw_rect(j, i, height, 0, 0);
+				draw_rect(j, i, 0, 0);
 			}
 }
 
@@ -68,7 +68,7 @@ function map::draw_player() {
 	
 	foreach(var player in players)
 		if(!player.hidden)
-			draw_rect(player.position.x - MAP_UNIT_SIZE / 2.0, player.position.z + MAP_UNIT_SIZE / 2.0, height, 0.5 * MAP_UNIT_SIZE, 1.5 * MAP_UNIT_SIZE);
+			draw_rect(player.position.x - MAP_UNIT_SIZE / 2.0, player.position.z + MAP_UNIT_SIZE / 2.0, 0.5 * MAP_UNIT_SIZE, 1.5 * MAP_UNIT_SIZE);
 }
 
 function map::draw_ground(x, y, w, h) {

@@ -78,7 +78,7 @@ function ThirdPersonView() {
 }
 
 function FreeCameraView() {
-	my_camera.SetPosition([30.0, WORLD_SUN_HEIGHT, 30.0]);
+	my_camera.SetPosition(WORLD_SUN_POSITION);
 	my_camera.SetTarget(my_players.get_me().position);
 	my_camera.Free();
 	CameraMoveMouse_MBL_LC();

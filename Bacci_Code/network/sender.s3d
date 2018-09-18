@@ -27,6 +27,7 @@ function SendUsersList() {
 	my_waiting_menu.first_time = true;
 	my_network.status = IN_GAME;
 	my_network.close();
+	to_update = true;
 }
 
 function SendUserInfo() {

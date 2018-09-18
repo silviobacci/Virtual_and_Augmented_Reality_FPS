@@ -31,8 +31,6 @@ class gadget{
 };
 
 function gadget::create_therapy_zone(position) {
-	glEnable(GL_BLEND);
-	
 	var mesh_therapy_zone = CVmNewMesh(VRP_CYLINDER);
 	mesh_therapy_zone.scale(ZONE_DIM, ZONE_HEIGHT, ZONE_DIM);
 	var material_therapy_zone = CVmMaterial();
@@ -59,8 +57,6 @@ function gadget::create_therapy_zone(position) {
 }
 
 function gadget::create_ammunition_zone(position) {
-	glEnable(GL_BLEND);
-	
 	var mesh_ammunition_zone = CVmNewMesh(VRP_CYLINDER);
 	mesh_ammunition_zone.scale(ZONE_DIM, ZONE_HEIGHT, ZONE_DIM);
 	var material_ammunition_zone = CVmMaterial();

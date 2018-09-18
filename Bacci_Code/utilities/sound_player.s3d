@@ -2,19 +2,19 @@
 
 #define N_SOUNDS			11
 
-#define STARTUP_SOUND		"startup.wav"
-#define GADGET_SOUND		"gadget.wav"
-#define END_SOUND			"end.wav"
+#define STARTUP_SOUND		"sounds/startup.wav"
+#define GADGET_SOUND		"sounds/gadget.wav"
+#define END_SOUND			"sounds/end.wav"
 
-#define STEP_SOUND			"step.wav"
-#define STEPFOOT_SOUND		"stepfoot.wav"
-#define JUMP_SOUND			"jump.wav"
-#define HIT_SOUND			"hit.wav"
+#define STEP_SOUND			"sounds/step.wav"
+#define STEPFOOT_SOUND		"sounds/stepfoot.wav"
+#define JUMP_SOUND			"sounds/jump.wav"
+#define HIT_SOUND			"sounds/hit.wav"
 
-#define CHANGE_SOUND		"change.wav"
-#define RECHARGE_SOUND		"recharge.wav"
-#define RAILGUN_SOUND		"railgun.wav"
-#define ROCKETL_SOUND		"rocketl.wav"
+#define CHANGE_SOUND		"sounds/change.wav"
+#define RECHARGE_SOUND		"sounds/recharge.wav"
+#define RAILGUN_SOUND		"sounds/railgun.wav"
+#define ROCKETL_SOUND		"sounds/rocketl.wav"
 
 var my_sound_player;
 

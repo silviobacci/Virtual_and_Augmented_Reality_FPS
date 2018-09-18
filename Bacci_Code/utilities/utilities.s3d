@@ -13,7 +13,7 @@
 #define END_GAME					6
 
 #define	FRAME_RATE					60
-#define TIME_STEP_UPDATE 			0.0001
+#define TIME_STEP_UPDATE 			1
 #define NETWORK_LOOP_PERIOD			2	
 #define PHYSICAL_LOOP_PERIOD		10
 
@@ -29,6 +29,13 @@ var current_view = FIRST_PERSON_VIEW;
 
 var my_network;
 
+var window;
+var window_w;
+var window_h;
+var resolution;
+
+var to_update = false;
+
 function atan2pi(x, y){
 	var phi = atan2(x, y);
 
@@ -36,4 +43,30 @@ function atan2pi(x, y){
 		phi = 2*PI - abs(phi);
 
 	return phi;
+}
+
+function dist2(u, v){
+	return sqrt((u.x - v.x)^2 + (u.z - v.z)^2);
+}
+
+function dist3(u, v){
+	return sqrt((u.x - v.x)^2 + (u.y - v.y)^2 + (u.z - v.z)^2);
+}
+
+function get_resolution() {
+	var size = window.GetSize();
+	window_w = ToFloat(size[0]);
+	window_h = ToFloat(size[1]);
+	return window_w / window_h;
+}
+
+function quit_game() {
+	window.Fullscreen(false);
+	window.Quit();
+}
+
+function exit_game(pause, startup) {
+	pause.show_menu = false;
+	startup.show_menu = true;
+	my_network.status = NOT_CONNECTED;
 }

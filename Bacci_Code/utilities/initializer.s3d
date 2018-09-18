@@ -1,6 +1,9 @@
 function init() {
+	glEnable(GL_BLEND);
+	glEnable(GL_NORMALIZE);
+	glEnable(GL_LIGHTING);
 	SetFrameRate(FRAME_RATE);	
-	SetTimeStep(TIME_STEP_UPDATE * 1000);
+	SetTimeStep(TIME_STEP_UPDATE);
 	
 	window = CVmWebBrowser();
 	window.Fullscreen(true);
