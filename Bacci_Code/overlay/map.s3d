@@ -5,6 +5,7 @@
 #define GROUND_COLOR			[244, 225, 174] / 255.0
 #define WALL_COLOR				[139, 63, 51] / 255.0
 #define PLAYER_COLOR			[255, 255, 255] / 255.0
+#define ENEMY_COLOR				[255, 0, 0] / 255.0
 
 var my_map;
 
@@ -64,11 +65,14 @@ function map::draw_wall() {
 }
 
 function map::draw_player() {
-	ConsoleColor(PLAYER_COLOR);
-	
 	foreach(var player in players)
-		if(!player.hidden)
+		if(!player.hidden) {
+			if(player.id == my_network.my_id)
+				ConsoleColor(PLAYER_COLOR);
+			else
+				ConsoleColor(ENEMY_COLOR);
 			draw_rect(player.position.x - MAP_UNIT_SIZE / 2.0, player.position.z + MAP_UNIT_SIZE / 2.0, 0.5 * MAP_UNIT_SIZE, 1.5 * MAP_UNIT_SIZE);
+		}	
 }
 
 function map::draw_ground(x, y, w, h) {

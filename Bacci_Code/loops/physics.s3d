@@ -1,5 +1,4 @@
 function PhysicalLoop() {
-	my_world.sun.Disable();
 	my_mouse.update();
 	my_keyboard.update();
 	resolution = get_resolution();
@@ -59,5 +58,4 @@ function PhysicalLoop() {
 	}
 	
 	to_update = false;
-	my_world.sun.Enable();
 }

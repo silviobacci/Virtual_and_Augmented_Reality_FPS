@@ -54,8 +54,8 @@ class world{
 	var width;
 	var height;
 	
-	var obj_array;
 	var wall_array;
+	var tree_array;
 	var ladder_array;
 	var wall;
 	var sun;
@@ -123,6 +123,7 @@ function world::create_map() {
 	width = len(array_matrix[0]);
 	
 	wall_array = array(0);
+	tree_array = array(0);
 	matrix_level = array(height * N_STEPS);
 	map = array(height);
 	
@@ -217,7 +218,7 @@ function world::create_sun() {
 	sun.SetPosition(WORLD_SUN_POSITION);
 	sun.SetDiffuse(1, 1, 1);
 	sun.SetParameter(GL_LINEAR_ATTENUATION, 0);
-	sun.Disable();
+	sun.enable();
 }
 
 function world::create_sky() {
@@ -336,15 +337,11 @@ function world::create_wall(height_scale, i, j) {
 
 function world::create_tree(height_scale, i, j) {
 	var billboard_tree = CVmBillboard();
-	var material_tree = CVmMaterial();
 	var texture_tree = CVmTexture(WORLD_TREE_IMAGE);
-	material_tree.diffuse = [1, 1, 1, 1];
-	material_tree.transparency = 0;
-	billboard_tree.SetMaterial(material_tree);
 	billboard_tree.SetTexture(texture_tree);
 	billboard_tree.SetSize(WORLD_DEFAULT_DIM, 2 * WORLD_DEFAULT_DIM);
 	billboard_tree.SetPosition(j, height_scale, i);
-	aadd(wall_array, billboard_tree);
+	aadd(tree_array, billboard_tree);
 }
 
 function world::init(){
@@ -360,4 +357,7 @@ function world::draw(){
 	
 	foreach(var wall in wall_array)
 		wall.draw();
+		
+	foreach(var tree in tree_array)
+		tree.draw(0, VR_BB_UNLOCK_Y);
 }

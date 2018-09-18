@@ -11,6 +11,8 @@ function OnDownload() {
 	FileDownload("XVRResources.zip");
 }
 
+function DownloadReady(RequestID) {}
+
 function OnInit(params) {
 	init();
 }
@@ -22,8 +24,6 @@ function OnFrame() {
 
 	SceneEnd();
 }
-
-function DownloadReady(RequestID) {}
 
 function OnTimer() {
 	var current_time = getTime();
@@ -50,6 +50,8 @@ function OnEvent(eventID) {
 		PhysicalLoop();	
 }
 
-function OnError() {}
+function OnError() {
+	exit_game(my_pause_menu, my_startup_menu);
+}
 
 function OnExit() {}

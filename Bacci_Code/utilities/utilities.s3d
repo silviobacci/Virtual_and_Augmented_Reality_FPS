@@ -69,4 +69,5 @@ function exit_game(pause, startup) {
 	pause.show_menu = false;
 	startup.show_menu = true;
 	my_network.status = NOT_CONNECTED;
+	my_network.close();
 }

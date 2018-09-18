@@ -76,8 +76,7 @@ function network::check_if_manager() {
 		manager_ip = NetGetIP();
 	}
 	
-	var tmp = "IP MANAGER: " + manager_ip;
-	trace(tmp);
+	trace(manager_ip);
 }
 
 function network::set_my_id() {
