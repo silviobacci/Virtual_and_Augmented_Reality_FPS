@@ -7,8 +7,6 @@ var timer_HIT_PDU = 0;
 var timer_BULLET_PDU = 0;
 var timer_SCORE_PDU = 0;
 
-var bullet_player_hit = array(0);
-
 function SendManagerInfo() {
 	if(getTime() - timer_INIT_PDU > INIT_PDU_PERIOD){
 		timer_INIT_PDU = getTime();

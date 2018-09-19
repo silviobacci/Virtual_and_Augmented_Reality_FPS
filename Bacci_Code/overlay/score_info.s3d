@@ -9,7 +9,7 @@
 #define SCORE_TEXT_COLOR		[255, 255, 255] / 255.0
 
 #define MAX_VISIBLE_SCORES		4
-#define WINNER_SCORE			1000
+#define WINNER_SCORE			100
 
 var my_score_info;
 

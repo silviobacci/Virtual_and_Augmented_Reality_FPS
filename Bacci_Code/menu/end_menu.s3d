@@ -35,6 +35,8 @@ function end_menu::check_mouse_position() {
 		if(my_mouse.is_clicked()) {
 			show_menu = false;	
 			wait.show_menu = true;
+			wait.update_it = false;
+			wait.first_time = true;
 		}
 		return;
 	}
@@ -49,12 +51,12 @@ function end_menu::check_mouse_position() {
 function end_menu::draw() {
 	draw_background([0, 1, 1, 1]);
 	if(winner)
-		draw_text("WINNER", deadbox, 2);	
+		draw_text("WINNER", deadbox, 4);	
 	else
-		draw_text("LOSER", deadbox, 2);	
+		draw_text("LOSER", deadbox, 4);	
 		
-	draw_text("REMATCH", playbox, -6);	
-	draw_text("QUIT", exitbox, -9);	
+	draw_text("REMATCH", playbox, -4);	
+	draw_text("QUIT", exitbox, -7);	
 	
 	ConsoleFinish();
 }

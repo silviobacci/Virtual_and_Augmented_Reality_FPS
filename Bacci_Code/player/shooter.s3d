@@ -7,6 +7,7 @@ function player::change_weapon(new_weapon){
 		duplicate = 1;
 	else
 		duplicate = 0;
+	my_sound_player.play_change(position);
 }
 
 function player::shoot(){

@@ -1,6 +1,3 @@
-var enemy_bullets = array(0);
-var hit_pdu_received = array(0);
-
 function CheckNewUser() {
 	var socket_id = my_network.accept();
 	if(socket_id != -1)

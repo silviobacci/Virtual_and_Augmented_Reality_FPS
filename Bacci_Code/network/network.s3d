@@ -1,7 +1,7 @@
-#define	MAX_PLAYERS				1
+#define	MAX_PLAYERS				2
 
 #define SOURCE_IP_ADDRESS		"0.0.0.0"
-#define BROADCAST_ADDRESS		"192.168.1.255"
+#define BROADCAST_ADDRESS		"192.168.43.255"
 #define PORT_UDP_GAME			50023	
 #define PORT_UDP_INIT			50022	
 #define PORT_TCP_INIT			50021
@@ -137,7 +137,7 @@ function network::create_KEEPALIVE_PDU() {
 }
 
 function network::create_POSITION_PDU(player) {
-	var PDU = array(16);
+	var PDU = array(17);
 	PDU[0] = POSITION_PDU;
 	PDU[1] = my_id;
 	PDU[2] = player.position;
@@ -153,7 +153,8 @@ function network::create_POSITION_PDU(player) {
 	PDU[12] = player.speedx; 
 	PDU[13] = player.speedy; 
 	PDU[14] = player.accx; 
-	PDU[15] = player.accy; 
+	PDU[15] = player.accy;
+	PDU[16] = player.current_weapon.bullet_type; 
 	return PDU;
 }
 

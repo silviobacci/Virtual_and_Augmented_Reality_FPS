@@ -24,9 +24,6 @@ function PhysicalLoop() {
 	if(my_pause_menu.show_menu)
 		return;
 		
-	if(my_waiting_menu.show_menu)
-		my_waiting_menu.check_mouse_position();
-		
 	if(my_startup_menu.show_menu)
 		my_startup_menu.check_mouse_position();
 		

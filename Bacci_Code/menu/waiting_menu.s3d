@@ -1,7 +1,6 @@
 var my_waiting_menu;
 
 class waiting_menu{
-	var gobackbox;
 	var waitbox;
 	
 	var show_menu;
@@ -18,13 +17,6 @@ class waiting_menu{
 	draw_commands();
 };
 
-function waiting_menu::check_mouse_position() {
-	if(my_mouse.is_contained(gobackbox) && my_mouse.is_clicked()) {
-		startup.show_menu = true;
-		show_menu = false;
-	}
-}
-
 function waiting_menu::update() {
 	my_network.status = CONNECTING;
 	my_network.check_if_manager();
@@ -35,7 +27,6 @@ function waiting_menu::update() {
 
 function waiting_menu::init(s) {
 	waitbox = create_box(0.5, 0.5, 0.5, 0.1);
-	gobackbox = create_box(0.5, 0.5, 0.1, 0.05);
 	
 	startup = s;
 	
@@ -47,7 +38,6 @@ function waiting_menu::init(s) {
 function waiting_menu::draw() {
 	draw_background([0, 1, 1, 1]);
 	draw_title("waiting for a connection..", waitbox, 0);
-	draw_text("GO BACK", gobackbox, -5.5);
 	
 	ConsoleFinish();
 	

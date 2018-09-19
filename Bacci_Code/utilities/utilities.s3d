@@ -14,7 +14,7 @@
 
 #define	FRAME_RATE					60
 #define TIME_STEP_UPDATE 			1
-#define NETWORK_LOOP_PERIOD			2	
+#define NETWORK_LOOP_PERIOD			5	
 #define PHYSICAL_LOOP_PERIOD		10
 
 var event_networking_id;
@@ -28,6 +28,11 @@ var delta_t;
 var current_view = FIRST_PERSON_VIEW;
 
 var my_network;
+var my_players;
+
+var enemy_bullets = array(0);
+var hit_pdu_received = array(0);
+var bullet_player_hit = array(0);
 
 var window;
 var window_w;
@@ -69,5 +74,10 @@ function exit_game(pause, startup) {
 	pause.show_menu = false;
 	startup.show_menu = true;
 	my_network.status = NOT_CONNECTED;
+	my_network.array_player = array(0);
+	my_players.player_array = array(0);
+	enemy_bullets = array(0);
+	hit_pdu_received = array(0);
+	bullet_player_hit = array(0);
 	my_network.close();
 }
