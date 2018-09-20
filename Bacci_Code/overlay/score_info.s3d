@@ -11,8 +11,6 @@
 #define MAX_VISIBLE_SCORES		4
 #define WINNER_SCORE			100
 
-var my_score_info;
-
 class score_info{
 	var scores;
 	var box;

@@ -137,7 +137,7 @@ function player_manager::respawn_player(id) {
 
 function player_manager::out_of_map() {
 	my_death_menu.show_menu = true;
-	get_me().position = [0, -5, 0];
+	get_me().position = [-1, -10, -1];
 	respawning = true;
 	timer_respawn = getTime();
 }

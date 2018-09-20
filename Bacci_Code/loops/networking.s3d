@@ -3,31 +3,32 @@ function NetworkLoop() {
 		my_network.status = END_GAME;
 		my_mouse.set_visible();
 	}
+	
+	if(my_network.status != IN_GAME)
+		ClearBufferGame();
+		
+	if(my_network.status != NOT_CONNECTED)
+		ClearBufferManager();
 		
 	switch(my_network.status) {
-		case MANAGING :
+		case MANAGER :
 			CheckNewUser();
+			SendManagerInfo();
+			break;
+		case READY_MANAGER :
+			SendUsersList();
+			break;
+		case USER :
+			SendUserInfo();
 			break;
 		case READY_USER :
 			ReceiveUsersList();
 			break;
 		case IN_GAME :
 			OnReceive();
-			break;
-	}
-	
-	switch(my_network.status) {
-		case MANAGING :
-			SendManagerInfo();
-			break;
-		case READY_MNG :
-			SendUsersList();
-			break;
-		case CONNECTING :
-			SendUserInfo();
+			OnSend();
 			break;
 		case END_GAME :
-		case IN_GAME :
 			OnSend();
 			break;
 	}

@@ -34,6 +34,7 @@ function end_menu::check_mouse_position() {
 	if(my_mouse.is_contained(playbox)) {
 		if(my_mouse.is_clicked()) {
 			show_menu = false;	
+			rematch_game(wait, startup);
 			wait.show_menu = true;
 			wait.update_it = false;
 			wait.first_time = true;
@@ -42,8 +43,13 @@ function end_menu::check_mouse_position() {
 	}
 
 	if(my_mouse.is_contained(exitbox)) {
-		if(my_mouse.is_clicked())
-			exit_game(this, startup);
+		if(my_mouse.is_clicked()) {
+			exit_game(wait, startup);
+			show_menu = false;
+			wait.show_menu = true;
+			wait.update_it = false;
+			wait.first_time = true;
+		}
 		return;
 	}
 }

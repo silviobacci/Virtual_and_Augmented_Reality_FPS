@@ -5,7 +5,7 @@ function CheckNewUser() {
 }
 
 function ReceiveUsersList() {
-	my_network.player_array = my_network.receive_from_manager();
+	while((my_network.player_array = my_network.receive_from_manager()) == void);
 	my_network.set_my_id();
 	my_players.create_players(my_network.player_array);
 	my_waiting_menu.show_menu = false;
@@ -83,4 +83,12 @@ function OnReceive() {
 					break;
 			}
 	}
+}
+
+function ClearBufferGame() {
+	while(my_network.receive_init() != void);
+}
+
+function ClearBufferManager() {
+	while(my_network.receive_in_game() != void);
 }

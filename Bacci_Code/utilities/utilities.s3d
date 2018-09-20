@@ -5,10 +5,10 @@
 #define N_VIEWS						2
 
 #define	NOT_CONNECTED				0
-#define	MANAGING					1
-#define	CONNECTING					2
+#define	MANAGER						1
+#define	USER						2
 #define	READY_USER					3
-#define	READY_MNG					4
+#define	READY_MANAGER				4
 #define	IN_GAME						5
 #define END_GAME					6
 
@@ -29,6 +29,7 @@ var current_view = FIRST_PERSON_VIEW;
 
 var my_network;
 var my_players;
+var my_score_info;
 
 var enemy_bullets = array(0);
 var hit_pdu_received = array(0);
@@ -70,14 +71,26 @@ function quit_game() {
 	window.Quit();
 }
 
-function exit_game(pause, startup) {
-	pause.show_menu = false;
-	startup.show_menu = true;
+function reset_game() {
 	my_network.status = NOT_CONNECTED;
-	my_network.array_player = array(0);
-	my_players.player_array = array(0);
+	my_network.manager_ip = void;
+	my_network.player_array = array(0);
+	my_players.array_player = array(0);
+	my_score_info.scores = array(0);
 	enemy_bullets = array(0);
 	hit_pdu_received = array(0);
 	bullet_player_hit = array(0);
 	my_network.close();
+}
+
+function exit_game(pause, startup) {
+	pause.show_menu = false;
+	startup.show_menu = true;
+	reset_game();
+}
+
+function rematch_game(pause, startup) {
+	pause.show_menu = false;
+	startup.show_menu = false;
+	reset_game();
 }

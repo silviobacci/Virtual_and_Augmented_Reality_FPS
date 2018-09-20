@@ -69,8 +69,8 @@ function network::check_if_manager() {
 	while(getTime() - timer < INIT_PDU_PERIOD && manager_ip == void)
 		manager_ip = receive_init();
 
-	if(manager_ip == void) {
-		status = MANAGING;
+	if(manager_ip == void || manager_ip == NetGetIP()) {
+		status = MANAGER;
 		add_player_manager(-1);
 		set_my_id();
 		manager_ip = NetGetIP();
@@ -104,7 +104,7 @@ function network::add_player_manager(socket) {
 	aadd(player_array, to_add);
 	
 	if(len(player_array) == MAX_PLAYERS)
-		status = READY_MNG;
+		status = READY_MANAGER;
 }
 
 function network::create_MANAGER_PDU(IP, ID) {
@@ -205,10 +205,13 @@ function network::close_user() {
 }
 
 function network::close() {
+	/*
 	if(status == MANAGING || status == READY_MNG)
 		close_manager();
 	else
 		close_user();
+		* 
+		*/
 }
 
 function network::send_in_game(PAYLOAD){
