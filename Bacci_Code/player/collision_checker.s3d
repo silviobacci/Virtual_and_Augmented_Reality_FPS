@@ -48,6 +48,10 @@ function player::check_collision(){
 			break;
 	}
 	
+	foreach(var player in my_players.array_player)
+		if(player.id != my_network.my_id && dist2(player.position, position) < COLLISION_RANGE)
+			return true;
+	
 	for (var i = start; i <= end; i++){
 		var iz = int(to_check[i].z);
 		var jz = int(abs(to_check[i].z - iz) * N_STEPS);

@@ -1,4 +1,4 @@
-#define	MAX_PLAYERS				2
+#define	MAX_PLAYERS				1
 
 #define SOURCE_IP_ADDRESS		"0.0.0.0"
 #define BROADCAST_ADDRESS		"172.20.10.15"
@@ -68,8 +68,6 @@ function network::check_if_manager() {
 	
 	while(getTime() - timer < INIT_PDU_PERIOD && manager_ip == void)
 		manager_ip = receive_init();
-
-	trace(manager_ip);
 	
 	if(manager_ip == void || manager_ip == NetGetIP()) {
 		status = MANAGER;

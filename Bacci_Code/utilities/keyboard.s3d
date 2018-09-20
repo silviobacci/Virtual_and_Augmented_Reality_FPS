@@ -7,8 +7,8 @@
 #define VK_S 					"s"
 #define VK_D 					"d"
 #define VK_C 					"c"
-#define VK_M 					"m"
 #define VK_R 					"r"
+#define VK_Z 					"z"
 
 var my_keyboard;
 var duplicate = 0;
@@ -75,7 +75,7 @@ function keyboard_manager::index_to_key(index) {
 		case 11:
 			return VK_R;
 		case 12:
-			return VK_M;
+			return VK_Z;
 		case 13:
 			return VK_LMENU;
 	}

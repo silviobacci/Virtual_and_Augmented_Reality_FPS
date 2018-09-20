@@ -55,4 +55,7 @@ function init() {
 	
 	my_gunsight = gunsight();
 	my_gunsight.init();
+	
+	ClearBufferManager();
+	ClearBufferGame();
 }

@@ -104,9 +104,9 @@ function unaim() {
 function update_camera() {
 	if(my_keyboard.is_pressed(VK_LCONTROL))
 		ChangeView();
-	else if(my_keyboard.is_pressed(VK_M))
+	else if(my_keyboard.is_pressed(VK_Z))
 		aim();
-	else if(!my_keyboard.is_pressed(VK_M))
+	else if(!my_keyboard.is_pressed(VK_Z))
 		unaim();
     
     switch(current_view) {

@@ -8,6 +8,7 @@
 #define AMMUNITION_ZONE_COLOR		[0, 0, 255] / 255.0
 #define ZONE_DIM					2
 #define ZONE_HEIGHT					3
+#define LP_TO_ADD					10
 
 class gadget{
 	var therapy_zone;
@@ -115,7 +116,7 @@ function gadget::update() {
 			timer_therapy_zone = getTime();
 			my_sound_player.play_gadget(zone[0]);
 			if(my_players.get_me().life_points != STARTING_LP)
-				my_players.get_me().life_points++;
+				my_players.get_me().life_points += LP_TO_ADD;
 		}
 		var distance = sqrt((zone[0].x - my_players.get_me().position.x)^2 + (zone[0].z - my_players.get_me().position.z)^2);
 		if(abs(distance) < ZONE_RAY) {
