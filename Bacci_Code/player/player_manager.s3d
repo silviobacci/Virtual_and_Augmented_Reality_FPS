@@ -1,7 +1,6 @@
 #define RESPAWN_PERIOD		2000
-#define ALONE_PERIOD		2000
+#define ALONE_PERIOD		10000
 
-var timer_players = array(0);
 function init_camera();
 
 class player_manager {
@@ -41,7 +40,7 @@ function player_manager::init(mp, ml){
 }
 
 function player_manager::update(){
-	if(len(array_player) - hidden_players == 1 && getTime() - timer_alone > ALONE_PERIOD) {
+	if(len(array_player) != 1 && len(array_player) - hidden_players == 1 && getTime() - timer_alone > ALONE_PERIOD) {
 		my_end_menu.winner = true;
 		my_end_menu.show_menu = true; 
 		my_sound_player.play_end();
@@ -72,9 +71,9 @@ function player_manager::update_player_from_pdu(pdu){
 			player.side_speed = 		pdu[7]; 
 			player.front_direction = 	pdu[8]; 
 			player.side_direction = 	pdu[9]; 
-			if(player.is_falling == false && pdu[10] == true) my_sound_player.play_jump(player.position);
-			player.is_falling = 	pdu[10]; 
-			if(player.is_jumping == false && pdu[11] == true) my_sound_player.play_jump(player.position);
+			if((player.last_falling == false && pdu[10] == true) || (player.is_jumping == false && pdu[11] == true)) my_sound_player.play_jump(player.position);
+			player.is_falling = 		pdu[10]; 
+			player.last_falling =		pdu[10];
 			player.is_jumping = 		pdu[11]; 
 			player.speedx = 			pdu[12]; 
 			player.speedy = 			pdu[13]; 
@@ -89,11 +88,11 @@ function player_manager::update_player_from_pdu(pdu){
 function player_manager::random_pos() {
 	var z;
 	var x;
-	var rows = len(map) - 1;
-	var columns = len(map[0]) - 1;
+	var rows = len(map) - 3;
+	var columns = len(map[0]) - 3;
 	do {
-		z = rand(rows);
-		x = rand(columns);
+		z = rand(rows) + 1;
+		x = rand(columns) + 1;
 	}while(map[z][x] > 0);
 	
 	return [x, 0, z];
@@ -133,11 +132,12 @@ function player_manager::respawn_player(id) {
 	var pos = my_players.random_pos();
 	var o = my_players.set_orientation(pos);
 	get_me().init(id, pos, o);
+	init_camera();
 }
 
 function player_manager::out_of_map() {
 	my_death_menu.show_menu = true;
-	get_me().position = [-1, -10, -1];
+	get_me().position = [0, -10, 0];
 	respawning = true;
 	timer_respawn = getTime();
 }

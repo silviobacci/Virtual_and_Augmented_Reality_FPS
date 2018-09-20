@@ -59,7 +59,8 @@ function OnSend() {
 		var shooted_bullets = my_players.get_me().get_shooted_bullets();
 		foreach(var bullet in shooted_bullets) {
 			PDU = my_network.create_BULLET_PDU(bullet[0], bullet[1]);
-			my_network.send_in_game(PDU);
+			for(var i = 0; i < N_BULLET_PDU; i++)
+				my_network.send_in_game(PDU);
 		}
 	}
 
@@ -68,7 +69,7 @@ function OnSend() {
 		var index = 0;
 		foreach(var bullet in bullet_player_hit) {
 			if(bullet[3] > 0) {
-				PDU = my_network.create_HIT_PDU(bullet[0], bullet[1], bullet[2]);
+				PDU = my_network.create_HIT_PDU(bullet[0], bullet[1], bullet[2], bullet[4]);
 				my_network.send_in_game(PDU);
 				bullet[3]--;
 			}

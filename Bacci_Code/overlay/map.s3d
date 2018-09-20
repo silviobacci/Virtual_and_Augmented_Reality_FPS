@@ -7,8 +7,6 @@
 #define PLAYER_COLOR			[255, 255, 255] / 255.0
 #define ENEMY_COLOR				[255, 0, 0] / 255.0
 
-var my_map;
-
 class map{
 	var matrix_level;
 	var players;
@@ -66,7 +64,7 @@ function map::draw_wall() {
 
 function map::draw_player() {
 	foreach(var player in players)
-		if(!player.hidden && player.position.z >= 0) {
+		if(!player.hidden && player.position.y >= 0) {
 			if(player.id == my_network.my_id)
 				ConsoleColor(PLAYER_COLOR);
 			else

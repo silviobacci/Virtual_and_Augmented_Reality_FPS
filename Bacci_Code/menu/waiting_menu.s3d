@@ -18,7 +18,6 @@ class waiting_menu{
 };
 
 function waiting_menu::update() {
-	my_mouse.change_to_arrow();
 	my_network.status = USER;
 	my_network.check_if_manager();
 	show_menu = true;

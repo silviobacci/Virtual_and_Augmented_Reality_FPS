@@ -26,8 +26,8 @@
 #define g 						9.81
 #define n				 		0.0000186
 
-#define N_BULLET_PDU	 		100
-#define N_HIT_PDU		 		100
+#define N_BULLET_PDU	 		3
+#define N_HIT_PDU		 		3
 
 #define NOSHOT					0
 #define FOOTSHOT				10
@@ -63,7 +63,6 @@ class bullet{
 	var obj;
 	var mesh;
 	
-	var fire_life;
 	var weapon_type;
 
 	create_bullet();
@@ -110,7 +109,6 @@ function bullet::init(i, wt){
 	mesh.scale(2);
 
 	is_flying = false;
-	fire_life = N_BULLET_PDU;
 	
 	create_bullet();
 }
@@ -150,7 +148,9 @@ function bullet::update(){
 		old_position = position;
 		update_dynamics();
 		
-		if(check_wall_collision()|| check_enemy_collision() || position[1] <= 0)
+		check_enemy_collision();
+		
+		if(check_wall_collision() || position[1] <= 0)
 			is_flying = false;
 		else
 			obj_bullet.setposition(position);

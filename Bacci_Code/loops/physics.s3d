@@ -45,7 +45,7 @@ function PhysicalLoop() {
 		var type = bullet[0].update_enemy_bullet_info();
 		if(type != NOSHOT) {
 			adel(enemy_bullets, index);
-			aadd(bullet_player_hit, [bullet[1], bullet[0].id, type, N_HIT_PDU]);
+			aadd(bullet_player_hit, [bullet[1], bullet[0].id, type, N_HIT_PDU, bullet[0].weapon_type]);
 			my_score_info.update(bullet[1], type, my_players.get_me().id);
 			my_players.get_me().life_points -= type * bullet[0].weapon_type;
 			if(my_players.get_me().life_points <= 0)

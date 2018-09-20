@@ -1,7 +1,7 @@
 #define	MAX_PLAYERS				2
 
 #define SOURCE_IP_ADDRESS		"0.0.0.0"
-#define BROADCAST_ADDRESS		"192.168.43.255"
+#define BROADCAST_ADDRESS		"172.20.10.15"
 #define PORT_UDP_GAME			50023	
 #define PORT_UDP_INIT			50022	
 #define PORT_TCP_INIT			50021
@@ -38,7 +38,7 @@ class network{
 	create_SCORE_PDU(scores);
 	create_KEEPALIVE_PDU();
 	create_POSITION_PDU(player);
-	create_HIT_PDU(enemy_id, bullet_id, type);
+	create_HIT_PDU(enemy_id, bullet_id, shot_type, weapon_type);
 	create_BULLET_PDU(bullet, type);
 	accept();
 	connect();
@@ -69,6 +69,8 @@ function network::check_if_manager() {
 	while(getTime() - timer < INIT_PDU_PERIOD && manager_ip == void)
 		manager_ip = receive_init();
 
+	trace(manager_ip);
+	
 	if(manager_ip == void || manager_ip == NetGetIP()) {
 		status = MANAGER;
 		add_player_manager(-1);
@@ -175,13 +177,14 @@ function network::create_BULLET_PDU(bullet, type) {
 	return PDU;
 }
 
-function network::create_HIT_PDU(enemy_id, bullet_id, type) {
-	var PDU = array(5);
+function network::create_HIT_PDU(enemy_id, bullet_id, shot_type, weapon_type) {
+	var PDU = array(6);
 	PDU[0] = HIT_PDU;
 	PDU[1] = my_id;
 	PDU[2] = enemy_id;
 	PDU[3] = bullet_id;
-	PDU[4] = type;
+	PDU[4] = shot_type;
+	PDU[5] = weapon_type;
 	return PDU;
 }
 
@@ -205,13 +208,12 @@ function network::close_user() {
 }
 
 function network::close() {
-	/*
-	if(status == MANAGING || status == READY_MNG)
+	/* 
+	if(status == MANAGER || status == READY_MANAGER)
 		close_manager();
 	else
 		close_user();
-		* 
-		*/
+	*/
 }
 
 function network::send_in_game(PAYLOAD){

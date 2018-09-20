@@ -40,13 +40,13 @@ function OnReceive() {
 				case BULLET_PDU:
 					already_present = false;
 					foreach(var bullet in enemy_bullets)
-						if(bullet[1] == received_data[1] && bullet[0].id == received_data[2])
+						if(bullet[1] == received_data[1] && bullet[0].id == received_data[2] && bullet[0].weapon_type == received_data[3])
 							already_present = true;
 					foreach(var bullet in bullet_player_hit)
-						if(bullet[0] == received_data[1] && bullet[1] == received_data[2])
+						if(bullet[0] == received_data[1] && bullet[1] == received_data[2] && bullet[4] == received_data[3])
 							already_present = true;
 					foreach(var bullet in hit_pdu_received)
-						if(bullet[2] == received_data[1] && bullet[3] == received_data[2])
+						if(bullet[0] == received_data[1] && bullet[1] == received_data[2] && bullet[2] == received_data[3])
 							already_present = true;
 					if(!already_present) {
 						var b = bullet();
@@ -74,7 +74,8 @@ function OnReceive() {
 							already_present = true;
 						}
 					if(!already_present) {
-						aadd(hit_pdu_received, [received_data[2], received_data[3]]);
+						trace(received_data);
+						aadd(hit_pdu_received, [received_data[2], received_data[3], received_data[5]]);
 						my_score_info.update(received_data[2], received_data[4], my_players.get_me().id);
 					}
 					break;
@@ -86,9 +87,9 @@ function OnReceive() {
 }
 
 function ClearBufferGame() {
-	while(my_network.receive_init() != void);
+	while(my_network.receive_in_game() != void);
 }
 
 function ClearBufferManager() {
-	while(my_network.receive_in_game() != void);
+	while(my_network.receive_init() != void);
 }

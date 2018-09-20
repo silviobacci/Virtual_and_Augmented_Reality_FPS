@@ -54,6 +54,7 @@ class player{
 	var my_rocketl; 
 	var current_weapon;
 	var life_points;
+	var last_falling;
 	
 	var hidden;
 	
@@ -119,6 +120,7 @@ function player::init(i, p, o){
 	is_jumping = 		false;
 	is_side_walking =	false;
 	hidden =			false;
+	last_falling = 		false;
 	front_direction = 	moving_direction;
 	side_direction = 	moving_direction;
 	temp_direction = 	FRONT;

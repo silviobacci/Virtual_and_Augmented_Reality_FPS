@@ -30,13 +30,13 @@ function OnTimer() {
 	
 	if(current_time - timer_network_loop >= NETWORK_LOOP_PERIOD){
 		timer_network_loop = current_time;
-		EventPost(event_networking_id);
+		EventSend(event_networking_id);
 	}
 	
 	if(current_time - timer_physical_loop >= PHYSICAL_LOOP_PERIOD){
 		delta_t = ToFloat(current_time - timer_physical_loop) / ToFloat(1000);
 		timer_physical_loop = current_time;
-		EventPost(event_physics_id);
+		EventSend(event_physics_id);
 	}
 }
 

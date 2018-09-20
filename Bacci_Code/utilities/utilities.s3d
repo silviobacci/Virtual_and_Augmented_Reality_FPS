@@ -30,10 +30,12 @@ var current_view = FIRST_PERSON_VIEW;
 var my_network;
 var my_players;
 var my_score_info;
+var my_map;
 
 var enemy_bullets = array(0);
 var hit_pdu_received = array(0);
 var bullet_player_hit = array(0);
+var timer_players = array(0);
 
 var window;
 var window_w;
@@ -77,9 +79,12 @@ function reset_game() {
 	my_network.player_array = array(0);
 	my_players.array_player = array(0);
 	my_score_info.scores = array(0);
+	timer_players = array(0);
+	my_map.players = array(0);
 	enemy_bullets = array(0);
 	hit_pdu_received = array(0);
 	bullet_player_hit = array(0);
+	my_players.hidden_players = 0;
 	my_network.close();
 }
 

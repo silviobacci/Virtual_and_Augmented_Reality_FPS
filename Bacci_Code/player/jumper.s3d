@@ -34,7 +34,8 @@ function player::init_jump_dynamic(){
 	accy = JUMP_FORCE / PLAYER_MASS * sin(angle) - g;
 	is_jumping = true;
 	is_falling = true;
-	
+
+	if(id == my_network.my_id)
 	my_sound_player.play_jump(position);
 }
 

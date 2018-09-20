@@ -4,27 +4,21 @@
 #define PLAYER_BODY		0.7
 
 function bullet::check_if_hit(player) {
-	if(position.y < player.y || position.y > player.y + PLAYER_HEIGHT)
-		return NOSHOT;
-	
-	var hit = false;
-	for(var i = -1; i < 4; i++) {
+	for(var i = -3; i < 4; i++) {
 		var to_check = position + i * PLAYER_DIM * [cos(angle_y) * cos(angle_x), sin(angle_y), cos(angle_y) * sin(angle_x)];
-		if(dist2(player, to_check) < PLAYER_DIM)
-			hit = true;
+		if(dist2(player, to_check) < PLAYER_DIM && to_check.y >= player.y && to_check.y <= player.y + PLAYER_HEIGHT) {
+			my_sound_player.play_hit(player);
+	
+			if(to_check.y > player.y + PLAYER_HEAD)
+				return HEADSHOT;
+			else if(to_check.y > player.y + PLAYER_BODY)
+				return BODYSHOT;
+			else
+				return FOOTSHOT;
+		}
 	}
 	
-	if(!hit)
-		return NOSHOT;
-		
-	my_sound_player.play_hit(player);
-	
-	if(position.y > player.y + PLAYER_HEAD)
-		return HEADSHOT;
-	else if(position.y > player.y + PLAYER_BODY)
-		return BODYSHOT;
-	else
-		return FOOTSHOT;
+	return NOSHOT;
 }
 
 function bullet::check_wall_collision(){
@@ -38,15 +32,9 @@ function bullet::check_wall_collision(){
 	
 	if(z >= 0 && z < len(my_world.matrix_level) && x >= 0 && x < len(my_world.matrix_level))
 		y = my_world.matrix_level[z][x];
-	if(y == void) {
-		trace(z);
-		trace(x);
-	}
-	if(y > position.y){
-		//var wall = "wall hit";
-		//trace(wall); 
+	
+	if(y > position.y)
 		return true;	
-	}
 	
 	return false;
 }
